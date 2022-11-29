@@ -1,42 +1,41 @@
-import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
 import { useCallback, useRef } from 'react';
+import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
+import { FormValues, SubmitFn } from '@/types/Form';
 
 const formValuesSubscriptions = new FormValuesSubscriptions();
 
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
-function useForm() {
-  const formValuesRef = useRef<{
-    [key: string]: any;
-  }>({});
+function useForm<TFormValues extends FormValues = FormValues>() {
+  const formValues = useRef<TFormValues>({} as TFormValues);
 
-  const getValue = useCallback((key?: string | undefined) => {
-    if (key === undefined) return formValuesRef;
-    return formValuesRef[key];
+  const getValue = useCallback((name?: keyof TFormValues) => {
+    if (name === undefined) return formValues;
+    return formValues.current[name];
   }, []);
 
-  const setValue = useCallback((name: string, value: any) => {
-    formValuesRef.current[name] = value;
+  const setValue = useCallback((name: keyof TFormValues, value: any) => {
+    formValues.current[name] = value;
   }, []);
 
-  const bindControl = useCallback((name: string) => {
-    formValuesSubscriptions.addSubscription(name);
+  const bindControl = useCallback((name: keyof TFormValues) => {
+    formValuesSubscriptions.addSubscription(name as string);
 
     const onChange = (e: any) => {
       const val = e.target.value;
-      formValuesSubscriptions.publish(name, val);
+      formValuesSubscriptions.publish(name as string, val);
       setValue(name, val);
     };
 
     return {
-      value: formValuesRef.current[name],
+      value: formValues.current[name],
       onChange,
     };
   }, []);
 
   const handleSubmit = useCallback(
-    (submitFn) => (e) => {
+    (submitFn: SubmitFn) => (e) => {
       e.preventDefault();
-      submitFn(formValuesRef.current);
+      submitFn(formValues.current);
     },
     [],
   );

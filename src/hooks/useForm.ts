@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { FormEvent, useCallback, useRef } from 'react';
 import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
 import { FormValues, SubmitFn } from '@/types/Form';
 
@@ -33,7 +33,7 @@ function useForm<TFormValues extends FormValues = FormValues>() {
   }, []);
 
   const handleSubmit = useCallback(
-    (submitFn: SubmitFn) => (e) => {
+    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
       submitFn(formValues.current);
     },

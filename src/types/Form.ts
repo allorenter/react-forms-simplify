@@ -1,5 +1,7 @@
 export type FormValues = Record<string, any>;
 
-export type SubmitFn = <TResponseData, TFormValues extends FormValues = FormValues>(
-  values: TFormValues,
+export type SubmitFn<TSubmitFormValues> = <TResponseData>(
+  values: TSubmitFormValues,
 ) => Promise<TResponseData | undefined>;
+
+// type Form = ReturnType<typeof useForm>;

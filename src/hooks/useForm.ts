@@ -1,4 +1,7 @@
-import { ChangeEvent, useCallback, useMemo, useRef, useState } from 'react';
+import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
+import { useCallback, useRef } from 'react';
+
+const formValuesSubscriptions = new FormValuesSubscriptions();
 
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
 function useForm() {
@@ -16,10 +19,14 @@ function useForm() {
   }, []);
 
   const bindControl = useCallback((name: string) => {
+    formValuesSubscriptions.addSubscription(name);
+
     const onChange = (e: any) => {
       const val = e.target.value;
+      formValuesSubscriptions.publish(name, val);
       setValue(name, val);
     };
+
     return {
       value: formValuesRef.current[name],
       onChange,
@@ -37,6 +44,8 @@ function useForm() {
   return {
     bindControl,
     handleSubmit,
+    getValue,
+    formValuesSubscriptions,
   };
 }
 

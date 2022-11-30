@@ -17,8 +17,7 @@ function useForm<TFormValues extends FormValues = FormValues>() {
     formValues.current[name] = value;
   }, []);
 
-  // bindFormControl
-  const bindControl = useCallback((name: keyof TFormValues) => {
+  const bindFormControl = useCallback((name: keyof TFormValues) => {
     formValuesSubscriptions.addSubscription(name as string);
 
     const onChange = (e: any) => {
@@ -57,7 +56,7 @@ function useForm<TFormValues extends FormValues = FormValues>() {
   );
 
   return {
-    bindControl,
+    bindFormControl,
     handleSubmit,
     getValue,
     formValuesSubscriptions,

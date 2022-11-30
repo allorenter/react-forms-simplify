@@ -5,10 +5,11 @@ import useForm from '@/hooks/useForm';
 import useFormValueWatch from '@/hooks/useFormValuewatch';
 import FormProvider from '@/providers/FormProvider';
 import useFormContext from '@/hooks/useFormContext';
+import useFormHistory from '@/hooks/useFormHistory';
 
 function SecondLevelPrueba() {
   const formValuesSubscriptions = useFormContext('formValuesSubscriptions');
-  const pruebasValue = useFormValueWatch({ name: 'prueba', formValuesSubscriptions });
+  const pruebasValue = useFormValueWatch({ name: 'prueba2', formValuesSubscriptions });
 
   console.log('RENDER PRUEBA', pruebasValue);
 
@@ -31,9 +32,10 @@ type TFieldValues = {
 
 function Example() {
   const form = useForm<TFieldValues>();
-  const { bindControl, handleSubmit, getValue } = form;
+  const { bindFormControl, handleSubmit, getValue, formValuesSubscriptions } = form;
+  const history = useFormHistory({ formValuesSubscriptions });
 
-  console.log('RE RENDER PARENT');
+  console.log('RE RENDER PARENT', history);
 
   const onSubmit = (values: TFieldValues) => {
     return new Promise((resolve, reject) => resolve({}));
@@ -50,9 +52,9 @@ function Example() {
       <div>
         <FormProvider form={form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <input {...bindControl('prueba2')} />
+            <input {...bindFormControl('prueba2')} />
             <br />
-            <input {...bindControl('prueba1')} />
+            <input {...bindFormControl('prueba1')} />
             <button type='submit'>ENVIAR</button>
             <br></br>
             <button type='button' onClick={getValues}>

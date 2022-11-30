@@ -8,6 +8,10 @@ class FormValueSubscription {
     this.subscribers = new Set<SetStateAction<any>>();
   }
 
+  getSubscribers() {
+    return this.subscribers;
+  }
+
   subscribe(actionFn: SetStateAction<any>) {
     this.subscribers.add(actionFn);
     return () => {
@@ -30,31 +34,53 @@ class FormValuesSubscriptions {
     this.formValuesSubscriptions = {};
   }
 
+  formValueIsInitialized(name: string) {
+    return this.formValuesSubscriptions[name] instanceof FormValueSubscription;
+  }
+
   // Añade instancia para gestionar las subscripciones a un valor
   initFormValueSubscription(name: string) {
-    if (!this.formValuesSubscriptions[name]) {
-      this.formValuesSubscriptions[name] = new FormValueSubscription();
-    }
+    if (this.formValueIsInitialized(name)) return null;
+
+    this.formValuesSubscriptions[name] = new FormValueSubscription();
+    return true;
+  }
+
+  getAllSubscriptions() {
+    return this.formValuesSubscriptions;
+  }
+
+  getFormValueSubscription(name: string) {
+    return this.formValuesSubscriptions[name];
   }
 
   subscribe(name: string, actionFn: SetStateAction<any>) {
-    if (this.formValuesSubscriptions[name]) {
-      this.formValuesSubscriptions[name].subscribe(actionFn);
-    }
+    if (!this.formValueIsInitialized(name)) return null;
+
+    this.formValuesSubscriptions[name].subscribe(actionFn);
+    return true;
   }
 
   subscribeAll(actionFn: SetStateAction<any>) {
-    Object.entries(this.formValuesSubscriptions).forEach((entry) => {
+    const initializedSubscriptionsEntries = Object.entries(this.formValuesSubscriptions);
+
+    if (initializedSubscriptionsEntries.length === 0) return null;
+
+    initializedSubscriptionsEntries.forEach((entry) => {
       const [name, formValueSubscription] = entry;
       const customAction = (value: any) => {
         actionFn(name, value);
       };
       formValueSubscription.subscribe(customAction);
     });
+    return true;
   }
 
   publish(name: string, value: any) {
+    if (!this.formValueIsInitialized(name)) return null;
+
     this.formValuesSubscriptions[name].publish(value);
+    return true;
   }
 }
 

@@ -35,7 +35,19 @@ class FormValuesSubscriptions {
   }
 
   addSubscriber(name: string, actionFn: SetStateAction<any>) {
-    this.formControlSubscriptions[name].subscribe(actionFn);
+    if (this.formControlSubscriptions[name]) {
+      this.formControlSubscriptions[name].subscribe(actionFn);
+    }
+  }
+
+  addGlobalSubscriber(actionFn: SetStateAction<any>) {
+    Object.entries(this.formControlSubscriptions).forEach((entry) => {
+      const [name, formValueSubscription] = entry;
+      const customAction = (value: any) => {
+        actionFn(name, value);
+      };
+      formValueSubscription.subscribe(customAction);
+    });
   }
 
   publish(name: string, value: any) {

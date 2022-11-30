@@ -1,5 +1,6 @@
 import { SetStateAction } from 'react';
 
+// Gestiona las subscripciones a un determinado valor
 class FormValueSubscription {
   private subscribers: Set<SetStateAction<any>>;
 
@@ -21,27 +22,29 @@ class FormValueSubscription {
   }
 }
 
+// Gestiona subscripcines a todos los valores del formulario
 class FormValuesSubscriptions {
-  private formControlSubscriptions: { [key: string]: FormValueSubscription };
+  private formValuesSubscriptions: { [key: string]: FormValueSubscription };
 
   constructor() {
-    this.formControlSubscriptions = {};
+    this.formValuesSubscriptions = {};
   }
 
+  // Añade instancia para gestionar las subscripciones a un valor
   addSubscription(name: string) {
-    if (!this.formControlSubscriptions[name]) {
-      this.formControlSubscriptions[name] = new FormValueSubscription();
+    if (!this.formValuesSubscriptions[name]) {
+      this.formValuesSubscriptions[name] = new FormValueSubscription();
     }
   }
 
-  addSubscriber(name: string, actionFn: SetStateAction<any>) {
-    if (this.formControlSubscriptions[name]) {
-      this.formControlSubscriptions[name].subscribe(actionFn);
+  subscribe(name: string, actionFn: SetStateAction<any>) {
+    if (this.formValuesSubscriptions[name]) {
+      this.formValuesSubscriptions[name].subscribe(actionFn);
     }
   }
 
-  addGlobalSubscriber(actionFn: SetStateAction<any>) {
-    Object.entries(this.formControlSubscriptions).forEach((entry) => {
+  subscribeAll(actionFn: SetStateAction<any>) {
+    Object.entries(this.formValuesSubscriptions).forEach((entry) => {
       const [name, formValueSubscription] = entry;
       const customAction = (value: any) => {
         actionFn(name, value);
@@ -52,7 +55,7 @@ class FormValuesSubscriptions {
 
   publish(name: string, value: any) {
     this.addSubscription(name);
-    this.formControlSubscriptions[name].publish(value);
+    this.formValuesSubscriptions[name].publish(value);
   }
 }
 

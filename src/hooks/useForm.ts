@@ -17,6 +17,7 @@ function useForm<TFormValues extends FormValues = FormValues>() {
     formValues.current[name] = value;
   }, []);
 
+  // bindFormControl
   const bindControl = useCallback((name: keyof TFormValues) => {
     formValuesSubscriptions.addSubscription(name as string);
 
@@ -27,10 +28,25 @@ function useForm<TFormValues extends FormValues = FormValues>() {
     };
 
     return {
-      value: formValues.current[name],
+      value: formValues.current[name] || '',
       onChange,
     };
   }, []);
+
+  // const bindImageControl = () => {
+  //   formValuesSubscriptions.addSubscription(name as string);
+
+  //   // AQUI SE SUBE EL FILE
+  //   const onChange = (e: any) => {
+  //     const file = e.target.value;
+  //     images.set(name, file);
+  //   };
+
+  //   return {
+  //     value: formValues.current[name] || '',
+  //     onChange,
+  //   };
+  // };
 
   const handleSubmit = useCallback(
     (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {

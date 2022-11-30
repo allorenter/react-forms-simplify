@@ -25,7 +25,7 @@ function useFormHistory({
   };
 
   useEffect(() => {
-    formValuesSubscriptions.addGlobalSubscriber(actionFn);
+    formValuesSubscriptions.subscribeAll(actionFn);
   }, [formValuesSubscriptions]);
 
   return { history, lastState };

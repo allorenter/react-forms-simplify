@@ -11,7 +11,7 @@ function useFormValueWatch({
   const [value, setValue] = useState<any>();
 
   useEffect(() => {
-    formValuesSubscriptions.addSubscriber(name, setValue);
+    formValuesSubscriptions.subscribe(name, setValue);
   }, [formValuesSubscriptions]);
 
   return value;

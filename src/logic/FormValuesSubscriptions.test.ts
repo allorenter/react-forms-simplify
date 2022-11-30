@@ -153,6 +153,4 @@ describe('FormValuesSubscriptions tests', () => {
     const result = subscriptions.subscribeAll(() => {});
     expect(result).toBe(null);
   });
-
-  // testear subscripción a todas cuando no se han iniciado previamente
 });

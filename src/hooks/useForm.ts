@@ -9,7 +9,7 @@ function useForm<TFormValues extends FormValues = FormValues>() {
   const formValues = useRef<TFormValues>({} as TFormValues);
 
   const getValue = useCallback((name?: keyof TFormValues) => {
-    if (name === undefined) return formValues;
+    if (name === undefined) return formValues.current;
     return formValues.current[name];
   }, []);
 

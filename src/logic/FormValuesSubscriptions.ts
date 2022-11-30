@@ -31,7 +31,7 @@ class FormValuesSubscriptions {
   }
 
   // Añade instancia para gestionar las subscripciones a un valor
-  addSubscription(name: string) {
+  initFormValueSubscription(name: string) {
     if (!this.formValuesSubscriptions[name]) {
       this.formValuesSubscriptions[name] = new FormValueSubscription();
     }
@@ -54,7 +54,6 @@ class FormValuesSubscriptions {
   }
 
   publish(name: string, value: any) {
-    this.addSubscription(name);
     this.formValuesSubscriptions[name].publish(value);
   }
 }

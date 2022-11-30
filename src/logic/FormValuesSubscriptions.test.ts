@@ -20,7 +20,7 @@ describe('FormValuesSubscriptions tests', () => {
     expect(result).toBe(null);
   });
 
-  test('should only init subcription once', async () => {
+  test('should only init FormValueSubscription once', async () => {
     const subscriptions = new FormValuesSubscriptions();
     subscriptions.initFormValueSubscription('name');
     subscriptions.subscribe('name', (val: any) => val);
@@ -150,7 +150,19 @@ describe('FormValuesSubscriptions tests', () => {
 
   test('should return null if subscribeAll is called and there is no initialized any FormValuesSubscription', async () => {
     const subscriptions = new FormValuesSubscriptions();
-    const result = subscriptions.subscribeAll(() => {});
+    const result = subscriptions.subscribeAll((val: any) => val);
     expect(result).toBe(null);
+  });
+
+  test('should unsubscribe the action', async () => {
+    const subscriptions = new FormValuesSubscriptions();
+    subscriptions.initFormValueSubscription('name');
+    const subscribedAction = subscriptions.subscribe('name', (val: any) => val);
+
+    expect(subscriptions.getFormValueSubscription('name').getSubscribers().size).toBe(1);
+
+    subscribedAction?.();
+
+    expect(subscriptions.getFormValueSubscription('name').getSubscribers().size).toBe(0);
   });
 });

@@ -57,8 +57,7 @@ class FormValuesSubscriptions {
   subscribe(name: string, actionFn: SetStateAction<any>) {
     if (!this.formValueIsInitialized(name)) return null;
 
-    this.formValuesSubscriptions[name].subscribe(actionFn);
-    return true;
+    return this.formValuesSubscriptions[name].subscribe(actionFn);
   }
 
   subscribeAll(actionFn: SetStateAction<any>) {

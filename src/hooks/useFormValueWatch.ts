@@ -1,5 +1,5 @@
-import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
 import { useEffect, useState } from 'react';
+import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
 
 function useFormValueWatch({
   name,
@@ -11,7 +11,8 @@ function useFormValueWatch({
   const [value, setValue] = useState<any>();
 
   useEffect(() => {
-    formValuesSubscriptions.subscribe(name, setValue);
+    const unsubscribeFn = formValuesSubscriptions.subscribe(name, setValue);
+    return () => unsubscribeFn?.();
   }, [formValuesSubscriptions]);
 
   return value;

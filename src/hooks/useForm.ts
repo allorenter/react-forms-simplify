@@ -3,8 +3,6 @@ import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
 import { FormValues, SubmitFn, UseFormParams } from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
 
-// DE LA FORMA EN LA UQE FUNCIONA AHORA MISMO, SOLO PUEDE HABER UN bindFormControl por name
-
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
 function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormParams) {
   const formValuesSubscriptions =
@@ -15,8 +13,6 @@ function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormPa
   const formValues = useRef<TFormValues>({} as TFormValues);
 
   const [getInputRef, setInputRef] = useDynamicRefs();
-
-  // AÑADO FUNCIONES DE LOS BINDFORM Y LOS SUSCRIBO
 
   const getValue = useCallback((name?: keyof TFormValues) => {
     if (name === undefined) return formValues.current;

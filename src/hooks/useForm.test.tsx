@@ -54,7 +54,7 @@ describe('useForm tests', () => {
     expect(subcriptions.formValueIsInitialized('name')).toBe(true);
   });
 
-  test('should set value when called setValue and the name is binded', async () => {
+  test('should set value when called  and the name is binded', async () => {
     const { result, rerender } = renderHook(() => useForm());
     const value = 'value for test';
     const formControl = result.current.bindFormControl('name');
@@ -87,15 +87,13 @@ describe('useForm tests', () => {
     expect(mockActionValue).toBe(value);
   });
 
-  test('should change the input value when setValue is called', async () => {
+  test('should change the input value when  is called', async () => {
     const defaultValue = 'initial value';
     const value = 'updated value';
-    // let ref = null;
     const Component = () => {
       const form = useForm();
       const onClick = () => {
         form.setValue('test', value);
-        // ref = form.getInputRef('test');
       };
       return (
         <>
@@ -108,10 +106,77 @@ describe('useForm tests', () => {
     const updateButton = getByRole('button');
     const input = getByRole('textbox');
     fireEvent.click(updateButton);
+
     await waitFor(() => {
       expect(input.value).toBe(value);
     });
   });
 
-  //  testear que se notifica cuando se llama al onchange del bindFormControl y cuando se llama a setValue
+  test('should notify to subscribers when  is called', async () => {
+    const subcriptions = new FormValuesSubscriptions();
+    const { result } = renderHook(() => useForm({ formValuesSubscriptions: subcriptions }));
+    const value = 'value for test';
+    result.current.bindFormControl('name');
+    let mockActionValue;
+    subcriptions.subscribe('name', (val: any) => {
+      mockActionValue = val;
+    });
+    result.current.setValue('name', value);
+
+    expect(mockActionValue).toBe(value);
+  });
+
+  test('should set the initial formValues when called reset', async () => {
+    const { result } = renderHook(() => useForm());
+    const values = {
+      test1: 'value for test1',
+      test2: 'value for test2',
+    };
+    result.current.reset(values);
+
+    expect(result.current.getValue()).toEqual(values);
+  });
+
+  test('should reset the current formValues when called reset', async () => {
+    const { result } = renderHook(() => useForm());
+    const initialValues = { value: 'value' };
+    result.current.reset(initialValues);
+
+    expect(result.current.getValue()).toEqual(initialValues);
+
+    const values = {
+      test1: 'value for test1',
+      test2: 'value for test2',
+    };
+    result.current.reset(values);
+
+    expect(result.current.getValue()).toEqual(values);
+  });
+
+  test('should change the inputs values when reset is called', async () => { });
+
+  test('should notify to subscribers when reset is called', async () => {
+    const subcriptions = new FormValuesSubscriptions();
+    const { result } = renderHook(() => useForm({ formValuesSubscriptions: subcriptions }));
+    const valueForTest1 = 'value for test 1';
+    const valueForTest2 = 'value for test 2';
+    result.current.bindFormControl('test1');
+    result.current.bindFormControl('test2');
+    let mockActionValueTest1, mockActionValueTest2;
+    subcriptions.subscribe('test1', (val: any) => {
+      mockActionValueTest1 = val;
+    });
+    subcriptions.subscribe('test2', (val: any) => {
+      mockActionValueTest2 = val;
+    });
+    result.current.reset({
+      test1: valueForTest1,
+      test2: valueForTest2,
+    });
+
+    expect(mockActionValueTest1).toBe(valueForTest1);
+    expect(mockActionValueTest2).toBe(valueForTest2);
+  });
+
+  //  testear que se notifica cuando se llama al onchange del bindFormControl y cuando se llama a
 });

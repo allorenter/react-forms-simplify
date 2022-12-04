@@ -58,6 +58,14 @@ function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormPa
     };
   }, []);
 
+  const reset = useCallback((values: TFormValues) => {
+    formValues.current = values;
+    Object.entries(values).forEach((entry) => {
+      const [name, value] = entry;
+      formValuesSubscriptions.publish(name, value);
+    });
+  }, []);
+
   // const bindImageControl = () => {
   //   formValuesSubscriptions.addSubscription(name as string);
 
@@ -88,6 +96,7 @@ function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormPa
     formValuesSubscriptions,
     setValue,
     getInputRef,
+    reset,
   };
 }
 

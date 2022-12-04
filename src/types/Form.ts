@@ -1,3 +1,5 @@
+import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
+
 export type FormValues = Record<string, any>;
 
 export type SubmitFn<TSubmitFormValues> = <TResponseData>(
@@ -5,3 +7,8 @@ export type SubmitFn<TSubmitFormValues> = <TResponseData>(
 ) => Promise<TResponseData | undefined>;
 
 // type Form = ReturnType<typeof useForm>;
+export type UseFormParams =
+  | {
+      formValuesSubscriptions?: FormValuesSubscriptions;
+    }
+  | undefined;

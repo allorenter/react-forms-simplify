@@ -10,11 +10,18 @@ describe('useForm tests', () => {
     expect(result.current.getValue()).toEqual({});
   });
 
-  test('should return undefined if getValue is called with a name that has not been bind', async () => {
+  test('should return undefined if getValue is called with a name that has not been in the formValues', async () => {
     const { result } = renderHook(() => useForm());
 
     expect(result.current.getValue('name')).toEqual(undefined);
   });
+
+  // test('should return undefined if getValue is called with a name that has not been bind', async () => {
+  //   const { result } = renderHook(() => useForm());
+  //   // IMPLEMENTARLO
+
+  //   expect(false).toEqual(true);
+  // });
 
   test('should not set a form value when the name has not been bind', async () => {
     const { result } = renderHook(() => useForm());
@@ -83,12 +90,12 @@ describe('useForm tests', () => {
   test('should change the input value when setValue is called', async () => {
     const defaultValue = 'initial value';
     const value = 'updated value';
-    let ref = null;
+    // let ref = null;
     const Component = () => {
       const form = useForm();
       const onClick = () => {
         form.setValue('test', value);
-        ref = form.getInputRef('test');
+        // ref = form.getInputRef('test');
       };
       return (
         <>
@@ -101,11 +108,8 @@ describe('useForm tests', () => {
     const updateButton = getByRole('button');
     const input = getByRole('textbox');
     fireEvent.click(updateButton);
-
     await waitFor(() => {
-      console.log('ref', ref.current.value);
-
-      expect(ref.current.value).toBe(value);
+      expect(input.value).toBe(value);
     });
   });
 

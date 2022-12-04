@@ -1,12 +1,22 @@
 import { FormEvent, useCallback, useRef } from 'react';
 import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
-import { FormValues, SubmitFn } from '@/types/Form';
+import { FormValues, SubmitFn, UseFormParams } from '@/types/Form';
+import useDynamicRefs from './useDynamicRef';
 
-const formValuesSubscriptions = new FormValuesSubscriptions();
+// DE LA FORMA EN LA UQE FUNCIONA AHORA MISMO, SOLO PUEDE HABER UN bindFormControl por name
 
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
-function useForm<TFormValues extends FormValues = FormValues>() {
+function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormParams) {
+  const formValuesSubscriptions =
+    params?.formValuesSubscriptions instanceof FormValuesSubscriptions
+      ? params?.formValuesSubscriptions
+      : new FormValuesSubscriptions();
+
   const formValues = useRef<TFormValues>({} as TFormValues);
+
+  const [getInputRef, setInputRef] = useDynamicRefs();
+
+  // AÑADO FUNCIONES DE LOS BINDFORM Y LOS SUSCRIBO
 
   const getValue = useCallback((name?: keyof TFormValues) => {
     if (name === undefined) return formValues.current;
@@ -14,21 +24,37 @@ function useForm<TFormValues extends FormValues = FormValues>() {
   }, []);
 
   const setValue = useCallback((name: keyof TFormValues, value: any) => {
-    formValues.current[name] = value;
+    if (name in formValues.current) {
+      formValues.current[name] = value;
+      formValuesSubscriptions.publish(name as string, value);
+    }
   }, []);
 
+  // IMPORTANTE: hasta que no se ejecuta un onChange, no se setea en formValues
   const bindFormControl = useCallback((name: keyof TFormValues) => {
     formValuesSubscriptions.initFormValueSubscription(name as string);
+    formValues.current[name] = '';
+
+    const ref = setInputRef(name as string);
+
+    const updateRefValue = (value: any) => {
+      if (typeof ref?.current === 'object' && ref?.current !== null) {
+        ref.current.value = value;
+      }
+    };
+
+    formValuesSubscriptions.subscribe(name as string, updateRefValue);
 
     const onChange = (e: any) => {
-      const val = e.target.value;
-      formValuesSubscriptions.publish(name as string, val);
-      setValue(name, val);
+      const value = e.target.value;
+      formValuesSubscriptions.publish(name as string, value);
+      formValues.current[name] = value;
     };
 
     return {
-      value: formValues.current[name] || '',
+      name,
       onChange,
+      ref,
     };
   }, []);
 
@@ -60,6 +86,8 @@ function useForm<TFormValues extends FormValues = FormValues>() {
     handleSubmit,
     getValue,
     formValuesSubscriptions,
+    setValue,
+    getInputRef,
   };
 }
 

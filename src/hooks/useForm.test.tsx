@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
 import useForm from './useForm';
 import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
 
@@ -48,20 +48,6 @@ describe('useForm tests', () => {
   });
 
   test('should set value when called setValue and the name is binded', async () => {
-    const { result } = renderHook(() => useForm());
-    const value = 'value for test';
-    const formControl = result.current.bindFormControl('name');
-    const eventMock = {
-      target: { value },
-    };
-    formControl.onChange(eventMock);
-    result.current.setValue('name', value);
-    console.log('result.current.getValue', result.current.getValue('name'));
-
-    expect(result.current.getValue('name')).toBe(value);
-  });
-
-  test('should set value when called setValue and the name is binded', async () => {
     const { result, rerender } = renderHook(() => useForm());
     const value = 'value for test';
     const formControl = result.current.bindFormControl('name');
@@ -92,6 +78,35 @@ describe('useForm tests', () => {
     });
 
     expect(mockActionValue).toBe(value);
+  });
+
+  test('should change the input value when setValue is called', async () => {
+    const defaultValue = 'initial value';
+    const value = 'updated value';
+    let ref = null;
+    const Component = () => {
+      const form = useForm();
+      const onClick = () => {
+        form.setValue('test', value);
+        ref = form.getInputRef('test');
+      };
+      return (
+        <>
+          <button onClick={onClick}>Set value</button>
+          <input {...form.bindFormControl('test')} defaultValue={defaultValue} />
+        </>
+      );
+    };
+    const { getByRole } = render(<Component />);
+    const updateButton = getByRole('button');
+    const input = getByRole('textbox');
+    fireEvent.click(updateButton);
+
+    await waitFor(() => {
+      console.log('ref', ref.current.value);
+
+      expect(ref.current.value).toBe(value);
+    });
   });
 
   //  testear que se notifica cuando se llama al onchange del bindFormControl y cuando se llama a setValue

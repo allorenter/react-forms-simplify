@@ -1,6 +1,6 @@
 import { FormEvent, useCallback, useRef } from 'react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
-import { FormFields, SubmitFn, UseFormParams } from '@/types/Form';
+import { FormFields, Join, PathsToStringProps, SubmitFn, UseFormParams } from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
 
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
@@ -14,12 +14,12 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
 
   const [getInputRef, setInputRef] = useDynamicRefs();
 
-  const getValue = useCallback((name?: keyof TFormFields) => {
+  const getValue = useCallback((name?: Join<PathsToStringProps<TFormFields>, '.'>) => {
     if (name === undefined) return formFields.current;
     return formFields.current[name];
   }, []);
 
-  const setValue = useCallback((name: keyof TFormFields, value: any) => {
+  const setValue = useCallback((name: Join<PathsToStringProps<TFormFields>, '.'>, value: any) => {
     if (name in formFields.current) {
       formFields.current[name] = value;
       formFieldsSubscriptions.publish(name as string, value);
@@ -27,7 +27,7 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
   }, []);
 
   // IMPORTANTE: hasta que no se ejecuta un onChange, no se setea en formFields
-  const bindFormField = useCallback((name: keyof TFormFields) => {
+  const bindFormField = useCallback((name: Join<PathsToStringProps<TFormFields>, '.'>) => {
     formFieldsSubscriptions.initFormFieldSubscription(name as string);
     formFields.current[name] = '';
 

@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
+import { FormFields, Join, PathsToStringProps } from '@/types/Form';
 
-function useWatchFormField({
+function useWatchFormField<TFormFields extends FormFields = FormFields>({
   name,
   formFieldsSubscriptions,
 }: {
-  name: string;
+  name: Join<PathsToStringProps<TFormFields>, '.'>;
   formFieldsSubscriptions: FormFieldsSubscriptions;
 }) {
   const [value, setValue] = useState<any>();

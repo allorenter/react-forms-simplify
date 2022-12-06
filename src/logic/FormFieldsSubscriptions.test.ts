@@ -1,74 +1,74 @@
 import { describe, test, expect } from 'vitest';
-import FormValuesSubscriptions from './FormValuesSubscriptions';
+import FormFieldsSubscriptions from './FormFieldsSubscriptions';
 
-describe('FormValuesSubscriptions tests', () => {
+describe('FormFieldsSubscriptions tests', () => {
   test('should init subscription to value', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
-    subscriptions.initFormValueSubscription('cod');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
+    subscriptions.initFormFieldSubscription('cod');
 
-    const formValuesSubscriptions = subscriptions.getAllSubscriptions();
+    const formFieldsSubscriptions = subscriptions.getAllSubscriptions();
 
-    expect(formValuesSubscriptions.name).toBeDefined();
-    expect(formValuesSubscriptions.cod).toBeDefined();
+    expect(formFieldsSubscriptions.name).toBeDefined();
+    expect(formFieldsSubscriptions.cod).toBeDefined();
   });
 
-  test('should return null if initFormValueSubscription is called and the FormValue has already been initialized', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
-    const result = subscriptions.initFormValueSubscription('name');
+  test('should return null if initFormFieldSubscription is called and the FormField has already been initialized', async () => {
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
+    const result = subscriptions.initFormFieldSubscription('name');
     expect(result).toBe(null);
   });
 
-  test('should only init FormValueSubscription once', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
+  test('should only init FormFieldSubscription once', async () => {
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
     subscriptions.subscribe('name', (val: any) => val);
-    subscriptions.initFormValueSubscription('name');
+    subscriptions.initFormFieldSubscription('name');
     // en la subscripción tiene que haber un subscriber
-    const sub = subscriptions.getFormValueSubscription('name');
+    const sub = subscriptions.getFormFieldSubscription('name');
     const subscribers = sub.getSubscribers();
     expect(subscribers.size).toBe(1);
   });
 
-  test('should subscribe to FormValue', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
+  test('should subscribe to FormField', async () => {
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
     subscriptions.subscribe('name', (val: any) => val);
-    const sub = subscriptions.getFormValueSubscription('name');
+    const sub = subscriptions.getFormFieldSubscription('name');
     const subscribers = sub.getSubscribers();
     expect(subscribers.size).toBe(1);
   });
 
   test('should not subscribe the same action more than once', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
     const action = (val: any) => {
       return val;
     };
     subscriptions.subscribe('name', action);
     subscriptions.subscribe('name', action);
-    const sub = subscriptions.getFormValueSubscription('name');
+    const sub = subscriptions.getFormFieldSubscription('name');
     const subscribers = sub.getSubscribers();
     expect(subscribers.size).toBe(1);
   });
 
   test('should not subscribe the same action more than once', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
     const action = (val: any) => {
       return val;
     };
     subscriptions.subscribe('name', action);
     subscriptions.subscribe('name', action);
-    const sub = subscriptions.getFormValueSubscription('name');
+    const sub = subscriptions.getFormFieldSubscription('name');
     const subscribers = sub?.getSubscribers();
     expect(subscribers.size).toBe(1);
   });
 
   test('should notify to subscribers on publish', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
     // se puede hacer con un spy
     let counter = 0;
     const action1 = () => {
@@ -84,8 +84,8 @@ describe('FormValuesSubscriptions tests', () => {
   });
 
   test('should publish the correct value to the subscribers', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
     // se puede hacer con un spy
     let receivedValue;
     const action = (val: any) => {
@@ -97,9 +97,9 @@ describe('FormValuesSubscriptions tests', () => {
   });
 
   test('should receive name and value in the action for subscribeAll', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
-    subscriptions.initFormValueSubscription('cod');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
+    subscriptions.initFormFieldSubscription('cod');
     const actionCalls: any = [];
     const action = (name: string, value: any) => {
       actionCalls.push({ name, value });
@@ -114,9 +114,9 @@ describe('FormValuesSubscriptions tests', () => {
   });
 
   test('should receive name and value in the action for subscribeAll', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
-    subscriptions.initFormValueSubscription('cod');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
+    subscriptions.initFormFieldSubscription('cod');
     const actionCalls: any = [];
     const action = (name: string, value: any) => {
       actionCalls.push({ name, value });
@@ -130,39 +130,39 @@ describe('FormValuesSubscriptions tests', () => {
     ]);
   });
 
-  test('should return null if subscribe is called before initializing FormValuesSubscription', async () => {
-    const subscriptions = new FormValuesSubscriptions();
+  test('should return null if subscribe is called before initializing FormFieldsSubscription', async () => {
+    const subscriptions = new FormFieldsSubscriptions();
     const result = subscriptions.publish('name', 'test');
     expect(result).toBe(null);
   });
 
-  test('should return null if publish is called before initializing FormValuesSubscription', async () => {
-    const subscriptions = new FormValuesSubscriptions();
+  test('should return null if publish is called before initializing FormFieldsSubscription', async () => {
+    const subscriptions = new FormFieldsSubscriptions();
     const result = subscriptions.publish('name', 'test');
     expect(result).toBe(null);
   });
 
-  test('should return null if publish is called before initializing FormValuesSubscription', async () => {
-    const subscriptions = new FormValuesSubscriptions();
+  test('should return null if publish is called before initializing FormFieldsSubscription', async () => {
+    const subscriptions = new FormFieldsSubscriptions();
     const result = subscriptions.publish('name', 'test');
     expect(result).toBe(null);
   });
 
-  test('should return null if subscribeAll is called and there is no initialized any FormValuesSubscription', async () => {
-    const subscriptions = new FormValuesSubscriptions();
+  test('should return null if subscribeAll is called and there is no initialized any FormFieldsSubscription', async () => {
+    const subscriptions = new FormFieldsSubscriptions();
     const result = subscriptions.subscribeAll((val: any) => val);
     expect(result).toBe(null);
   });
 
   test('should unsubscribe the action', async () => {
-    const subscriptions = new FormValuesSubscriptions();
-    subscriptions.initFormValueSubscription('name');
+    const subscriptions = new FormFieldsSubscriptions();
+    subscriptions.initFormFieldSubscription('name');
     const subscribedAction = subscriptions.subscribe('name', (val: any) => val);
 
-    expect(subscriptions.getFormValueSubscription('name').getSubscribers().size).toBe(1);
+    expect(subscriptions.getFormFieldSubscription('name').getSubscribers().size).toBe(1);
 
     subscribedAction?.();
 
-    expect(subscriptions.getFormValueSubscription('name').getSubscribers().size).toBe(0);
+    expect(subscriptions.getFormFieldSubscription('name').getSubscribers().size).toBe(0);
   });
 });

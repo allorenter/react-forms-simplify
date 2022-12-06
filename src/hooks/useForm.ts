@@ -1,35 +1,35 @@
 import { FormEvent, useCallback, useRef } from 'react';
-import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
-import { FormValues, SubmitFn, UseFormParams } from '@/types/Form';
+import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
+import { FormFields, SubmitFn, UseFormParams } from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
 
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
-function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormParams) {
-  const formValuesSubscriptions =
-    params?.formValuesSubscriptions instanceof FormValuesSubscriptions
-      ? params?.formValuesSubscriptions
-      : new FormValuesSubscriptions();
+function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormParams) {
+  const formFieldsSubscriptions =
+    params?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
+      ? params?.formFieldsSubscriptions
+      : new FormFieldsSubscriptions();
 
-  const formValues = useRef<TFormValues>({} as TFormValues);
+  const formFields = useRef<TFormFields>({} as TFormFields);
 
   const [getInputRef, setInputRef] = useDynamicRefs();
 
-  const getValue = useCallback((name?: keyof TFormValues) => {
-    if (name === undefined) return formValues.current;
-    return formValues.current[name];
+  const getValue = useCallback((name?: keyof TFormFields) => {
+    if (name === undefined) return formFields.current;
+    return formFields.current[name];
   }, []);
 
-  const setValue = useCallback((name: keyof TFormValues, value: any) => {
-    if (name in formValues.current) {
-      formValues.current[name] = value;
-      formValuesSubscriptions.publish(name as string, value);
+  const setValue = useCallback((name: keyof TFormFields, value: any) => {
+    if (name in formFields.current) {
+      formFields.current[name] = value;
+      formFieldsSubscriptions.publish(name as string, value);
     }
   }, []);
 
-  // IMPORTANTE: hasta que no se ejecuta un onChange, no se setea en formValues
-  const bindFormControl = useCallback((name: keyof TFormValues) => {
-    formValuesSubscriptions.initFormValueSubscription(name as string);
-    formValues.current[name] = '';
+  // IMPORTANTE: hasta que no se ejecuta un onChange, no se setea en formFields
+  const bindFormControl = useCallback((name: keyof TFormFields) => {
+    formFieldsSubscriptions.initFormFieldSubscription(name as string);
+    formFields.current[name] = '';
 
     const ref = setInputRef(name as string);
 
@@ -39,12 +39,12 @@ function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormPa
       }
     };
 
-    formValuesSubscriptions.subscribe(name as string, updateRefValue);
+    formFieldsSubscriptions.subscribe(name as string, updateRefValue);
 
     const onChange = (e: any) => {
       const value = e.target.value;
-      formValuesSubscriptions.publish(name as string, value);
-      formValues.current[name] = value;
+      formFieldsSubscriptions.publish(name as string, value);
+      formFields.current[name] = value;
     };
 
     return {
@@ -54,18 +54,18 @@ function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormPa
     };
   }, []);
 
-  const reset = useCallback((values: TFormValues) => {
-    formValues.current = values;
+  const reset = useCallback((values: TFormFields) => {
+    formFields.current = values;
     Object.entries(values).forEach((entry) => {
       const [name, value] = entry;
-      formValuesSubscriptions.publish(name, value);
+      formFieldsSubscriptions.publish(name, value);
     });
   }, []);
 
   const handleSubmit = useCallback(
-    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
+    (submitFn: SubmitFn<TFormFields>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      return submitFn(formValues.current);
+      return submitFn(formFields.current);
     },
     [],
   );
@@ -74,7 +74,7 @@ function useForm<TFormValues extends FormValues = FormValues>(params?: UseFormPa
     bindFormControl,
     handleSubmit,
     getValue,
-    formValuesSubscriptions,
+    formFieldsSubscriptions,
     setValue,
     getInputRef,
     reset,

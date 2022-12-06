@@ -1,38 +1,37 @@
-import useBindFormControl from '@/hooks/useBindFormControl';
-import useForm from '@/hooks/useForm';
-import useFormValueWatch from '@/hooks/useFormValueWatch';
-import FormValuesSubscriptions from '@/logic/FormValuesSubscriptions';
 import { FormEvent } from 'react';
+import useBindFormControl from '@/hooks/useBindFormField';
+import useWatchFormField from '@/hooks/useWatchFormField';
+import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 
-export type FormValues = Record<string, any>;
+export type FormFields = Record<string, any>;
 
-export type SubmitFn<TSubmitFormValues> = <TResponseData>(
-  values: TSubmitFormValues,
+export type SubmitFn<TSubmitFormFields> = <TResponseData>(
+  values: TSubmitFormFields,
 ) => Promise<TResponseData | undefined>;
 
 // type Form = ReturnType<typeof useForm>;
 export type UseFormParams =
   | {
-      formValuesSubscriptions?: FormValuesSubscriptions;
+      formFieldsSubscriptions?: FormFieldsSubscriptions;
     }
   | undefined;
 
-export type UseForm<TFormValues> = {
-  bindFormControl: (name: keyof TFormValues) => {
-    name: keyof TFormValues;
+export type UseForm<TFormFields> = {
+  bindFormControl: (name: keyof TFormFields) => {
+    name: keyof TFormFields;
     onChange: (e: any) => void;
     ref: void | React.RefObject<unknown>;
   };
   handleSubmit: (
-    submitFn: SubmitFn<TFormValues>,
+    submitFn: SubmitFn<TFormFields>,
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown>;
-  getValue: (name?: keyof TFormValues | undefined) => TFormValues | TFormValues[keyof TFormValues];
-  formValuesSubscriptions: FormValuesSubscriptions;
-  setValue: (name: keyof TFormValues, value: any) => void;
+  getValue: (name?: keyof TFormFields | undefined) => TFormFields | TFormFields[keyof TFormFields];
+  formFieldsSubscriptions: FormFieldsSubscriptions;
+  setValue: (name: keyof TFormFields, value: any) => void;
   getInputRef: (key: string) => void | React.RefObject<unknown>;
-  reset: (values: TFormValues) => void;
+  reset: (values: TFormFields) => void;
 };
 
 export type UseBindFormControl = ReturnType<typeof useBindFormControl>;
 
-export type UseFormValueWatch = ReturnType<typeof useFormValueWatch>;
+export type useWatchFormField = ReturnType<typeof useWatchFormField>;

@@ -31,10 +31,10 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  test('should add formField when call bindFormControl', async () => {
+  test('should add formField when call bindFormField', async () => {
     const subcriptions = new FormFieldsSubscriptions();
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
-    const formControl = result.current.bindFormControl('name');
+    const formControl = result.current.bindFormField('name');
     const fieldValue = 'value for the simulated field';
     const eventMock = {
       target: {
@@ -46,10 +46,10 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toBe(fieldValue);
   });
 
-  test('should add a FormFieldsSubscription when call bindFormControl', async () => {
+  test('should add a FormFieldsSubscription when call bindFormField', async () => {
     const subcriptions = new FormFieldsSubscriptions();
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
-    result.current.bindFormControl('name');
+    result.current.bindFormField('name');
 
     expect(subcriptions.formFieldIsInitialized('name')).toBe(true);
   });
@@ -57,7 +57,7 @@ describe('useForm tests', () => {
   test('should set value when called  and the name is binded', async () => {
     const { result, rerender } = renderHook(() => useForm());
     const value = 'value for test';
-    const formControl = result.current.bindFormControl('name');
+    const formControl = result.current.bindFormField('name');
     const eventMock = {
       target: { value: 'a' },
     };
@@ -72,7 +72,7 @@ describe('useForm tests', () => {
     const subcriptions = new FormFieldsSubscriptions();
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
     const value = 'value for test';
-    const formControl = result.current.bindFormControl('name');
+    const formControl = result.current.bindFormField('name');
     formControl.onChange({
       target: { value: 'a' },
     });
@@ -98,7 +98,7 @@ describe('useForm tests', () => {
       return (
         <>
           <button onClick={onClick}>Set value</button>
-          <input {...form.bindFormControl('test')} defaultValue={defaultValue} />
+          <input {...form.bindFormField('test')} defaultValue={defaultValue} />
         </>
       );
     };
@@ -116,7 +116,7 @@ describe('useForm tests', () => {
     const subcriptions = new FormFieldsSubscriptions();
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
     const value = 'value for test';
-    result.current.bindFormControl('name');
+    result.current.bindFormField('name');
     let mockActionValue;
     subcriptions.subscribe('name', (val: any) => {
       mockActionValue = val;
@@ -160,8 +160,8 @@ describe('useForm tests', () => {
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
     const valueForTest1 = 'value for test 1';
     const valueForTest2 = 'value for test 2';
-    result.current.bindFormControl('test1');
-    result.current.bindFormControl('test2');
+    result.current.bindFormField('test1');
+    result.current.bindFormField('test2');
     let mockActionValueTest1, mockActionValueTest2;
     subcriptions.subscribe('test1', (val: any) => {
       mockActionValueTest1 = val;
@@ -178,5 +178,5 @@ describe('useForm tests', () => {
     expect(mockActionValueTest2).toBe(valueForTest2);
   });
 
-  //  testear que se notifica cuando se llama al onchange del bindFormControl y cuando se llama a
+  //  testear que se notifica cuando se llama al onchange del bindFormField y cuando se llama a
 });

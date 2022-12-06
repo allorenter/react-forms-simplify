@@ -1,7 +1,7 @@
 import { FormEvent } from 'react';
-import useBindFormControl from '@/hooks/useBindFormField';
 import useWatchFormField from '@/hooks/useWatchFormField';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
+import useBindFormField from '@/hooks/useBindFormField';
 
 export type FormFields = Record<string, any>;
 
@@ -17,7 +17,7 @@ export type UseFormParams =
   | undefined;
 
 export type UseForm<TFormFields> = {
-  bindFormControl: (name: keyof TFormFields) => {
+  bindFormField: (name: keyof TFormFields) => {
     name: keyof TFormFields;
     onChange: (e: any) => void;
     ref: void | React.RefObject<unknown>;
@@ -32,6 +32,6 @@ export type UseForm<TFormFields> = {
   reset: (values: TFormFields) => void;
 };
 
-export type UseBindFormControl = ReturnType<typeof useBindFormControl>;
+export type UseBindFormField = ReturnType<typeof useBindFormField>;
 
 export type useWatchFormField = ReturnType<typeof useWatchFormField>;

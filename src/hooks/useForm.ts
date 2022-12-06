@@ -27,7 +27,7 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
   }, []);
 
   // IMPORTANTE: hasta que no se ejecuta un onChange, no se setea en formFields
-  const bindFormControl = useCallback((name: keyof TFormFields) => {
+  const bindFormField = useCallback((name: keyof TFormFields) => {
     formFieldsSubscriptions.initFormFieldSubscription(name as string);
     formFields.current[name] = '';
 
@@ -71,7 +71,7 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
   );
 
   return {
-    bindFormControl,
+    bindFormField,
     handleSubmit,
     getValue,
     formFieldsSubscriptions,

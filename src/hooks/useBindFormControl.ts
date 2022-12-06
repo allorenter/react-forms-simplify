@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
-import { UseForm } from '@/types/Form';
+import { FormValues, UseForm } from '@/types/Form';
 
-function useBindFormControl({ name, form }: { name: string; form: UseForm }) {
+function useBindFormControl<TFormValues extends FormValues = FormValues>({
+  name,
+  form,
+}: {
+  name: keyof TFormValues;
+  form: UseForm<TFormValues>;
+}) {
   const [val, setVal] = useState<any>();
   const { formValuesSubscriptions, setValue } = form;
 
   useEffect(() => {
-    const unsubscribeFn = formValuesSubscriptions.subscribe(name, setVal);
+    const unsubscribeFn = formValuesSubscriptions.subscribe(name as string, setVal);
     return () => unsubscribeFn?.();
   }, [formValuesSubscriptions]);
 

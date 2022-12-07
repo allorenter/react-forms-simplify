@@ -31,7 +31,7 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  test('should add formField when call bindFormField', async () => {
+  test('should add a name to FormField when call bindFormField', async () => {
     const subcriptions = new FormFieldsSubscriptions();
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
     const formControl = result.current.bindFormField('name');
@@ -126,7 +126,7 @@ describe('useForm tests', () => {
     expect(mockActionValue).toBe(value);
   });
 
-  test('should set the initial formFields when called reset', async () => {
+  test('should set the initial FormFields when called reset', async () => {
     const { result } = renderHook(() => useForm());
     const values = {
       test1: 'value for test1',

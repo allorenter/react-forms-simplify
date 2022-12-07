@@ -2,6 +2,7 @@ import { FormEvent, useCallback, useRef } from 'react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import { FormFields, Join, PathsToStringProps, SubmitFn, UseFormParams } from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
+import formatFormValues from '@/logic/formatFormValues';
 
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
 function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormParams) {
@@ -15,7 +16,7 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
   const [getInputRef, setInputRef] = useDynamicRefs();
 
   const getValue = useCallback((name?: Join<PathsToStringProps<TFormFields>, '.'>) => {
-    if (name === undefined) return formFields.current;
+    if (name === undefined) return formatFormValues(formFields.current);
     return formFields.current[name];
   }, []);
 
@@ -65,7 +66,7 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
   const handleSubmit = useCallback(
     (submitFn: SubmitFn<TFormFields>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      return submitFn(formFields.current);
+      return submitFn(formatFormValues(formFields.current) as TFormFields);
     },
     [],
   );

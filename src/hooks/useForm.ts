@@ -5,22 +5,22 @@ import useDynamicRefs from './useDynamicRef';
 import formatFormValues from '@/logic/formatFormValues';
 
 // HAY QUE IMPLEMENTAR DOTNOTATION PARA get y setValue
-function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormParams) {
+function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormParams) {
   const formFieldsSubscriptions =
     params?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
       ? params?.formFieldsSubscriptions
       : new FormFieldsSubscriptions();
 
-  const formFields = useRef<TFormFields>({} as TFormFields);
+  const formFields = useRef<FormFields>({} as FormFields);
 
   const [getInputRef, setInputRef] = useDynamicRefs();
 
-  const getValue = useCallback((name?: Join<PathsToStringProps<TFormFields>, '.'>) => {
+  const getValue = useCallback((name?: Join<PathsToStringProps<TFormValues>, '.'>) => {
     if (name === undefined) return formatFormValues(formFields.current);
     return formFields.current[name];
   }, []);
 
-  const setValue = useCallback((name: Join<PathsToStringProps<TFormFields>, '.'>, value: any) => {
+  const setValue = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>, value: any) => {
     if (name in formFields.current) {
       formFields.current[name] = value;
       formFieldsSubscriptions.publish(name as string, value);
@@ -28,7 +28,7 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
   }, []);
 
   // IMPORTANTE: hasta que no se ejecuta un onChange, no se setea en formFields
-  const bindFormField = useCallback((name: Join<PathsToStringProps<TFormFields>, '.'>) => {
+  const bindFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     formFieldsSubscriptions.initFormFieldSubscription(name as string);
     formFields.current[name] = '';
 
@@ -55,7 +55,7 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
     };
   }, []);
 
-  const reset = useCallback((values: TFormFields) => {
+  const reset = useCallback((values: TFormValues) => {
     formFields.current = values;
     Object.entries(values).forEach((entry) => {
       const [name, value] = entry;
@@ -64,9 +64,10 @@ function useForm<TFormFields extends FormFields = FormFields>(params?: UseFormPa
   }, []);
 
   const handleSubmit = useCallback(
-    (submitFn: SubmitFn<TFormFields>) => (e: FormEvent<HTMLFormElement>) => {
+    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      return submitFn(formatFormValues(formFields.current) as TFormFields);
+      const formatted = formatFormValues(formFields.current);
+      return submitFn(formatted as TFormValues);
     },
     [],
   );

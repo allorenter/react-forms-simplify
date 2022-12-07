@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { FormFields, Join, PathsToStringProps, UseForm } from '@/types/Form';
 
-function useBindFormField<TFormFields extends FormFields = FormFields>({
+function useBindFormField<TFormValues extends FormFields = FormFields>({
   name,
   form,
 }: {
-  name: Join<PathsToStringProps<TFormFields>, '.'>;
-  form: UseForm<TFormFields>;
+  name: Join<PathsToStringProps<TFormValues>, '.'>;
+  form: UseForm<TFormValues>;
 }) {
   const [val, setVal] = useState<any>();
   const { formFieldsSubscriptions, setValue } = form;

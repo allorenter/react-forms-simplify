@@ -13,6 +13,11 @@ class FormFieldSubscription {
   }
 
   subscribe(actionFn: SetStateAction<any>) {
+    // en caso de ser updateRefValue, elimino la anterior si la hubiera
+    if (actionFn.name === 'updateRefValue') {
+      const lastFn = [...this.subscribers].find((fn) => fn.name === 'updateRefValue');
+      if (lastFn) this.subscribers.delete(lastFn);
+    }
     this.subscribers.add(actionFn);
     return () => {
       this.subscribers.delete(actionFn);

@@ -12,7 +12,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
 
   const formFields = useRef<FormFields>({} as FormFields);
 
-  const [getInputRef, setInputRef] = useDynamicRefs();
+  const [, setFormFieldRef] = useDynamicRefs();
 
   const initFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     if (!formFields.current[name]) {
@@ -32,12 +32,10 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     }
   }, []);
 
-  // IMPORTANTE: hasta que no se ejecuta un onChange, no se setea en formFields
   const bindFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     formFieldsSubscriptions.initFormFieldSubscription(name as string);
     initFormField(name);
-
-    const ref = setInputRef(name as string);
+    const ref = setFormFieldRef(name as string);
 
     const updateRefValue = (value: any) => {
       if (typeof ref?.current === 'object' && ref?.current !== null) {
@@ -83,7 +81,6 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     getValue,
     formFieldsSubscriptions,
     setValue,
-    getInputRef,
     reset,
     initFormField,
   };

@@ -16,14 +16,7 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  // test('should return undefined if getValue is called with a name that has not been bind', async () => {
-  //   const { result } = renderHook(() => useForm());
-  //   // IMPLEMENTARLO
-
-  //   expect(false).toEqual(true);
-  // });
-
-  test('should not set a form value when the name has not been bind', async () => {
+  test('should not set a FormField when the name has not been bind', async () => {
     const { result } = renderHook(() => useForm());
     const value = 'test value';
     result.current.setValue('name', value);
@@ -54,7 +47,7 @@ describe('useForm tests', () => {
     expect(subcriptions.formFieldIsInitialized('name')).toBe(true);
   });
 
-  test('should set value when called  and the name is binded', async () => {
+  test('should set value when called setValue and the name is binded', async () => {
     const { result, rerender } = renderHook(() => useForm());
     const value = 'value for test';
     const formControl = result.current.bindFormField('name');
@@ -153,7 +146,7 @@ describe('useForm tests', () => {
     expect(result.current.getValue()).toEqual(values);
   });
 
-  test('should change the inputs values when reset is called', async () => { });
+  test('should change the inputs values when reset is called', async () => {});
 
   test('should notify to subscribers when reset is called', async () => {
     const subcriptions = new FormFieldsSubscriptions();
@@ -178,5 +171,7 @@ describe('useForm tests', () => {
     expect(mockActionValueTest2).toBe(valueForTest2);
   });
 
-  //  testear que se notifica cuando se llama al onchange del bindFormField y cuando se llama a
+  // test para getValues con names anidados
+
+  // faltan los tests del onSubmit
 });

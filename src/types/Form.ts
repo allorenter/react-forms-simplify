@@ -30,6 +30,7 @@ export type UseForm<TFormFields> = {
   setValue: (name: keyof TFormFields, value: any) => void;
   getInputRef: (key: string) => void | React.RefObject<unknown>;
   reset: (values: TFormFields) => void;
+  initFormField: (name: keyof TFormFields) => void;
 };
 
 export type UseBindFormField = ReturnType<typeof useBindFormField>;

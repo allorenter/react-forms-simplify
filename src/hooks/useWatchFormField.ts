@@ -14,7 +14,7 @@ function useWatchFormField<TFormValues extends FormFields = FormFields>({
   useEffect(() => {
     const unsubscribeFn = formFieldsSubscriptions.subscribe(name, setValue);
     return () => unsubscribeFn?.();
-  }, [formFieldsSubscriptions]);
+  }, []);
 
   return value;
 }

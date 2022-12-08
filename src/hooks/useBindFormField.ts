@@ -8,13 +8,15 @@ function useBindFormField<TFormValues extends FormFields = FormFields>({
   name: Join<PathsToStringProps<TFormValues>, '.'>;
   form: UseForm<TFormValues>;
 }) {
-  const [val, setVal] = useState<any>();
-  const { formFieldsSubscriptions, setValue } = form;
+  const [val, setVal] = useState<any>('');
+  const { formFieldsSubscriptions, setValue, initFormField } = form;
 
   useEffect(() => {
+    formFieldsSubscriptions.initFormFieldSubscription(name as string);
+    initFormField(name);
     const unsubscribeFn = formFieldsSubscriptions.subscribe(name as string, setVal);
     return () => unsubscribeFn?.();
-  }, [formFieldsSubscriptions]);
+  }, []);
 
   return {
     value: val,

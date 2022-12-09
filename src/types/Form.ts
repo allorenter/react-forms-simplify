@@ -28,7 +28,6 @@ export type UseForm<TFormFields> = {
   getValue: (name?: keyof TFormFields | undefined) => TFormFields | TFormFields[keyof TFormFields];
   formFieldsSubscriptions: FormFieldsSubscriptions;
   setValue: (name: keyof TFormFields, value: any) => void;
-  getInputRef: (key: string) => void | React.RefObject<unknown>;
   reset: (values: TFormFields) => void;
   initFormField: (name: keyof TFormFields) => void;
 };

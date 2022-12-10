@@ -13,25 +13,25 @@ export type SubmitFn<TSubmitFormFields> = <TResponseData>(
 // type Form = ReturnType<typeof useForm>;
 export type UseFormParams =
   | {
-      formFieldsSubscriptions?: FormFieldsSubscriptions;
-      formFieldsTouchedSubscriptions?: FormFieldsTouchedSubscriptions;
-    }
+    formFieldsSubscriptions?: FormFieldsSubscriptions;
+    formFieldsTouchedSubscriptions?: FormFieldsTouchedSubscriptions;
+  }
   | undefined;
 
-export type UseForm<TFormFields> = {
-  bindFormField: (name: keyof TFormFields) => {
-    name: keyof TFormFields;
+export type UseForm<TFormValues> = {
+  bindFormField: (name: keyof TFormValues) => {
+    name: keyof TFormValues;
     onChange: (e: any) => void;
     ref: void | React.RefObject<unknown>;
   };
   handleSubmit: (
-    submitFn: SubmitFn<TFormFields>,
+    submitFn: SubmitFn<TFormValues>,
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown>;
-  getValue: (name?: keyof TFormFields | undefined) => TFormFields | TFormFields[keyof TFormFields];
+  getValue: (name?: keyof TFormValues | undefined) => TFormValues | TFormValues[keyof TFormValues];
   formFieldsSubscriptions: FormFieldsSubscriptions;
-  setValue: (name: keyof TFormFields, value: any) => void;
-  reset: (values: TFormFields) => void;
-  initFormField: (name: keyof TFormFields) => void;
+  setValue: (name: keyof TFormValues, value: any) => void;
+  reset: (values: TFormValues) => void;
+  initFormField: (name: keyof TFormValues) => void;
   formFieldsTouchedSubcriptions: FormFieldsTouchedSubscriptions;
 };
 
@@ -42,8 +42,8 @@ export type useWatchFormField = ReturnType<typeof useWatchFormField>;
 export type PathsToStringProps<T> = T extends string
   ? []
   : {
-      [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
-    }[Extract<keyof T, string>];
+    [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
+  }[Extract<keyof T, string>];
 
 export type Join<T extends string[], D extends string> = T extends []
   ? never
@@ -51,8 +51,8 @@ export type Join<T extends string[], D extends string> = T extends []
   ? F
   : T extends [infer F, ...infer R]
   ? F extends string
-    ? `${F}${D}${Join<Extract<R, string[]>, D>}`
-    : never
+  ? `${F}${D}${Join<Extract<R, string[]>, D>}`
+  : never
   : string;
 
 export type TouchedFormFields = Record<string, boolean>;

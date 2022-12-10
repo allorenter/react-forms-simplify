@@ -20,7 +20,7 @@ function useBindFormField<TFormValues extends FormFields = FormFields>({
 
   return {
     value: val,
-    setFormField: (val: any) => setValue(name, val),
+    setFormFieldValue: (val: any) => setValue(name, val),
   };
 }
 

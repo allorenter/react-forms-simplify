@@ -30,7 +30,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
 
   const touchedFormFields = useRef<TouchedFormFields>({});
 
-  // const [formFieldsErrors, setFormFieldErrors] = useState<FormFields>({} as FormFields);
+  // const [formFieldsErrors, setFormFieldValueErrors] = useState<FormFields>({} as FormFields);
 
   const initFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     if (!formFields.current[name]) {

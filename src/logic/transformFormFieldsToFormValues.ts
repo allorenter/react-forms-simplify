@@ -1,6 +1,6 @@
 import { FormFields } from '@/types/Form';
 
-function formatFormValues(formFields: FormFields) {
+function transformFormFieldsToFormValues(formFields: FormFields) {
   const result: Record<string, any> = {};
 
   for (const key of Object.keys(formFields)) {
@@ -23,4 +23,4 @@ function formatFormValues(formFields: FormFields) {
   return result;
 }
 
-export default formatFormValues;
+export default transformFormFieldsToFormValues;

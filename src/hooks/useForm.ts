@@ -9,7 +9,7 @@ import {
   UseFormParams,
 } from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
-import formatFormValues from '@/logic/formatFormValues';
+import transformFormFieldsToFormValues from '@/logic/transformFormFieldsToFormValues';
 import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
 import transformFormValuesToFormFields from '@/logic/transformFormValuesToFormFields';
 
@@ -51,7 +51,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
   );
 
   const getValue = useCallback((name?: Join<PathsToStringProps<TFormValues>, '.'>) => {
-    if (name === undefined) return formatFormValues(formFields.current);
+    if (name === undefined) return transformFormFieldsToFormValues(formFields.current);
     return formFields.current[name];
   }, []);
 
@@ -103,7 +103,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
   const handleSubmit = useCallback(
     (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
-      const formatted = formatFormValues(formFields.current);
+      const formatted = transformFormFieldsToFormValues(formFields.current);
       return submitFn(formatted as TFormValues);
     },
     [],

@@ -1,8 +1,16 @@
-import { FormEvent, useCallback, useRef } from 'react';
+import { FormEvent, useCallback, useRef, useState } from 'react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
-import { FormFields, Join, PathsToStringProps, SubmitFn, UseFormParams } from '@/types/Form';
+import {
+  FormFields,
+  Join,
+  PathsToStringProps,
+  SubmitFn,
+  TouchedFormFields,
+  UseFormParams,
+} from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
 import formatFormValues from '@/logic/formatFormValues';
+import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
 
 function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormParams) {
   const formFieldsSubscriptions =
@@ -10,13 +18,23 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
       ? params?.formFieldsSubscriptions
       : new FormFieldsSubscriptions();
 
+  const formFieldsTouchedSubcriptions =
+    params?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
+      ? params?.formFieldsTouchedSubscriptions
+      : new FormFieldsTouchedSubscriptions();
+
   const formFields = useRef<FormFields>({} as FormFields);
 
   const [, setFormFieldRef] = useDynamicRefs();
 
+  const touchedFormFields = useRef<TouchedFormFields>({});
+
+  // const [formFieldsErrors, setFormFieldErrors] = useState<FormFields>({} as FormFields);
+
   const initFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     if (!formFields.current[name]) {
       formFields.current[name] = '';
+      touchedFormFields.current[name] = false;
     }
   }, []);
 
@@ -46,6 +64,10 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     formFieldsSubscriptions.subscribe(name as string, updateRefValue);
 
     const onChange = (e: any) => {
+      if (!touchedFormFields.current[name]) {
+        touchedFormFields.current[name] = true;
+        formFieldsTouchedSubcriptions.publish(touchedFormFields.current);
+      }
       const value = e.target.value;
       formFieldsSubscriptions.publish(name as string, value);
       formFields.current[name] = value;
@@ -83,6 +105,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     setValue,
     reset,
     initFormField,
+    formFieldsTouchedSubcriptions,
   };
 }
 

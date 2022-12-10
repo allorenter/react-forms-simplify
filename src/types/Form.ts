@@ -2,6 +2,7 @@ import { FormEvent } from 'react';
 import useWatchFormField from '@/hooks/useWatchFormField';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import useBindFormField from '@/hooks/useBindFormField';
+import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
 
 export type FormFields = Record<string, any>;
 
@@ -13,6 +14,7 @@ export type SubmitFn<TSubmitFormFields> = <TResponseData>(
 export type UseFormParams =
   | {
       formFieldsSubscriptions?: FormFieldsSubscriptions;
+      formFieldsTouchedSubscriptions?: FormFieldsTouchedSubscriptions;
     }
   | undefined;
 
@@ -30,6 +32,7 @@ export type UseForm<TFormFields> = {
   setValue: (name: keyof TFormFields, value: any) => void;
   reset: (values: TFormFields) => void;
   initFormField: (name: keyof TFormFields) => void;
+  formFieldsTouchedSubcriptions: FormFieldsTouchedSubscriptions;
 };
 
 export type UseBindFormField = ReturnType<typeof useBindFormField>;
@@ -51,3 +54,5 @@ export type Join<T extends string[], D extends string> = T extends []
     ? `${F}${D}${Join<Extract<R, string[]>, D>}`
     : never
   : string;
+
+export type TouchedFormFields = Record<string, boolean>;

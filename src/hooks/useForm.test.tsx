@@ -80,7 +80,7 @@ describe('useForm tests', () => {
     expect(mockActionValue).toBe(value);
   });
 
-  test('should change the input value when  is called', async () => {
+  test('should change the input value when the onChange is called', async () => {
     const defaultValue = 'initial value';
     const value = 'updated value';
     const Component = () => {
@@ -105,7 +105,7 @@ describe('useForm tests', () => {
     });
   });
 
-  test('should notify to subscribers when  is called', async () => {
+  test('should notify to subscribers when onChange is called', async () => {
     const subcriptions = new FormFieldsSubscriptions();
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
     const value = 'value for test';
@@ -146,8 +146,6 @@ describe('useForm tests', () => {
     expect(result.current.getValue()).toEqual(values);
   });
 
-  test('should change the inputs values when reset is called', async () => {});
-
   test('should notify to subscribers when reset is called', async () => {
     const subcriptions = new FormFieldsSubscriptions();
     const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
@@ -170,6 +168,10 @@ describe('useForm tests', () => {
     expect(mockActionValueTest1).toBe(valueForTest1);
     expect(mockActionValueTest2).toBe(valueForTest2);
   });
+
+  test('should add only one subscription when called bindFormControl even if the componet is rerendered', async () => { });
+
+  test('should change the inputs values when reset is called', async () => { });
 
   // test para getValues con names anidados
 

@@ -1,4 +1,4 @@
-import { FormEvent, useCallback, useRef, useState } from 'react';
+import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import {
   FormFields,
@@ -26,7 +26,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
 
   const formFields = useRef<FormFields>({} as FormFields);
 
-  const [, setFormFieldRef] = useDynamicRefs();
+  const [, setFormFieldRef] = useDynamicRefs<HTMLInputElement>();
 
   const touchedFormFields = useRef<TouchedFormFields>({});
 
@@ -86,7 +86,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     return {
       name,
       onChange,
-      ref,
+      ref: ref as RefObject<HTMLInputElement>,
     };
   }, []);
 

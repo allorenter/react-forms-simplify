@@ -38,6 +38,13 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     }
   }, []);
 
+  const touchFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
+    if (!touchedFormFields.current[name]) {
+      touchedFormFields.current[name] = true;
+      formFieldsTouchedSubcriptions.publish(touchedFormFields.current);
+    }
+  }, []);
+
   const getValue = useCallback((name?: Join<PathsToStringProps<TFormValues>, '.'>) => {
     if (name === undefined) return formatFormValues(formFields.current);
     return formFields.current[name];
@@ -47,6 +54,7 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     if (name in formFields.current) {
       formFields.current[name] = value;
       formFieldsSubscriptions.publish(name as string, value);
+      touchFormField(name);
     }
   }, []);
 
@@ -64,13 +72,10 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     formFieldsSubscriptions.subscribe(name as string, updateRefValue);
 
     const onChange = (e: any) => {
-      if (!touchedFormFields.current[name]) {
-        touchedFormFields.current[name] = true;
-        formFieldsTouchedSubcriptions.publish(touchedFormFields.current);
-      }
       const value = e.target.value;
       formFieldsSubscriptions.publish(name as string, value);
       formFields.current[name] = value;
+      touchFormField(name);
     };
 
     return {

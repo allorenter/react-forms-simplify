@@ -11,6 +11,7 @@ import {
 import useDynamicRefs from './useDynamicRef';
 import formatFormValues from '@/logic/formatFormValues';
 import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
+import transformFormValuesToFormFields from '@/logic/transformFormValuesToFormFields';
 
 function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormParams) {
   const formFieldsSubscriptions =
@@ -38,12 +39,16 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
     }
   }, []);
 
-  const touchFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
-    if (!touchedFormFields.current[name]) {
-      touchedFormFields.current[name] = true;
-      formFieldsTouchedSubcriptions.publish(touchedFormFields.current);
-    }
-  }, []);
+  const touchFormField = useCallback(
+    (name: Join<PathsToStringProps<TFormValues>, '.'>, touch = true) => {
+      // solo lo ejecuto en caso de querer cambiar su valor
+      if (touchedFormFields.current[name] !== touch) {
+        touchedFormFields.current[name] = touch;
+        formFieldsTouchedSubcriptions.publish(touchedFormFields.current);
+      }
+    },
+    [],
+  );
 
   const getValue = useCallback((name?: Join<PathsToStringProps<TFormValues>, '.'>) => {
     if (name === undefined) return formatFormValues(formFields.current);
@@ -86,10 +91,12 @@ function useForm<TFormValues extends FormFields = FormFields>(params?: UseFormPa
   }, []);
 
   const reset = useCallback((values: TFormValues) => {
-    formFields.current = values;
-    Object.entries(values).forEach((entry) => {
+    const newFormFields = transformFormValuesToFormFields(values);
+    formFields.current = newFormFields;
+    Object.entries(newFormFields).forEach((entry) => {
       const [name, value] = entry;
       formFieldsSubscriptions.publish(name, value);
+      touchFormField(name as Join<PathsToStringProps<TFormValues>, '.'>, false);
     });
   }, []);
 

@@ -1,5 +1,6 @@
 import { FormFieldsErrors, TouchedFormFields } from '@/types/Form';
 import { SetStateAction } from 'react';
+import formatFormFieldsErrors from './formatFormFieldsErrors';
 
 class FormFieldsErrorsSubscriptions {
   private subscribers: Set<SetStateAction<any>>;
@@ -17,7 +18,8 @@ class FormFieldsErrorsSubscriptions {
 
   publish(errors: FormFieldsErrors) {
     for (const actionFn of Array.from(this.subscribers)) {
-      actionFn(errors);
+      const formatted = formatFormFieldsErrors(errors);
+      actionFn(formatted);
     }
   }
 }

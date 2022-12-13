@@ -14,6 +14,7 @@ function validateFormField(
     formFieldsErrors[name] =
       value === undefined || value === null || Number.isNaN(value) || value === ''
         ? {
+            name,
             type: 'required',
           }
         : undefined;

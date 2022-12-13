@@ -6,14 +6,17 @@ function useFormErrors<T>({ form }: { form: UseForm<T> }) {
 
   useEffect(() => {
     const unsuscribeFn = form.formFieldsErrorsSubcriptions.subscribe((errors: FormFieldsErrors) => {
-      setErrors((prev) => ({ ...prev, ...errors }));
+      setErrors(() => ({ ...errors }));
     });
     return () => unsuscribeFn();
   }, []);
 
-  console.log('errors', errors);
+  const hasErrors = Object.keys(errors).length > 0;
 
-  return errors;
+  return {
+    hasErrors,
+    errors,
+  };
 }
 
 export default useFormErrors;

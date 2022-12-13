@@ -1,4 +1,4 @@
-import { FormEvent } from 'react';
+import { FormEvent, RefObject } from 'react';
 import useWatchFormField from '@/hooks/useWatchFormField';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import useBindFormField from '@/hooks/useBindFormField';
@@ -44,11 +44,11 @@ export type UseForm<TFormValues> = {
   bindFormField: (name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     name: Join<PathsToStringProps<TFormValues>, '.'>;
     onChange: (e: any) => void;
-    ref: void | React.RefObject<unknown>;
+    ref: RefObject<HTMLInputElement>;
   };
   handleSubmit: (
     submitFn: SubmitFn<TFormValues>,
-  ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown>;
+  ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (
     name?: Join<PathsToStringProps<TFormValues>, '.'> | undefined,
   ) => TFormValues | TFormValues[Join<PathsToStringProps<TFormValues>, '.'>];
@@ -58,6 +58,8 @@ export type UseForm<TFormValues> = {
   initFormField: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
   formFieldsTouchedSubcriptions: FormFieldsTouchedSubscriptions;
   formFieldsErrorsSubcriptions: FormFieldsErrorsSubscriptions;
+  getErrors: () => FormFieldsErrors;
+  setFocus: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
 };
 
 export type TouchedFormFields = Record<string, boolean>;
@@ -69,7 +71,7 @@ export type Validation = {
   validateFunction?: ValidateFunction;
 };
 
-export type FormFieldsValidation = Record<string, Validation>;
+export type FormFieldsValidations = Record<string, Validation>;
 
 export type BindFormFieldOptions =
   | {
@@ -79,6 +81,7 @@ export type BindFormFieldOptions =
 
 export type FormFieldError =
   | {
+      name: string;
       type: 'validateFunction' | 'required';
       message?: string | undefined;
     }

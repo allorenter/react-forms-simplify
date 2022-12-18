@@ -79,6 +79,13 @@ function useForm<TFormValues extends FormFields = FormFields>(
 
   const setValue = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>, value: any) => {
     if (name in formFields.current) {
+      validateFormField(
+        formFieldsValidations.current[name],
+        name,
+        value,
+        formFieldsErrors.current,
+        formFieldsErrorsSubcriptions,
+      );
       formFields.current[name] = value;
       formFieldsSubscriptions.publish(name as string, value);
       touchFormField(name);
@@ -142,6 +149,10 @@ function useForm<TFormValues extends FormFields = FormFields>(
     (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
+      const hasErrors = () => {
+        return Object.values(formFieldsErrors.current).some((val) => val !== undefined);
+      };
+
       // hace focus sobre el formField del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
       const focusError = () => {
         const errorsNames = Object.keys(formFieldsErrors.current);
@@ -151,7 +162,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
         }
       };
 
-      if (Object.keys(formFieldsErrors.current).length > 0) return focusError();
+      if (hasErrors()) return focusError();
 
       // si no hay erorres, valido todos los formFields de uno en uno
       const validationsNames = Object.keys(formFieldsValidations.current);
@@ -163,7 +174,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
           formFieldsErrors.current,
           formFieldsErrorsSubcriptions,
         );
-        if (Object.keys(formFieldsErrors.current).length > 0) return focusError();
+        if (hasErrors()) return focusError();
       }
 
       const formatted = transformFormFieldsToFormValues(formFields.current);

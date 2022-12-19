@@ -64,6 +64,12 @@ export type UseForm<TFormValues> = {
   getErrors: () => FormFieldsErrors;
   setFocus: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
   isSubmitting: boolean;
+  initFormFieldValidation: (
+    name: Join<PathsToStringProps<TFormValues>, '.'>,
+    validation: Validation | undefined,
+  ) => void;
+  setFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
+  getFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
 };
 
 export type TouchedFormFields = Record<string, boolean>;

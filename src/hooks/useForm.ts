@@ -40,7 +40,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
       : new FormFieldsErrorsSubscriptions();
 
   const formFields = useRef<FormFields>({} as FormFields);
-  const [getFormFieldRef, setFormFieldRef] = useDynamicRefs<HTMLInputElement>();
+  const [getFormFieldRef, setFormFieldRef, getAllRefs] = useDynamicRefs<HTMLInputElement>();
   const touchedFormFields = useRef<TouchedFormFields>({});
   const formFieldsErrors = useRef<FormFieldsErrors>({});
   const formFieldsValidations = useRef<FormFieldsValidations>({});
@@ -143,6 +143,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
 
   const setFocus = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     const ref = getFormFieldRef(name as string);
+    console.log('REFFFFFF EN SETFOUC', getAllRefs(), name, ref);
+
     if (ref) ref.current?.focus();
   }, []);
 
@@ -156,7 +158,13 @@ function useForm<TFormValues extends FormFields = FormFields>(
 
       // hace focus sobre el formField del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
       const focusError = () => {
-        const errorsNames = Object.keys(formFieldsErrors.current);
+        const errorsNames = Object.entries(formFieldsErrors.current)
+          .filter((entry) => {
+            return entry[1] !== undefined;
+          })
+          .map((entry) => {
+            return entry[1]?.name;
+          });
         if (errorsNames[0]) {
           setFocus(errorsNames[0] as Join<PathsToStringProps<TFormValues>, '.'>);
           return;
@@ -204,6 +212,9 @@ function useForm<TFormValues extends FormFields = FormFields>(
     getErrors,
     setFocus,
     isSubmitting,
+    initFormFieldValidation,
+    setFormFieldRef,
+    getFormFieldRef,
   };
 }
 

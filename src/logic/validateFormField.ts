@@ -1,5 +1,5 @@
 import { FormFieldsErrors, Validation } from '@/types/Form';
-import FormFieldsErrorsSubscriptions from './FormFieldsErrorsSubcriptions';
+import FormFieldsErrorsSubscriptions from './FormFieldsErrorsSubscriptions';
 
 function validateFormField(
   validation: Validation | undefined,

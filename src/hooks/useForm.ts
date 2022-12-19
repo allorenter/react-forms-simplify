@@ -17,7 +17,7 @@ import useDynamicRefs from './useDynamicRef';
 import transformFormFieldsToFormValues from '@/logic/transformFormFieldsToFormValues';
 import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
 import transformFormValuesToFormFields from '@/logic/transformFormValuesToFormFields';
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubcriptions';
+import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
 import validateFormField from '@/logic/validateFormField';
 import formatFormFieldsErrors from '@/logic/formatFormFieldsErrors';
 

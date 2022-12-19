@@ -3,7 +3,7 @@ import useWatchFormField from '@/hooks/useWatchFormField';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import useBindFormField from '@/hooks/useBindFormField';
 import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubcriptions';
+import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
 
 export type FormFields = Record<string, any>;
 

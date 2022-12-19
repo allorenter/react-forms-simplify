@@ -1,12 +1,9 @@
 import FormContext from '@/context/FormContext';
-import { useContextSelector } from 'use-context-selector';
+import { UseForm } from '@/types/Form';
+import { useContext } from 'react';
 
-function useFormContext(selector: string) {
-  const contextVal = useContextSelector(FormContext, (contextValues: any) => {
-    return contextValues[selector];
-  });
-
-  return contextVal;
+function useFormContext<TFormValues>() {
+  return useContext(FormContext) as UseForm<TFormValues>;
 }
 
 export default useFormContext;

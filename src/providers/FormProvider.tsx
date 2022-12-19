@@ -1,6 +1,13 @@
 import FormContext from '@/context/FormContext';
+import { UseForm } from '@/types/Form';
 
-function FormProvider({ children, form }: { children: JSX.Element | JSX.Element[]; form: any }) {
+function FormProvider<TFormValues>({
+  children,
+  form,
+}: {
+  children: JSX.Element | JSX.Element[];
+  form: UseForm<TFormValues>;
+}) {
   return <FormContext.Provider value={form}>{children}</FormContext.Provider>;
 }
 

@@ -41,7 +41,10 @@ export type Join<T extends string[], D extends string> = T extends []
   : string;
 
 export type UseForm<TFormValues> = {
-  bindFormField: (name: Join<PathsToStringProps<TFormValues>, '.'>) => {
+  bindFormField: (
+    name: Join<PathsToStringProps<TFormValues>, '.'>,
+    options?: BindFormFieldOptions,
+  ) => {
     name: Join<PathsToStringProps<TFormValues>, '.'>;
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;

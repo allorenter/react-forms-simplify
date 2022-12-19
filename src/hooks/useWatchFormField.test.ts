@@ -2,14 +2,15 @@ import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import useFormFieldWatch from './useWatchFormField';
+import useForm from './useForm';
 
 describe('useFormFieldWatch tests', () => {
   test('should return null if the FormField to which we subscribe has not been initialized', async () => {
-    const subscriptions = new FormFieldsSubscriptions();
+    const form = renderHook(() => useForm());
     const { result } = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
 
@@ -19,10 +20,11 @@ describe('useFormFieldWatch tests', () => {
   test('should return undefined if the FormField is initialized but has not publish a value yet', async () => {
     const subscriptions = new FormFieldsSubscriptions();
     subscriptions.initFormFieldSubscription('name');
+    const form = renderHook(() => useForm({ formFieldsSubscriptions: subscriptions }));
     const { result } = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
 
@@ -32,10 +34,11 @@ describe('useFormFieldWatch tests', () => {
   test('should return the value if the FormField is initialized and publish a value', async () => {
     const subscriptions = new FormFieldsSubscriptions();
     subscriptions.initFormFieldSubscription('name');
+    const form = renderHook(() => useForm({ formFieldsSubscriptions: subscriptions }));
     const { result, rerender } = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
 
@@ -51,17 +54,18 @@ describe('useFormFieldWatch tests', () => {
   test('should not create a new subscription if other FormField is subscribed ', async () => {
     const subscriptions = new FormFieldsSubscriptions();
     subscriptions.initFormFieldSubscription('name');
+    const form = renderHook(() => useForm({ formFieldsSubscriptions: subscriptions }));
     const hookName = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
     subscriptions.initFormFieldSubscription('cod');
     renderHook(() =>
       useFormFieldWatch({
         name: 'cod',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
     hookName.rerender({ formFieldsSubscriptions: subscriptions });
@@ -73,16 +77,17 @@ describe('useFormFieldWatch tests', () => {
   test('should be two subscribers in the FormFieldSubscription if there are two hooks subscribed to the same name', async () => {
     const subscriptions = new FormFieldsSubscriptions();
     subscriptions.initFormFieldSubscription('name');
+    const form = renderHook(() => useForm({ formFieldsSubscriptions: subscriptions }));
     const firstHook = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
     const secondHook = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
     firstHook.rerender();
@@ -95,16 +100,17 @@ describe('useFormFieldWatch tests', () => {
   test('should have the same value if two hooks are subscribed to the same name', async () => {
     const subscriptions = new FormFieldsSubscriptions();
     subscriptions.initFormFieldSubscription('name');
+    const form = renderHook(() => useForm({ formFieldsSubscriptions: subscriptions }));
     const firstHook = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
     const secondHook = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
 
@@ -123,10 +129,11 @@ describe('useFormFieldWatch tests', () => {
   test('should remove the subscription if the hook unmount', () => {
     const subscriptions = new FormFieldsSubscriptions();
     subscriptions.initFormFieldSubscription('name');
+    const form = renderHook(() => useForm({ formFieldsSubscriptions: subscriptions }));
     const { unmount } = renderHook(() =>
       useFormFieldWatch({
         name: 'name',
-        formFieldsSubscriptions: subscriptions,
+        form: form.result.current,
       }),
     );
     const nameSubscription = subscriptions.getFormFieldSubscription('name');

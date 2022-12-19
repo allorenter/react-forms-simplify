@@ -60,6 +60,7 @@ export type UseForm<TFormValues> = {
   formFieldsErrorsSubcriptions: FormFieldsErrorsSubscriptions;
   getErrors: () => FormFieldsErrors;
   setFocus: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
+  isSubmitting: boolean;
 };
 
 export type TouchedFormFields = Record<string, boolean>;

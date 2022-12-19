@@ -1,4 +1,4 @@
-import { FormEvent, RefObject, useCallback, useRef } from 'react';
+import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import {
   BindFormFieldOptions,
@@ -44,6 +44,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
   const touchedFormFields = useRef<TouchedFormFields>({});
   const formFieldsErrors = useRef<FormFieldsErrors>({});
   const formFieldsValidations = useRef<FormFieldsValidations>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     if (!formFields.current[name]) {
@@ -149,7 +150,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
     (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
-      const hasErrors = () => {
+      const hasError = () => {
         return Object.values(formFieldsErrors.current).some((val) => val !== undefined);
       };
 
@@ -162,7 +163,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
         }
       };
 
-      if (hasErrors()) return focusError();
+      if (hasError()) return focusError();
 
       // si no hay erorres, valido todos los formFields de uno en uno
       const validationsNames = Object.keys(formFieldsValidations.current);
@@ -174,11 +175,14 @@ function useForm<TFormValues extends FormFields = FormFields>(
           formFieldsErrors.current,
           formFieldsErrorsSubcriptions,
         );
-        if (hasErrors()) return focusError();
+        if (hasError()) return focusError();
       }
 
       const formatted = transformFormFieldsToFormValues(formFields.current);
-      return submitFn(formatted as TFormValues);
+      setIsSubmitting(true);
+      return submitFn(formatted as TFormValues).finally(() => {
+        setIsSubmitting(false);
+      });
     },
     [],
   );
@@ -199,6 +203,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
     formFieldsErrorsSubcriptions,
     getErrors,
     setFocus,
+    isSubmitting,
   };
 }
 

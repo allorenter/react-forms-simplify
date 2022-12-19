@@ -28,6 +28,9 @@ describe('useBindFormField tests', () => {
       },
       setValue: vi.fn(),
       initFormField: vi.fn(),
+      getFormFieldRef: vi.fn(),
+      initFormFieldValidation: vi.fn(),
+      setFormFieldRef: vi.fn(),
     };
     const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
     expect(result.current.value).toEqual('');
@@ -47,6 +50,9 @@ describe('useBindFormField tests', () => {
       },
       setValue: vi.fn(),
       initFormField: vi.fn(),
+      getFormFieldRef: vi.fn(),
+      initFormFieldValidation: vi.fn(),
+      setFormFieldRef: vi.fn(),
     };
     const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
     expect(result.current.value).toEqual('new value');
@@ -61,6 +67,9 @@ describe('useBindFormField tests', () => {
       },
       setValue: vi.fn(),
       initFormField: vi.fn(),
+      getFormFieldRef: vi.fn(),
+      initFormFieldValidation: vi.fn(),
+      setFormFieldRef: vi.fn(),
     };
     const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
     result.current.setFormFieldValue('new value');

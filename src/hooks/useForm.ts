@@ -143,8 +143,6 @@ function useForm<TFormValues extends FormFields = FormFields>(
 
   const setFocus = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
     const ref = getFormFieldRef(name as string);
-    console.log('REFFFFFF EN SETFOUC', getAllRefs(), name, ref);
-
     if (ref) ref.current?.focus();
   }, []);
 

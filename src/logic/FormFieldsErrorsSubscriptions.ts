@@ -22,6 +22,10 @@ class FormFieldsErrorsSubscriptions {
       actionFn(formatted);
     }
   }
+
+  getSubscribers() {
+    return this.subscribers;
+  }
 }
 
 export default FormFieldsErrorsSubscriptions;

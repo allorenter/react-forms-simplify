@@ -20,6 +20,10 @@ class FormFieldsTouchedSubscriptions {
       actionFn(touchedFormFields);
     }
   }
+
+  getSubscribers() {
+    return this.subscribers;
+  }
 }
 
 export default FormFieldsTouchedSubscriptions;

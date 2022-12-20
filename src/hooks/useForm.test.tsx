@@ -169,13 +169,50 @@ describe('useForm tests', () => {
     expect(mockActionValueTest2).toBe(valueForTest2);
   });
 
-  test('should add only one subscription when called bindFormControl even if the componet is rerendered', async () => { });
+  test('should add only one subscription when called bindFormControl even if the componet is rerendered', async () => {
+    const formFieldsSubscriptions = new FormFieldsSubscriptions();
+    const Component = () => {
+      const form = useForm({ formFieldsSubscriptions: formFieldsSubscriptions });
 
-  test('should change the inputs values when reset is called', async () => { });
+      return <input {...form.bindFormField('name')} />;
+    };
+    const { rerender } = render(<Component />);
+    rerender(<Component />);
+
+    expect(formFieldsSubscriptions.getFormFieldSubscription('name').getSubscribers().size).toBe(1);
+  });
+
+  test('should change the inputs values when reset is called', async () => {
+    const updatedValue = 'updatedValue';
+    const Component = () => {
+      const form = useForm();
+      const onClick = () => {
+        form.reset({ test: updatedValue });
+      };
+      return (
+        <>
+          <button onClick={onClick}>Set value</button>
+          <input {...form.bindFormField('test')} />
+        </>
+      );
+    };
+    const { getByRole } = render(<Component />);
+    const updateButton = getByRole('button');
+    const input = getByRole('textbox');
+    fireEvent.click(updateButton);
+
+    await waitFor(() => {
+      expect(input.value).toBe(updatedValue);
+    });
+  });
 
   // test para getValues con names anidados
 
   // faltan los tests del onSubmit
 
   // test para comprobar correcto funcionamiento de touchedFormFields
+
+  // testear que setea a [] los touchedFormFields cuando llamo a reset
+
+  // test para comprobar funcionamiento de los errores
 });

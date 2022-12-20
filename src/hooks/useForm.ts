@@ -40,7 +40,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
       : new FormFieldsErrorsSubscriptions();
 
   const formFields = useRef<FormFields>({} as FormFields);
-  const [getFormFieldRef, setFormFieldRef, getAllRefs] = useDynamicRefs<HTMLInputElement>();
+  const [getFormFieldRef, setFormFieldRef] = useDynamicRefs<HTMLInputElement>();
   const touchedFormFields = useRef<TouchedFormFields>({});
   const formFieldsErrors = useRef<FormFieldsErrors>({});
   const formFieldsValidations = useRef<FormFieldsValidations>({});

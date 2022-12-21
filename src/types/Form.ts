@@ -7,9 +7,7 @@ import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions
 
 export type FormFields = Record<string, any>;
 
-export type SubmitFn<TSubmitFormFields> = <TResponseData>(
-  values: TSubmitFormFields,
-) => Promise<TResponseData | undefined>;
+export type SubmitFn<TSubmitFormFields> = (values: TSubmitFormFields) => Promise<any>;
 
 // type Form = ReturnType<typeof useForm>;
 export type UseFormParams =

@@ -101,6 +101,8 @@ describe('useForm tests', () => {
     fireEvent.click(updateButton);
 
     await waitFor(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       expect(input.value).toBe(value);
     });
   });
@@ -202,6 +204,8 @@ describe('useForm tests', () => {
     fireEvent.click(updateButton);
 
     await waitFor(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
       expect(input.value).toBe(updatedValue);
     });
   });

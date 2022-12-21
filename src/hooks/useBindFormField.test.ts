@@ -32,6 +32,8 @@ describe('useBindFormField tests', () => {
       initFormFieldValidation: vi.fn(),
       setFormFieldRef: vi.fn(),
     };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
     expect(result.current.value).toEqual('');
     expect(typeof result.current.setFormFieldValue).toBe('function');
@@ -54,6 +56,8 @@ describe('useBindFormField tests', () => {
       initFormFieldValidation: vi.fn(),
       setFormFieldRef: vi.fn(),
     };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
     expect(result.current.value).toEqual('new value');
     expect(typeof result.current.setFormFieldValue).toBe('function');
@@ -71,6 +75,8 @@ describe('useBindFormField tests', () => {
       initFormFieldValidation: vi.fn(),
       setFormFieldRef: vi.fn(),
     };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
     result.current.setFormFieldValue('new value');
     expect(form.setValue).toHaveBeenCalledWith('username', 'new value');

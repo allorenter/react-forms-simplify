@@ -13,6 +13,8 @@ describe('useFormErrors', () => {
     const submit = hookForm.result.current.handleSubmit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     submit({ preventDefault: () => { } });
     hookForm.rerender();
     errorHook.rerender();
@@ -29,6 +31,8 @@ describe('useFormErrors', () => {
     const submit = hookForm.result.current.handleSubmit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     submit({ preventDefault: () => { } });
     hookForm.rerender();
     errorHook.rerender();
@@ -46,6 +50,8 @@ describe('useFormErrors', () => {
     const submit = hookForm.result.current.handleSubmit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     submit({ preventDefault: () => { } });
     hookForm.rerender();
     errorHook.rerender();

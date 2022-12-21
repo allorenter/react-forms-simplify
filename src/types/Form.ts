@@ -40,9 +40,13 @@ export type Join<T extends string[], D extends string> = T extends []
 
 export type UseForm<TFormValues> = {
   bindFormField: (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     name: Join<PathsToStringProps<TFormValues>, '.'>,
     options?: BindFormFieldOptions,
   ) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     name: Join<PathsToStringProps<TFormValues>, '.'>;
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
@@ -51,18 +55,30 @@ export type UseForm<TFormValues> = {
     submitFn: SubmitFn<TFormValues>,
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     name?: Join<PathsToStringProps<TFormValues>, '.'> | undefined,
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
   ) => TFormValues | TFormValues[Join<PathsToStringProps<TFormValues>, '.'>];
   formFieldsSubscriptions: FormFieldsSubscriptions;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   setValue: (name: Join<PathsToStringProps<TFormValues>, '.'>, value: any) => void;
   reset: (values: TFormValues) => void;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   initFormField: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
   formFieldsTouchedSubcriptions: FormFieldsTouchedSubscriptions;
   formFieldsErrorsSubcriptions: FormFieldsErrorsSubscriptions;
   getErrors: () => FormFieldsErrors;
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-expect-error
   setFocus: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
   isSubmitting: boolean;
   initFormFieldValidation: (
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     name: Join<PathsToStringProps<TFormValues>, '.'>,
     validation: Validation | undefined,
   ) => void;

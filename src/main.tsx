@@ -1,10 +1,6 @@
-import React, { useState } from 'react'
-import ReactDOM from 'react-dom/client'
-import Example from './examples/index';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom/client';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode>
-    <Example />
-  </React.StrictMode>
-)
-
+  <React.StrictMode></React.StrictMode>,
+);

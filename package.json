@@ -3,9 +3,22 @@
   "version": "1.0.0",
   "description": "",
   "type": "module",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/react-forms-simplify.umd.cjs",
+  "module": "./dist/react-forms-simplify.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/react-forms-simplify.js",
+      "require": "./dist/react-forms-simplify.umd.cjs"
+    }
+  },
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build:types": "tsup src/index.ts --format esm,cjs,iife --dts --minify",
+    "build": "tsc && vite build && npm run build:types",
     "preview": "vite preview",
     "lint": "npx eslint src",
     "lint:fix": "npm run lint -- --fix",
@@ -44,6 +57,7 @@
     "eslint-plugin-react-hooks": "^4.5.0",
     "jsdom": "^20.0.0",
     "prettier": "^2.6.2",
+    "tsup": "^6.5.0",
     "typescript": "^4.6.4",
     "vite": "^3.2.3",
     "vite-tsconfig-paths": "^3.5.0",

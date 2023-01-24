@@ -1,26 +1,27 @@
-import { RefObject, useEffect, useRef, useState } from 'react';
-import { BindFormFieldOptions, FormFields, Join, PathsToStringProps, UseForm } from '@/types/Form';
+import { RefObject, useEffect, useState } from 'react';
+import { BindFormFieldOptions, FormFields, FormName, UseForm } from '@/types/Form';
 
-function useBindFormField<TFormValues extends FormFields = FormFields>({
+function useBind<TFormValues extends FormFields = FormFields>({
   name,
   form,
   options,
 }: {
-  name: Join<PathsToStringProps<TFormValues>, '.'>;
+  name: FormName<TFormValues>;
   form: UseForm<TFormValues>;
   options?: BindFormFieldOptions;
 }) {
   const [val, setVal] = useState<any>('');
   const {
-    formFieldsSubscriptions,
+    $instance: {
+      formFieldsSubscriptions,
+      initFormField,
+      initFormFieldValidation,
+      setFormFieldRef,
+      getFormFieldRef,
+    },
     setValue,
-    initFormField,
-    initFormFieldValidation,
-    setFormFieldRef,
-    getFormFieldRef,
   } = form;
 
-  // HAY QUE AÑADIR UNA REF PARA PODER HACER AUTOFOCUS EN CASO DE ERROR, ETC
   useEffect(() => {
     formFieldsSubscriptions.initFormFieldSubscription(name as string);
     initFormField(name);
@@ -37,4 +38,4 @@ function useBindFormField<TFormValues extends FormFields = FormFields>({
   };
 }
 
-export default useBindFormField;
+export default useBind;

@@ -6,7 +6,7 @@ function validateFormField(
   name: string,
   value: any,
   formFieldsErrors: FormFieldsErrors,
-  formFieldsErrorsSubcriptions: FormFieldsErrorsSubscriptions,
+  formFieldsErrorsSubscriptions: FormFieldsErrorsSubscriptions,
 ) {
   if (!validation) return;
 
@@ -20,7 +20,7 @@ function validateFormField(
         : undefined;
   }
 
-  formFieldsErrorsSubcriptions.publish(formFieldsErrors);
+  formFieldsErrorsSubscriptions.publish(formFieldsErrors);
 }
 
 export default validateFormField;

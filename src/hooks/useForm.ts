@@ -5,8 +5,7 @@ import {
   FormFields,
   FormFieldsErrors,
   FormFieldsValidations,
-  Join,
-  PathsToStringProps,
+  FormName,
   SubmitFn,
   TouchedFormFields,
   UseForm,
@@ -25,18 +24,18 @@ function useForm<TFormValues extends FormFields = FormFields>(
   params?: UseFormParams,
 ): UseForm<TFormValues> {
   const formFieldsSubscriptions =
-    params?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
-      ? params?.formFieldsSubscriptions
+    params?.$instance?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
+      ? params?.$instance?.formFieldsSubscriptions
       : new FormFieldsSubscriptions();
 
-  const formFieldsTouchedSubcriptions =
-    params?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
-      ? params?.formFieldsTouchedSubscriptions
+  const formFieldsTouchedSubscriptions =
+    params?.$instance?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
+      ? params?.$instance?.formFieldsTouchedSubscriptions
       : new FormFieldsTouchedSubscriptions();
 
-  const formFieldsErrorsSubcriptions =
-    params?.formFieldsErrorsSubcriptions instanceof FormFieldsErrorsSubscriptions
-      ? params?.formFieldsErrorsSubcriptions
+  const formFieldsErrorsSubscriptions =
+    params?.$instance?.formFieldsErrorsSubscriptions instanceof FormFieldsErrorsSubscriptions
+      ? params?.$instance?.formFieldsErrorsSubscriptions
       : new FormFieldsErrorsSubscriptions();
 
   const formFields = useRef<FormFields>({} as FormFields);
@@ -46,7 +45,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
   const formFieldsValidations = useRef<FormFieldsValidations>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initFormField = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
+  const initFormField = useCallback((name: FormName<TFormValues>) => {
     if (!formFields.current[name]) {
       formFields.current[name] = '';
       touchedFormFields.current[name] = false;
@@ -54,7 +53,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
   }, []);
 
   const initFormFieldValidation = useCallback(
-    (name: Join<PathsToStringProps<TFormValues>, '.'>, validation: Validation | undefined) => {
+    (name: FormName<TFormValues>, validation: Validation | undefined) => {
       if (validation !== undefined) {
         formFieldsValidations.current[name] = validation;
       }
@@ -62,30 +61,27 @@ function useForm<TFormValues extends FormFields = FormFields>(
     [],
   );
 
-  const touchFormField = useCallback(
-    (name: Join<PathsToStringProps<TFormValues>, '.'>, touch = true) => {
-      // solo lo ejecuto en caso de querer cambiar su valor
-      if (touchedFormFields.current[name] !== touch) {
-        touchedFormFields.current[name] = touch;
-        formFieldsTouchedSubcriptions.publish(touchedFormFields.current);
-      }
-    },
-    [],
-  );
+  const touchFormField = useCallback((name: FormName<TFormValues>, touch = true) => {
+    // solo lo ejecuto en caso de querer cambiar su valor
+    if (touchedFormFields.current[name] !== touch) {
+      touchedFormFields.current[name] = touch;
+      formFieldsTouchedSubscriptions.publish(touchedFormFields.current);
+    }
+  }, []);
 
-  const getValue = useCallback((name?: Join<PathsToStringProps<TFormValues>, '.'>) => {
+  const getValue = useCallback((name?: FormName<TFormValues>) => {
     if (name === undefined) return transformFormFieldsToFormValues(formFields.current);
     return formFields.current[name];
   }, []);
 
-  const setValue = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>, value: any) => {
+  const setValue = useCallback((name: FormName<TFormValues>, value: any) => {
     if (name in formFields.current) {
       validateFormField(
         formFieldsValidations.current[name],
         name,
         value,
         formFieldsErrors.current,
-        formFieldsErrorsSubcriptions,
+        formFieldsErrorsSubscriptions,
       );
       formFields.current[name] = value;
       formFieldsSubscriptions.publish(name as string, value);
@@ -93,43 +89,40 @@ function useForm<TFormValues extends FormFields = FormFields>(
     }
   }, []);
 
-  const bindFormField = useCallback(
-    (name: Join<PathsToStringProps<TFormValues>, '.'>, options?: BindFormFieldOptions) => {
-      formFieldsSubscriptions.initFormFieldSubscription(name as string);
-      initFormField(name);
-      initFormFieldValidation(name, options?.validation);
-      const ref = setFormFieldRef(name as string) as RefObject<HTMLInputElement>;
+  const bind = useCallback((name: FormName<TFormValues>, options?: BindFormFieldOptions) => {
+    formFieldsSubscriptions.initFormFieldSubscription(name as string);
+    initFormField(name);
+    initFormFieldValidation(name, options?.validation);
+    const ref = setFormFieldRef(name as string) as RefObject<HTMLInputElement>;
 
-      const updateRefValue = (value: any) => {
-        if (typeof ref?.current === 'object' && ref?.current !== null) {
-          ref.current.value = value;
-        }
-      };
+    const updateRefValue = (value: any) => {
+      if (typeof ref?.current === 'object' && ref?.current !== null) {
+        ref.current.value = value;
+      }
+    };
 
-      formFieldsSubscriptions.subscribe(name as string, updateRefValue);
+    formFieldsSubscriptions.subscribe(name as string, updateRefValue);
 
-      const onChange = (e: any) => {
-        const value = e.target.value;
-        validateFormField(
-          formFieldsValidations.current[name],
-          name,
-          value,
-          formFieldsErrors.current,
-          formFieldsErrorsSubcriptions,
-        );
-        formFieldsSubscriptions.publish(name as string, value);
-        formFields.current[name] = value;
-        touchFormField(name);
-      };
-
-      return {
+    const onChange = (e: any) => {
+      const value = e.target.value;
+      validateFormField(
+        formFieldsValidations.current[name],
         name,
-        onChange,
-        ref,
-      };
-    },
-    [],
-  );
+        value,
+        formFieldsErrors.current,
+        formFieldsErrorsSubscriptions,
+      );
+      formFieldsSubscriptions.publish(name as string, value);
+      formFields.current[name] = value;
+      touchFormField(name);
+    };
+
+    return {
+      name,
+      onChange,
+      ref,
+    };
+  }, []);
 
   const reset = useCallback((values: TFormValues) => {
     const newFormFields = transformFormValuesToFormFields(values);
@@ -137,16 +130,16 @@ function useForm<TFormValues extends FormFields = FormFields>(
     Object.entries(newFormFields).forEach((entry) => {
       const [name, value] = entry;
       formFieldsSubscriptions.publish(name, value);
-      touchFormField(name as Join<PathsToStringProps<TFormValues>, '.'>, false);
+      touchFormField(name as FormName<TFormValues>, false);
     });
   }, []);
 
-  const setFocus = useCallback((name: Join<PathsToStringProps<TFormValues>, '.'>) => {
+  const setFocus = useCallback((name: FormName<TFormValues>) => {
     const ref = getFormFieldRef(name as string);
     if (ref) ref.current?.focus();
   }, []);
 
-  const handleSubmit = useCallback(
+  const submit = useCallback(
     (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
@@ -164,7 +157,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
             return entry[1]?.name;
           });
         if (errorsNames[0]) {
-          setFocus(errorsNames[0] as Join<PathsToStringProps<TFormValues>, '.'>);
+          setFocus(errorsNames[0] as FormName<TFormValues>);
           return;
         }
       };
@@ -179,7 +172,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
           name,
           formFields.current[name],
           formFieldsErrors.current,
-          formFieldsErrorsSubcriptions,
+          formFieldsErrorsSubscriptions,
         );
         if (hasError()) return focusError();
       }
@@ -198,21 +191,23 @@ function useForm<TFormValues extends FormFields = FormFields>(
   }, []);
 
   return {
-    bindFormField,
-    handleSubmit,
+    bind,
+    submit,
     getValue,
-    formFieldsSubscriptions,
     setValue,
     reset,
-    initFormField,
-    formFieldsTouchedSubcriptions,
-    formFieldsErrorsSubcriptions,
-    getErrors,
     setFocus,
+    getErrors,
     isSubmitting,
-    initFormFieldValidation,
-    setFormFieldRef,
-    getFormFieldRef,
+    $instance: {
+      formFieldsSubscriptions,
+      initFormField,
+      formFieldsTouchedSubscriptions,
+      formFieldsErrorsSubscriptions,
+      initFormFieldValidation,
+      setFormFieldRef,
+      getFormFieldRef,
+    },
   };
 }
 

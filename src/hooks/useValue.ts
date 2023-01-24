@@ -1,15 +1,15 @@
 import { useEffect, useState } from 'react';
-import { FormFields, Join, PathsToStringProps, UseForm } from '@/types/Form';
+import { FormFields, FormName, UseForm } from '@/types/Form';
 
-function useWatchFormField<TFormValues extends FormFields = FormFields>({
+function useValue<TFormValues extends FormFields = FormFields>({
   name,
   form,
 }: {
-  name: Join<PathsToStringProps<TFormValues>, '.'>;
+  name: FormName<TFormValues>;
   form: UseForm<TFormValues>;
 }) {
   const [value, setValue] = useState<any>();
-  const { formFieldsSubscriptions } = form;
+  const { formFieldsSubscriptions } = form.$instance;
 
   useEffect(() => {
     const unsubscribeFn = formFieldsSubscriptions.subscribe(name, setValue);
@@ -19,4 +19,4 @@ function useWatchFormField<TFormValues extends FormFields = FormFields>({
   return value;
 }
 
-export default useWatchFormField;
+export default useValue;

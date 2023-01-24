@@ -1,16 +1,16 @@
 import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
-import { useForm, useFormErrors } from '..';
+import { useForm, useErrors } from '..';
 
-describe('useFormErrors', () => {
+describe('useErrors', () => {
   test('should return hasErrors = true if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
-    hookForm.result.current.bindFormField('name', {
+    hookForm.result.current.bind('name', {
       validation: { required: true },
     });
-    const errorHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.handleSubmit((values) => {
+    const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
+    const submit = hookForm.result.current.submit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -24,11 +24,11 @@ describe('useFormErrors', () => {
 
   test('should return the error type and the formFieldName if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
-    hookForm.result.current.bindFormField('phone', {
+    hookForm.result.current.bind('phone', {
       validation: { required: true },
     });
-    const errorHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.handleSubmit((values) => {
+    const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
+    const submit = hookForm.result.current.submit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -42,12 +42,12 @@ describe('useFormErrors', () => {
 
   test('should return empty errors if the form has no errors', () => {
     const hookForm = renderHook(() => useForm());
-    const bind = hookForm.result.current.bindFormField('phone', {
+    const bind = hookForm.result.current.bind('phone', {
       validation: { required: true },
     });
     bind.onChange({ target: { value: '675654321' } });
-    const errorHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.handleSubmit((values) => {
+    const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
+    const submit = hookForm.result.current.submit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -59,17 +59,17 @@ describe('useFormErrors', () => {
     expect(errorHook.result.current.errors).toEqual({});
   });
 
-  test('should unsuscribe when the hook unmount', () => {
-    const formFieldErrorsSubcriptions = new FormFieldsErrorsSubscriptions();
+  test('should unsubscribe when the hook unmount', () => {
+    const formFieldErrorsSubscriptions = new FormFieldsErrorsSubscriptions();
     const hookForm = renderHook(() =>
-      useForm({ formFieldsErrorsSubcriptions: formFieldErrorsSubcriptions }),
+      useForm({ $instance: { formFieldsErrorsSubscriptions: formFieldErrorsSubscriptions } }),
     );
-    const errorsHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
+    const errorsHook = renderHook(() => useErrors({ form: hookForm.result.current }));
 
-    expect(formFieldErrorsSubcriptions.getSubscribers().size).toBe(1);
+    expect(formFieldErrorsSubscriptions.getSubscribers().size).toBe(1);
 
     errorsHook.unmount();
 
-    expect(formFieldErrorsSubcriptions.getSubscribers().size).toEqual(0);
+    expect(formFieldErrorsSubscriptions.getSubscribers().size).toEqual(0);
   });
 });

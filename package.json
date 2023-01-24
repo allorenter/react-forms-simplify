@@ -35,10 +35,6 @@
     "url": "https://github.com/allorenter/react-forms-simplify/issues"
   },
   "homepage": "https://github.com/allorenter/react-forms-simplify#readme",
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0"
-  },
   "devDependencies": {
     "@testing-library/react": "^13.4.0",
     "@types/react": "^18.0.24",
@@ -56,6 +52,8 @@
     "jsdom": "^20.0.0",
     "prettier": "^2.6.2",
     "tsup": "^6.5.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^4.6.4",
     "vite": "^3.2.3",
     "vite-tsconfig-paths": "^3.5.0",

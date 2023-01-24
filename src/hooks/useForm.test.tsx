@@ -24,10 +24,12 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  test('should add a name to FormField when call bindFormField', async () => {
-    const subcriptions = new FormFieldsSubscriptions();
-    const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
-    const formControl = result.current.bindFormField('name');
+  test('should add a name to FormField when call bind', async () => {
+    const Subscriptions = new FormFieldsSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { formFieldsSubscriptions: Subscriptions } }),
+    );
+    const formControl = result.current.bind('name');
     const fieldValue = 'value for the simulated field';
     const eventMock = {
       target: {
@@ -39,18 +41,20 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toBe(fieldValue);
   });
 
-  test('should add a FormFieldsSubscription when call bindFormField', async () => {
-    const subcriptions = new FormFieldsSubscriptions();
-    const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
-    result.current.bindFormField('name');
+  test('should add a FormFieldsSubscription when call bind', async () => {
+    const Subscriptions = new FormFieldsSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { formFieldsSubscriptions: Subscriptions } }),
+    );
+    result.current.bind('name');
 
-    expect(subcriptions.formFieldIsInitialized('name')).toBe(true);
+    expect(Subscriptions.formFieldIsInitialized('name')).toBe(true);
   });
 
   test('should set value when called setValue and the name is binded', async () => {
     const { result, rerender } = renderHook(() => useForm());
     const value = 'value for test';
-    const formControl = result.current.bindFormField('name');
+    const formControl = result.current.bind('name');
     const eventMock = {
       target: { value: 'a' },
     };
@@ -62,15 +66,17 @@ describe('useForm tests', () => {
   });
 
   test('should notify to subscribers when onChange is called', async () => {
-    const subcriptions = new FormFieldsSubscriptions();
-    const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
+    const Subscriptions = new FormFieldsSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { formFieldsSubscriptions: Subscriptions } }),
+    );
     const value = 'value for test';
-    const formControl = result.current.bindFormField('name');
+    const formControl = result.current.bind('name');
     formControl.onChange({
       target: { value: 'a' },
     });
     let mockActionValue;
-    subcriptions.subscribe('name', (val: any) => {
+    Subscriptions.subscribe('name', (val: any) => {
       mockActionValue = val;
     });
     formControl.onChange({
@@ -91,7 +97,7 @@ describe('useForm tests', () => {
       return (
         <>
           <button onClick={onClick}>Set value</button>
-          <input {...form.bindFormField('test')} defaultValue={defaultValue} />
+          <input {...form.bind('test')} defaultValue={defaultValue} />
         </>
       );
     };
@@ -108,12 +114,14 @@ describe('useForm tests', () => {
   });
 
   test('should notify to subscribers when onChange is called', async () => {
-    const subcriptions = new FormFieldsSubscriptions();
-    const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
+    const Subscriptions = new FormFieldsSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { formFieldsSubscriptions: Subscriptions } }),
+    );
     const value = 'value for test';
-    result.current.bindFormField('name');
+    result.current.bind('name');
     let mockActionValue;
-    subcriptions.subscribe('name', (val: any) => {
+    Subscriptions.subscribe('name', (val: any) => {
       mockActionValue = val;
     });
     result.current.setValue('name', value);
@@ -149,17 +157,19 @@ describe('useForm tests', () => {
   });
 
   test('should notify to subscribers when reset is called', async () => {
-    const subcriptions = new FormFieldsSubscriptions();
-    const { result } = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
+    const Subscriptions = new FormFieldsSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { formFieldsSubscriptions: Subscriptions } }),
+    );
     const valueForTest1 = 'value for test 1';
     const valueForTest2 = 'value for test 2';
-    result.current.bindFormField('test1');
-    result.current.bindFormField('test2');
+    result.current.bind('test1');
+    result.current.bind('test2');
     let mockActionValueTest1, mockActionValueTest2;
-    subcriptions.subscribe('test1', (val: any) => {
+    Subscriptions.subscribe('test1', (val: any) => {
       mockActionValueTest1 = val;
     });
-    subcriptions.subscribe('test2', (val: any) => {
+    Subscriptions.subscribe('test2', (val: any) => {
       mockActionValueTest2 = val;
     });
     result.current.reset({
@@ -174,9 +184,9 @@ describe('useForm tests', () => {
   test('should add only one subscription when called bindFormControl even if the componet is rerendered', async () => {
     const formFieldsSubscriptions = new FormFieldsSubscriptions();
     const Component = () => {
-      const form = useForm({ formFieldsSubscriptions: formFieldsSubscriptions });
+      const form = useForm({ $instance: { formFieldsSubscriptions: formFieldsSubscriptions } });
 
-      return <input {...form.bindFormField('name')} />;
+      return <input {...form.bind('name')} />;
     };
     const { rerender } = render(<Component />);
     rerender(<Component />);
@@ -194,7 +204,7 @@ describe('useForm tests', () => {
       return (
         <>
           <button onClick={onClick}>Set value</button>
-          <input {...form.bindFormField('test')} />
+          <input {...form.bind('test')} />
         </>
       );
     };

@@ -1,16 +1,16 @@
-import { TouchedFormFields, UseForm } from '@/types/Form';
+import { FormFields, TouchedFormFields, UseForm } from '@/types/Form';
 import { useEffect, useMemo, useState } from 'react';
 
-function useTouchedFormFields<TFormValues>({ form }: { form: UseForm<TFormValues> }) {
+function useTouched<TFormValues extends FormFields>({ form }: { form: UseForm<TFormValues> }) {
   const [touched, setTouched] = useState<TouchedFormFields>({});
 
   useEffect(() => {
-    const unsuscribeFn = form.formFieldsTouchedSubcriptions.subscribe(
+    const unsubscribeFn = form.$instance.formFieldsTouchedSubscriptions.subscribe(
       (touch: TouchedFormFields) => {
         setTouched((prev) => ({ ...prev, ...touch }));
       },
     );
-    return () => unsuscribeFn();
+    return () => unsubscribeFn();
   }, []);
 
   const touchedArray = useMemo(() => {
@@ -28,4 +28,4 @@ function useTouchedFormFields<TFormValues>({ form }: { form: UseForm<TFormValues
   return touchedArray;
 }
 
-export default useTouchedFormFields;
+export default useTouched;

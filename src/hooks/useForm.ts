@@ -25,18 +25,18 @@ function useForm<TFormValues extends FormFields = FormFields>(
   params?: UseFormParams,
 ): UseForm<TFormValues> {
   const formFieldsSubscriptions =
-    params?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
-      ? params?.formFieldsSubscriptions
+    params?.$instance?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
+      ? params?.$instance?.formFieldsSubscriptions
       : new FormFieldsSubscriptions();
 
   const formFieldsTouchedSubscriptions =
-    params?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
-      ? params?.formFieldsTouchedSubscriptions
+    params?.$instance?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
+      ? params?.$instance?.formFieldsTouchedSubscriptions
       : new FormFieldsTouchedSubscriptions();
 
   const formFieldsErrorsSubscriptions =
-    params?.formFieldsErrorsSubscriptions instanceof FormFieldsErrorsSubscriptions
-      ? params?.formFieldsErrorsSubscriptions
+    params?.$instance?.formFieldsErrorsSubscriptions instanceof FormFieldsErrorsSubscriptions
+      ? params?.$instance?.formFieldsErrorsSubscriptions
       : new FormFieldsErrorsSubscriptions();
 
   const formFields = useRef<FormFields>({} as FormFields);
@@ -201,18 +201,20 @@ function useForm<TFormValues extends FormFields = FormFields>(
     bind,
     submit,
     getValue,
-    formFieldsSubscriptions,
     setValue,
     reset,
-    initFormField,
-    formFieldsTouchedSubscriptions,
-    formFieldsErrorsSubscriptions,
-    getErrors,
     setFocus,
+    getErrors,
     isSubmitting,
-    initFormFieldValidation,
-    setFormFieldRef,
-    getFormFieldRef,
+    $instance: {
+      formFieldsSubscriptions,
+      initFormField,
+      formFieldsTouchedSubscriptions,
+      formFieldsErrorsSubscriptions,
+      initFormFieldValidation,
+      setFormFieldRef,
+      getFormFieldRef,
+    },
   };
 }
 

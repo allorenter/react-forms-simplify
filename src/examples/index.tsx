@@ -12,8 +12,6 @@ function Example() {
   const form = useForm<TFieldValues>();
   const { submit, bind } = form;
 
-  console.log(Object.keys(form));
-
   const onSubmit = (values) => {
     console.log('values', values);
 

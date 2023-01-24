@@ -5,7 +5,7 @@ function useTouched<TFormValues>({ form }: { form: UseForm<TFormValues> }) {
   const [touched, setTouched] = useState<TouchedFormFields>({});
 
   useEffect(() => {
-    const unsubscribeFn = form.formFieldsTouchedSubscriptions.subscribe(
+    const unsubscribeFn = form.$instance.formFieldsTouchedSubscriptions.subscribe(
       (touch: TouchedFormFields) => {
         setTouched((prev) => ({ ...prev, ...touch }));
       },

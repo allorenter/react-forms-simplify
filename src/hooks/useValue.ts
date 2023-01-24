@@ -9,7 +9,7 @@ function useValue<TFormValues extends FormFields = FormFields>({
   form: UseForm<TFormValues>;
 }) {
   const [value, setValue] = useState<any>();
-  const { formFieldsSubscriptions } = form;
+  const { formFieldsSubscriptions } = form.$instance;
 
   useEffect(() => {
     const unsubscribeFn = formFieldsSubscriptions.subscribe(name, setValue);

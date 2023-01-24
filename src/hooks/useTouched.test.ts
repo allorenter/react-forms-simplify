@@ -32,7 +32,7 @@ describe('useErrors', () => {
   test('should unsubscribe when the hook unmount', () => {
     const touchedFieldsSubscriptions = new FormFieldsTouchedSubscriptions();
     const hookForm = renderHook(() =>
-      useForm({ formFieldsTouchedSubscriptions: touchedFieldsSubscriptions }),
+      useForm({ $instance: { formFieldsTouchedSubscriptions: touchedFieldsSubscriptions } }),
     );
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));
 

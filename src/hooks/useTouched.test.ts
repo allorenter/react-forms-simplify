@@ -6,7 +6,7 @@ import { useForm, useTouched } from '..';
 describe('useErrors', () => {
   test('should return empty array if no formField is touched', () => {
     const hookForm = renderHook(() => useForm());
-    hookForm.result.current.bindFormField('name', {
+    hookForm.result.current.bind('name', {
       validation: { required: true },
     });
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));
@@ -18,7 +18,7 @@ describe('useErrors', () => {
 
   test('should return the name of the touched formFields', () => {
     const hookForm = renderHook(() => useForm());
-    const formControl = hookForm.result.current.bindFormField('name');
+    const formControl = hookForm.result.current.bind('name');
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));
     formControl.onChange({
       target: { value: 'a' },

@@ -6,11 +6,11 @@ import { useForm, useErrors } from '..';
 describe('useErrors', () => {
   test('should return hasErrors = true if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
-    hookForm.result.current.bindFormField('name', {
+    hookForm.result.current.bind('name', {
       validation: { required: true },
     });
     const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.handleSubmit((values) => {
+    const submit = hookForm.result.current.submit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -24,11 +24,11 @@ describe('useErrors', () => {
 
   test('should return the error type and the formFieldName if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
-    hookForm.result.current.bindFormField('phone', {
+    hookForm.result.current.bind('phone', {
       validation: { required: true },
     });
     const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.handleSubmit((values) => {
+    const submit = hookForm.result.current.submit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -42,12 +42,12 @@ describe('useErrors', () => {
 
   test('should return empty errors if the form has no errors', () => {
     const hookForm = renderHook(() => useForm());
-    const bind = hookForm.result.current.bindFormField('phone', {
+    const bind = hookForm.result.current.bind('phone', {
       validation: { required: true },
     });
     bind.onChange({ target: { value: '675654321' } });
     const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.handleSubmit((values) => {
+    const submit = hookForm.result.current.submit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

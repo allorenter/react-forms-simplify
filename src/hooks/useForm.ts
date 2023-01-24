@@ -93,7 +93,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
     }
   }, []);
 
-  const bindFormField = useCallback(
+  const bind = useCallback(
     (name: Join<PathsToStringProps<TFormValues>, '.'>, options?: BindFormFieldOptions) => {
       formFieldsSubscriptions.initFormFieldSubscription(name as string);
       initFormField(name);
@@ -146,7 +146,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
     if (ref) ref.current?.focus();
   }, []);
 
-  const handleSubmit = useCallback(
+  const submit = useCallback(
     (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
@@ -198,8 +198,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
   }, []);
 
   return {
-    bindFormField,
-    handleSubmit,
+    bind,
+    submit,
     getValue,
     formFieldsSubscriptions,
     setValue,

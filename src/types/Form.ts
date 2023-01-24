@@ -39,7 +39,7 @@ export type Join<T extends string[], D extends string> = T extends []
   : string;
 
 export type UseForm<TFormValues> = {
-  bindFormField: (
+  bind: (
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     name: Join<PathsToStringProps<TFormValues>, '.'>,
@@ -51,7 +51,7 @@ export type UseForm<TFormValues> = {
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
   };
-  handleSubmit: (
+  submit: (
     submitFn: SubmitFn<TFormValues>,
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (

@@ -59,17 +59,17 @@ describe('useErrors', () => {
     expect(errorHook.result.current.errors).toEqual({});
   });
 
-  test('should unsuscribe when the hook unmount', () => {
-    const formFieldErrorsSubcriptions = new FormFieldsErrorsSubscriptions();
+  test('should unsubscribe when the hook unmount', () => {
+    const formFieldErrorsSubscriptions = new FormFieldsErrorsSubscriptions();
     const hookForm = renderHook(() =>
-      useForm({ formFieldsErrorsSubcriptions: formFieldErrorsSubcriptions }),
+      useForm({ formFieldsErrorsSubscriptions: formFieldErrorsSubscriptions }),
     );
     const errorsHook = renderHook(() => useErrors({ form: hookForm.result.current }));
 
-    expect(formFieldErrorsSubcriptions.getSubscribers().size).toBe(1);
+    expect(formFieldErrorsSubscriptions.getSubscribers().size).toBe(1);
 
     errorsHook.unmount();
 
-    expect(formFieldErrorsSubcriptions.getSubscribers().size).toEqual(0);
+    expect(formFieldErrorsSubscriptions.getSubscribers().size).toEqual(0);
   });
 });

@@ -14,7 +14,7 @@ export type UseFormParams =
   | {
       formFieldsSubscriptions?: FormFieldsSubscriptions;
       formFieldsTouchedSubscriptions?: FormFieldsTouchedSubscriptions;
-      formFieldsErrorsSubcriptions?: FormFieldsErrorsSubscriptions;
+      formFieldsErrorsSubscriptions?: FormFieldsErrorsSubscriptions;
     }
   | undefined;
 
@@ -69,8 +69,8 @@ export type UseForm<TFormValues> = {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error
   initFormField: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
-  formFieldsTouchedSubcriptions: FormFieldsTouchedSubscriptions;
-  formFieldsErrorsSubcriptions: FormFieldsErrorsSubscriptions;
+  formFieldsTouchedSubscriptions: FormFieldsTouchedSubscriptions;
+  formFieldsErrorsSubscriptions: FormFieldsErrorsSubscriptions;
   getErrors: () => FormFieldsErrors;
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-expect-error

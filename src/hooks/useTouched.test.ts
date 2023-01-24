@@ -29,17 +29,17 @@ describe('useErrors', () => {
     expect(touchedHook.result.current).toEqual(['name']);
   });
 
-  test('should unsuscribe when the hook unmount', () => {
-    const touchedFieldsSubcriptions = new FormFieldsTouchedSubscriptions();
+  test('should unsubscribe when the hook unmount', () => {
+    const touchedFieldsSubscriptions = new FormFieldsTouchedSubscriptions();
     const hookForm = renderHook(() =>
-      useForm({ formFieldsTouchedSubscriptions: touchedFieldsSubcriptions }),
+      useForm({ formFieldsTouchedSubscriptions: touchedFieldsSubscriptions }),
     );
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));
 
-    expect(touchedFieldsSubcriptions.getSubscribers().size).toBe(1);
+    expect(touchedFieldsSubscriptions.getSubscribers().size).toBe(1);
 
     touchedHook.unmount();
 
-    expect(touchedFieldsSubcriptions.getSubscribers().size).toEqual(0);
+    expect(touchedFieldsSubscriptions.getSubscribers().size).toEqual(0);
   });
 });

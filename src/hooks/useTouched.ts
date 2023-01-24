@@ -5,12 +5,12 @@ function useTouched<TFormValues>({ form }: { form: UseForm<TFormValues> }) {
   const [touched, setTouched] = useState<TouchedFormFields>({});
 
   useEffect(() => {
-    const unsuscribeFn = form.formFieldsTouchedSubcriptions.subscribe(
+    const unsubscribeFn = form.formFieldsTouchedSubscriptions.subscribe(
       (touch: TouchedFormFields) => {
         setTouched((prev) => ({ ...prev, ...touch }));
       },
     );
-    return () => unsuscribeFn();
+    return () => unsubscribeFn();
   }, []);
 
   const touchedArray = useMemo(() => {

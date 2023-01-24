@@ -29,14 +29,14 @@ function useForm<TFormValues extends FormFields = FormFields>(
       ? params?.formFieldsSubscriptions
       : new FormFieldsSubscriptions();
 
-  const formFieldsTouchedSubcriptions =
+  const formFieldsTouchedSubscriptions =
     params?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
       ? params?.formFieldsTouchedSubscriptions
       : new FormFieldsTouchedSubscriptions();
 
-  const formFieldsErrorsSubcriptions =
-    params?.formFieldsErrorsSubcriptions instanceof FormFieldsErrorsSubscriptions
-      ? params?.formFieldsErrorsSubcriptions
+  const formFieldsErrorsSubscriptions =
+    params?.formFieldsErrorsSubscriptions instanceof FormFieldsErrorsSubscriptions
+      ? params?.formFieldsErrorsSubscriptions
       : new FormFieldsErrorsSubscriptions();
 
   const formFields = useRef<FormFields>({} as FormFields);
@@ -67,7 +67,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
       // solo lo ejecuto en caso de querer cambiar su valor
       if (touchedFormFields.current[name] !== touch) {
         touchedFormFields.current[name] = touch;
-        formFieldsTouchedSubcriptions.publish(touchedFormFields.current);
+        formFieldsTouchedSubscriptions.publish(touchedFormFields.current);
       }
     },
     [],
@@ -85,7 +85,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
         name,
         value,
         formFieldsErrors.current,
-        formFieldsErrorsSubcriptions,
+        formFieldsErrorsSubscriptions,
       );
       formFields.current[name] = value;
       formFieldsSubscriptions.publish(name as string, value);
@@ -115,7 +115,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
           name,
           value,
           formFieldsErrors.current,
-          formFieldsErrorsSubcriptions,
+          formFieldsErrorsSubscriptions,
         );
         formFieldsSubscriptions.publish(name as string, value);
         formFields.current[name] = value;
@@ -179,7 +179,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
           name,
           formFields.current[name],
           formFieldsErrors.current,
-          formFieldsErrorsSubcriptions,
+          formFieldsErrorsSubscriptions,
         );
         if (hasError()) return focusError();
       }
@@ -205,8 +205,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
     setValue,
     reset,
     initFormField,
-    formFieldsTouchedSubcriptions,
-    formFieldsErrorsSubcriptions,
+    formFieldsTouchedSubscriptions,
+    formFieldsErrorsSubscriptions,
     getErrors,
     setFocus,
     isSubmitting,

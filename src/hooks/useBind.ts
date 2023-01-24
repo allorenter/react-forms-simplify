@@ -22,7 +22,6 @@ function useBind<TFormValues extends FormFields = FormFields>({
     setValue,
   } = form;
 
-  // HAY QUE AÑADIR UNA REF PARA PODER HACER AUTOFOCUS EN CASO DE ERROR, ETC
   useEffect(() => {
     formFieldsSubscriptions.initFormFieldSubscription(name as string);
     initFormField(name);

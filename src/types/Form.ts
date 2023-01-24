@@ -9,7 +9,6 @@ export type FormFields = Record<string, any>;
 
 export type SubmitFn<TSubmitFormFields> = (values: TSubmitFormFields) => Promise<any>;
 
-// type Form = ReturnType<typeof useForm>;
 export type UseFormParams =
   | {
       $instance: {
@@ -24,13 +23,13 @@ export type UseBindFormField = ReturnType<typeof useBind>;
 
 export type useValue = ReturnType<typeof useValue>;
 
-export type PathsToStringProps<T> = T extends string
+type PathsToStringProps<T> = T extends string
   ? []
   : {
       [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
     }[Extract<keyof T, string>];
 
-export type Join<T extends string[], D extends string> = T extends []
+type Join<T extends string[], D extends string> = T extends []
   ? never
   : T extends [infer F]
   ? F
@@ -40,16 +39,14 @@ export type Join<T extends string[], D extends string> = T extends []
     : never
   : string;
 
-export type UseForm<TFormValues> = {
+export type FormName<TFormValues extends FormFields> = Join<PathsToStringProps<TFormValues>, '.'>;
+
+export type UseForm<TFormValues extends FormFields> = {
   bind: (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    name: Join<PathsToStringProps<TFormValues>, '.'>,
+    name: FormName<TFormValues>,
     options?: BindFormFieldOptions,
   ) => {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    name: Join<PathsToStringProps<TFormValues>, '.'>;
+    name: FormName<TFormValues>;
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
   };
@@ -57,34 +54,22 @@ export type UseForm<TFormValues> = {
     submitFn: SubmitFn<TFormValues>,
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    name?: Join<PathsToStringProps<TFormValues>, '.'> | undefined,
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-  ) => TFormValues | TFormValues[Join<PathsToStringProps<TFormValues>, '.'>];
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  setValue: (name: Join<PathsToStringProps<TFormValues>, '.'>, value: any) => void;
+    name?: FormName<TFormValues> | undefined,
+  ) => TFormValues | TFormValues[FormName<TFormValues>];
+  setValue: (name: FormName<TFormValues>, value: any) => void;
   reset: (values: TFormValues) => void;
   getErrors: () => FormFieldsErrors;
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error
-  setFocus: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
+  setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;
 
   $instance: {
     setFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
     getFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
     initFormFieldValidation: (
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      name: Join<PathsToStringProps<TFormValues>, '.'>,
+      name: FormName<TFormValues>,
       validation: Validation | undefined,
     ) => void;
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    initFormField: (name: Join<PathsToStringProps<TFormValues>, '.'>) => void;
+    initFormField: (name: FormName<TFormValues>) => void;
     formFieldsTouchedSubscriptions: FormFieldsTouchedSubscriptions;
     formFieldsErrorsSubscriptions: FormFieldsErrorsSubscriptions;
     formFieldsSubscriptions: FormFieldsSubscriptions;

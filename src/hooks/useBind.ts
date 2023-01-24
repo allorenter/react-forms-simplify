@@ -1,12 +1,12 @@
 import { RefObject, useEffect, useState } from 'react';
-import { BindFormFieldOptions, FormFields, Join, PathsToStringProps, UseForm } from '@/types/Form';
+import { BindFormFieldOptions, FormFields, FormName, UseForm } from '@/types/Form';
 
 function useBind<TFormValues extends FormFields = FormFields>({
   name,
   form,
   options,
 }: {
-  name: Join<PathsToStringProps<TFormValues>, '.'>;
+  name: FormName<TFormValues>;
   form: UseForm<TFormValues>;
   options?: BindFormFieldOptions;
 }) {

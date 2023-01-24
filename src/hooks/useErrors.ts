@@ -1,7 +1,7 @@
 import { FormFieldsErrors, UseForm } from '@/types/Form';
 import { useEffect, useState } from 'react';
 
-function useFormErrors<TFormValues>({ form }: { form: UseForm<TFormValues> }) {
+function useErrors<TFormValues>({ form }: { form: UseForm<TFormValues> }) {
   const [errors, setErrors] = useState<FormFieldsErrors>({});
 
   useEffect(() => {
@@ -19,4 +19,4 @@ function useFormErrors<TFormValues>({ form }: { form: UseForm<TFormValues> }) {
   };
 }
 
-export default useFormErrors;
+export default useErrors;

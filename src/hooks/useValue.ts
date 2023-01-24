@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { FormFields, Join, PathsToStringProps, UseForm } from '@/types/Form';
 
-function useWatchFormField<TFormValues extends FormFields = FormFields>({
+function useValue<TFormValues extends FormFields = FormFields>({
   name,
   form,
 }: {
@@ -19,4 +19,4 @@ function useWatchFormField<TFormValues extends FormFields = FormFields>({
   return value;
 }
 
-export default useWatchFormField;
+export default useValue;

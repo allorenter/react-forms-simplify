@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
-import useFormFieldWatch from './useWatchFormField';
+import useFormFieldWatch from './useValue';
 import useForm from './useForm';
 
 describe('useFormFieldWatch tests', () => {

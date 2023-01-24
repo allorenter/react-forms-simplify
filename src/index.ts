@@ -1,19 +1,11 @@
-import useBindFormField from './hooks/useBindFormField';
+import useBind from './hooks/useBind';
 import useForm from './hooks/useForm';
 import useFormContext from './hooks/useFormContext';
-import useFormErrors from './hooks/useFormErrors';
-import useTouchedFormFields from './hooks/useTouchedFormFields';
-import useWatchFormField from './hooks/useWatchFormField';
+import useErrors from './hooks/useErrors';
+import useTouched from './hooks/useTouched';
+import useValue from './hooks/useValue';
 import FormProvider from './providers/FormProvider';
 
-export {
-  useForm,
-  useFormContext,
-  useBindFormField,
-  useFormErrors,
-  useTouchedFormFields,
-  useWatchFormField,
-  FormProvider,
-};
+export { useForm, useFormContext, useBind, useErrors, useTouched, useValue, FormProvider };
 
 export * from './types/Form';

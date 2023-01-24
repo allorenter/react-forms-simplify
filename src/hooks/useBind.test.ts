@@ -1,13 +1,13 @@
 import { describe, test, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import useForm from './useForm';
-import useBindFormField from './useBindFormField';
+import useBind from './useBind';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 
-describe('useBindFormField tests', () => {
+describe('useBind tests', () => {
   test('should add a name to FormField when the hook is called initially', async () => {
     const useFormHook = renderHook(() => useForm());
-    renderHook(() => useBindFormField({ name: 'test', form: useFormHook.result.current }));
+    renderHook(() => useBind({ name: 'test', form: useFormHook.result.current }));
 
     expect(useFormHook.result.current.getValue()).toEqual({ test: '' });
   });
@@ -15,7 +15,7 @@ describe('useBindFormField tests', () => {
   test('should add a FormFieldsSubscription when the hook is called initially', async () => {
     const subcriptions = new FormFieldsSubscriptions();
     const useFormHook = renderHook(() => useForm({ formFieldsSubscriptions: subcriptions }));
-    renderHook(() => useBindFormField({ name: 'test', form: useFormHook.result.current }));
+    renderHook(() => useBind({ name: 'test', form: useFormHook.result.current }));
 
     expect(subcriptions.formFieldIsInitialized('test')).toBe(true);
   });
@@ -34,7 +34,7 @@ describe('useBindFormField tests', () => {
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
+    const { result } = renderHook(() => useBind({ name: 'username', form }));
     expect(result.current.value).toEqual('');
     expect(typeof result.current.setFormFieldValue).toBe('function');
     expect(form.formFieldsSubscriptions.initFormFieldSubscription).toHaveBeenCalledWith('username');
@@ -58,7 +58,7 @@ describe('useBindFormField tests', () => {
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
+    const { result } = renderHook(() => useBind({ name: 'username', form }));
     expect(result.current.value).toEqual('new value');
     expect(typeof result.current.setFormFieldValue).toBe('function');
   });
@@ -77,7 +77,7 @@ describe('useBindFormField tests', () => {
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    const { result } = renderHook(() => useBindFormField({ name: 'username', form }));
+    const { result } = renderHook(() => useBind({ name: 'username', form }));
     result.current.setFormFieldValue('new value');
     expect(form.setValue).toHaveBeenCalledWith('username', 'new value');
   });

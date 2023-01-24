@@ -10,13 +10,28 @@ type TFieldValues = {
 
 function Example() {
   const form = useForm<TFieldValues>();
+  const { handleSubmit, bindFormField } = form;
+
+  console.log(form);
+
+  const onSubmit = (values) => {
+    console.log('values', values);
+
+    return new Promise((resolve) => {
+      resolve({});
+    });
+  };
 
   return (
     <div className='example'>
       <h1>EXAMPLE</h1>
       <div>
         <FormProvider form={form}>
-          <form></form>
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <input {...bindFormField('prueba1')} />
+
+            <button type='submit'>Enviar</button>
+          </form>
         </FormProvider>
       </div>
     </div>

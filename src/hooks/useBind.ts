@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useRef, useState } from 'react';
 import { BindFormFieldOptions, FormFields, Join, PathsToStringProps, UseForm } from '@/types/Form';
 
-function useBindFormField<TFormValues extends FormFields = FormFields>({
+function useBind<TFormValues extends FormFields = FormFields>({
   name,
   form,
   options,
@@ -37,4 +37,4 @@ function useBindFormField<TFormValues extends FormFields = FormFields>({
   };
 }
 
-export default useBindFormField;
+export default useBind;

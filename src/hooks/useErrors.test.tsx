@@ -1,15 +1,15 @@
 import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
-import { useForm, useFormErrors } from '..';
+import { useForm, useErrors } from '..';
 
-describe('useFormErrors', () => {
+describe('useErrors', () => {
   test('should return hasErrors = true if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bindFormField('name', {
       validation: { required: true },
     });
-    const errorHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
+    const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
     const submit = hookForm.result.current.handleSubmit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
@@ -27,7 +27,7 @@ describe('useFormErrors', () => {
     hookForm.result.current.bindFormField('phone', {
       validation: { required: true },
     });
-    const errorHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
+    const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
     const submit = hookForm.result.current.handleSubmit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
@@ -46,7 +46,7 @@ describe('useFormErrors', () => {
       validation: { required: true },
     });
     bind.onChange({ target: { value: '675654321' } });
-    const errorHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
+    const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
     const submit = hookForm.result.current.handleSubmit((values) => {
       return new Promise((resolve) => resolve('submit'));
     });
@@ -64,7 +64,7 @@ describe('useFormErrors', () => {
     const hookForm = renderHook(() =>
       useForm({ formFieldsErrorsSubcriptions: formFieldErrorsSubcriptions }),
     );
-    const errorsHook = renderHook(() => useFormErrors({ form: hookForm.result.current }));
+    const errorsHook = renderHook(() => useErrors({ form: hookForm.result.current }));
 
     expect(formFieldErrorsSubcriptions.getSubscribers().size).toBe(1);
 

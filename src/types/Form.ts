@@ -1,7 +1,7 @@
 import { FormEvent, RefObject } from 'react';
-import useWatchFormField from '@/hooks/useWatchFormField';
+import useValue from '@/hooks/useValue';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
-import useBindFormField from '@/hooks/useBindFormField';
+import useBind from '@/hooks/useBind';
 import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
 import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
 
@@ -18,9 +18,9 @@ export type UseFormParams =
     }
   | undefined;
 
-export type UseBindFormField = ReturnType<typeof useBindFormField>;
+export type UseBindFormField = ReturnType<typeof useBind>;
 
-export type useWatchFormField = ReturnType<typeof useWatchFormField>;
+export type useValue = ReturnType<typeof useValue>;
 
 export type PathsToStringProps<T> = T extends string
   ? []

@@ -2,5 +2,5 @@ import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
-  <React.StrictMode></React.StrictMode>,
+  <React.StrictMode>aaa</React.StrictMode>,
 );

@@ -1,7 +1,7 @@
-import { TouchedFormFields, UseForm } from '@/types/Form';
+import { FormFields, TouchedFormFields, UseForm } from '@/types/Form';
 import { useEffect, useMemo, useState } from 'react';
 
-function useTouched<TFormValues>({ form }: { form: UseForm<TFormValues> }) {
+function useTouched<TFormValues extends FormFields>({ form }: { form: UseForm<TFormValues> }) {
   const [touched, setTouched] = useState<TouchedFormFields>({});
 
   useEffect(() => {

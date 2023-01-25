@@ -33,7 +33,7 @@ function useBind<TFormValues extends FormFields = FormFields>({
 
   return {
     value: val,
-    setFormFieldValue: (val: any) => setValue(name, val),
+    setValue: (val: any) => setValue(name, val),
     ref: getFormFieldRef(name) as RefObject<HTMLInputElement>,
   };
 }

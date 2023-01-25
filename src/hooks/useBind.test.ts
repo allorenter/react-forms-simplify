@@ -40,7 +40,7 @@ describe('useBind tests', () => {
     // @ts-expect-error
     const { result } = renderHook(() => useBind({ name: 'username', form }));
     expect(result.current.value).toEqual('');
-    expect(typeof result.current.setFormFieldValue).toBe('function');
+    expect(typeof result.current.setValue).toBe('function');
     expect(form.$instance.formFieldsSubscriptions.initFormFieldSubscription).toHaveBeenCalledWith(
       'username',
     );
@@ -68,10 +68,10 @@ describe('useBind tests', () => {
     // @ts-expect-error
     const { result } = renderHook(() => useBind({ name: 'username', form }));
     expect(result.current.value).toEqual('new value');
-    expect(typeof result.current.setFormFieldValue).toBe('function');
+    expect(typeof result.current.setValue).toBe('function');
   });
 
-  test('should update the form field value when setFormFieldValue is called', () => {
+  test('should update the form field value when setValue is called', () => {
     const form = {
       $instance: {
         formFieldsSubscriptions: {
@@ -88,7 +88,7 @@ describe('useBind tests', () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     const { result } = renderHook(() => useBind({ name: 'username', form }));
-    result.current.setFormFieldValue('new value');
+    result.current.setValue('new value');
     expect(form.setValue).toHaveBeenCalledWith('username', 'new value');
   });
 });

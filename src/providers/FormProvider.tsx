@@ -1,7 +1,7 @@
 import FormContext from '@/context/FormContext';
-import { UseForm } from '@/types/Form';
+import { FormFields, UseForm } from '@/types/Form';
 
-function FormProvider<TFormValues>({
+function FormProvider<TFormValues extends FormFields>({
   children,
   form,
 }: {

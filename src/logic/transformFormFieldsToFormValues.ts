@@ -14,7 +14,9 @@ function transformFormFieldsToFormValues(formFields: FormFields) {
         }
         current = current[parts[i]];
       }
-      current[parts[parts.length - 1]] = value;
+      if (typeof current === 'object') {
+        current[parts[parts.length - 1]] = value;
+      }
     } else {
       result[key] = value;
     }

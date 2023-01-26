@@ -97,7 +97,10 @@ describe('useForm tests', () => {
       return (
         <>
           <button onClick={onClick}>Set value</button>
-          <input {...form.bind('test')} defaultValue={defaultValue} />
+          <input
+            {...form.bind('test')}
+            defaultValue={defaultValue}
+          />
         </>
       );
     };

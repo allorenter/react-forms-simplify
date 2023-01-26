@@ -8,7 +8,11 @@ function FormProvider<TFormValues extends FormFields>({
   children: JSX.Element | JSX.Element[];
   form: UseForm<TFormValues>;
 }) {
-  return <FormContext.Provider value={form}>{children}</FormContext.Provider>;
+  return (
+    <FormContext.Provider value={form} key={'0'}>
+      {children}
+    </FormContext.Provider>
+  );
 }
 
 export default FormProvider;

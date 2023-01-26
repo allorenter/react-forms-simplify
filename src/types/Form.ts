@@ -7,7 +7,7 @@ import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions
 
 export type FormFields = Record<string, any>;
 
-export type SubmitFn<TSubmitFormFields> = (values: TSubmitFormFields) => Promise<any>;
+export type SubmitFn<TSubmitFormFields> = (values: TSubmitFormFields) => any;
 
 export type UseFormParams =
   | {
@@ -61,7 +61,6 @@ export type UseForm<TFormValues extends FormFields> = {
   getErrors: () => FormFieldsErrors;
   setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;
-
   $instance: {
     setFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
     getFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;

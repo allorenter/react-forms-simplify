@@ -178,10 +178,22 @@ function useForm<TFormValues extends FormFields = FormFields>(
       }
 
       const formatted = transformFormFieldsToFormValues(formFields.current);
+
       setIsSubmitting(true);
-      return submitFn(formatted as TFormValues).finally(() => {
-        setIsSubmitting(false);
-      });
+      try {
+        return submitFn(formatted as TFormValues).finally(() => {
+          setIsSubmitting(false);
+        });
+      } catch (e) {
+        if (e instanceof TypeError) {
+          // ejecuto promesa para que isSubmitting sea true y después false
+          new Promise((resolve) => {
+            resolve('');
+          }).then(() => {
+            setIsSubmitting(false);
+          });
+        }
+      }
     },
     [],
   );

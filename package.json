@@ -1,14 +1,24 @@
 {
   "name": "react-forms-simplify",
   "version": "1.0.0",
-  "description": "",
+  "description": "Simple React forms library",
   "type": "module",
-  "files": [
-    "dist"
+  "keywords": [
+    "react",
+    "hooks",
+    "form",
+    "forms",
+    "typescript",
+    "react-hooks"
   ],
+  "license": "MIT",
   "main": "./dist/react-forms-simplify.umd.cjs",
   "module": "./dist/react-forms-simplify.js",
   "types": "./dist/index.d.ts",
+  "author": "allorenter",
+  "files": [
+    "dist"
+  ],
   "exports": {
     ".": {
       "import": "./dist/react-forms-simplify.js",
@@ -29,8 +39,6 @@
     "type": "git",
     "url": "git+https://github.com/allorenter/react-forms-simplify.git"
   },
-  "author": "allorenter",
-  "license": "ISC",
   "bugs": {
     "url": "https://github.com/allorenter/react-forms-simplify/issues"
   },

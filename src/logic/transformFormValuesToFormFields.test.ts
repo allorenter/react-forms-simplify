@@ -29,4 +29,22 @@ describe('transformFormValuesToFormFields', () => {
 
     expect(transformFormValuesToFormFields(input)).toEqual(expected);
   });
+
+  test('should return array values correctly', () => {
+    const input = {
+      key1: 'value1',
+      key2: {
+        nestedKey1: 'nestedValue1',
+        nestedKey2: ['a', 'b'],
+      },
+    };
+
+    const expected = {
+      key1: 'value1',
+      'key2.nestedKey1': 'nestedValue1',
+      'key2.nestedKey2': ['a', 'b'],
+    };
+
+    expect(transformFormValuesToFormFields(input)).toEqual(expected);
+  });
 });

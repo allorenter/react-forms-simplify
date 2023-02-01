@@ -14,11 +14,16 @@ function getRef<T>(key: string): React.RefObject<T> | undefined | void {
   return map.get(key) as React.RefObject<T>;
 }
 
+function getAllRefs() {
+  return map;
+}
+
 function useDynamicRefs<T>(): [
   (key: string) => void | React.RefObject<T>,
   (key: string) => void | React.RefObject<T>,
+  () => Map<string, React.RefObject<unknown>>,
 ] {
-  return [getRef, setRef];
+  return [getRef, setRef, getAllRefs];
 }
 
 export default useDynamicRefs;

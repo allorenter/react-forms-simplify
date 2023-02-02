@@ -1,14 +1,14 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import NamesValuesSubscriptions from '@/logic/NamesValuesSubscriptions';
-import useFormFieldWatch from './useValue';
+import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
+import useValueWatch from './useValue';
 import useForm from './useForm';
 
-describe('useFormFieldWatch tests', () => {
-  test('should return null if the FormField to which we subscribe has not been initialized', async () => {
+describe('useValueWatch tests', () => {
+  test('should return null if the Value to which we subscribe has not been initialized', async () => {
     const form = renderHook(() => useForm());
     const { result } = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
@@ -17,14 +17,12 @@ describe('useFormFieldWatch tests', () => {
     expect(result.current).toBe(undefined);
   });
 
-  test('should return undefined if the FormField is initialized but has not publish a value yet', async () => {
-    const subscriptions = new NamesValuesSubscriptions();
-    subscriptions.initFormFieldSubscription('name');
-    const form = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
-    );
+  test('should return undefined if the Value is initialized but has not publish a value yet', async () => {
+    const subscriptions = new ValuesSubscriptions();
+    subscriptions.initValueSubscription('name');
+    const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { result } = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
@@ -33,14 +31,12 @@ describe('useFormFieldWatch tests', () => {
     expect(result.current).toBe(undefined);
   });
 
-  test('should return the value if the FormField is initialized and publish a value', async () => {
-    const subscriptions = new NamesValuesSubscriptions();
-    subscriptions.initFormFieldSubscription('name');
-    const form = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
-    );
+  test('should return the value if the Value is initialized and publish a value', async () => {
+    const subscriptions = new ValuesSubscriptions();
+    subscriptions.initValueSubscription('name');
+    const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { result, rerender } = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
@@ -55,70 +51,64 @@ describe('useFormFieldWatch tests', () => {
     expect(result.current).toBe(publishedValue);
   });
 
-  test('should not create a new subscription if other FormField is subscribed ', async () => {
-    const subscriptions = new NamesValuesSubscriptions();
-    subscriptions.initFormFieldSubscription('name');
-    const form = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
-    );
+  test('should not create a new subscription if other Value is subscribed ', async () => {
+    const subscriptions = new ValuesSubscriptions();
+    subscriptions.initValueSubscription('name');
+    const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const hookName = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
     );
-    subscriptions.initFormFieldSubscription('cod');
+    subscriptions.initValueSubscription('cod');
     renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'cod',
         form: form.result.current,
       }),
     );
-    hookName.rerender({ namesValuesSubscriptions: subscriptions });
-    const nameSubscribers = subscriptions.getFormFieldSubscription('name').getSubscribers();
+    hookName.rerender({ valuesSubscriptions: subscriptions });
+    const nameSubscribers = subscriptions.getValueSubscription('name').getSubscribers();
 
     expect(nameSubscribers.size).toBe(1);
   });
 
-  test('should be two subscribers in the FormFieldSubscription if there are two hooks subscribed to the same name', async () => {
-    const subscriptions = new NamesValuesSubscriptions();
-    subscriptions.initFormFieldSubscription('name');
-    const form = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
-    );
+  test('should be two subscribers in the ValueSubscription if there are two hooks subscribed to the same name', async () => {
+    const subscriptions = new ValuesSubscriptions();
+    subscriptions.initValueSubscription('name');
+    const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const firstHook = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
     );
     const secondHook = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
     );
     firstHook.rerender();
     secondHook.rerender();
-    const nameSubscribers = subscriptions.getFormFieldSubscription('name').getSubscribers();
+    const nameSubscribers = subscriptions.getValueSubscription('name').getSubscribers();
 
     expect(nameSubscribers.size).toBe(2);
   });
 
   test('should have the same value if two hooks are subscribed to the same name', async () => {
-    const subscriptions = new NamesValuesSubscriptions();
-    subscriptions.initFormFieldSubscription('name');
-    const form = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
-    );
+    const subscriptions = new ValuesSubscriptions();
+    subscriptions.initValueSubscription('name');
+    const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const firstHook = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
     );
     const secondHook = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
@@ -137,18 +127,16 @@ describe('useFormFieldWatch tests', () => {
   });
 
   test('should remove the subscription if the hook unmount', () => {
-    const subscriptions = new NamesValuesSubscriptions();
-    subscriptions.initFormFieldSubscription('name');
-    const form = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
-    );
+    const subscriptions = new ValuesSubscriptions();
+    subscriptions.initValueSubscription('name');
+    const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { unmount } = renderHook(() =>
-      useFormFieldWatch({
+      useValueWatch({
         name: 'name',
         form: form.result.current,
       }),
     );
-    const nameSubscription = subscriptions.getFormFieldSubscription('name');
+    const nameSubscription = subscriptions.getValueSubscription('name');
 
     expect(nameSubscription.getSubscribers().size).toBe(1);
 

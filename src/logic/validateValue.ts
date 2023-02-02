@@ -1,7 +1,7 @@
 import { FormErrors, Validation } from '@/types/Form';
 import ErrorsSubscriptions from './ErrorsSubscriptions';
 
-function validateFormField(
+function validateValue(
   validation: Validation | undefined,
   name: string,
   value: any,
@@ -23,4 +23,4 @@ function validateFormField(
   errorsSubscriptions.publish(errors);
 }
 
-export default validateFormField;
+export default validateValue;

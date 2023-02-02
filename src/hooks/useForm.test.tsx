@@ -1,7 +1,7 @@
 import { describe, test, expect } from 'vitest';
 import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
 import useForm from './useForm';
-import NamesValuesSubscriptions from '@/logic/NamesValuesSubscriptions';
+import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 
 describe('useForm tests', () => {
   test('should return an empty object if getValues is called initially', async () => {
@@ -10,13 +10,13 @@ describe('useForm tests', () => {
     expect(result.current.getValue()).toEqual({});
   });
 
-  test('should return undefined if getValue is called with a name that has not been in the namesValues', async () => {
+  test('should return undefined if getValue is called with a name that has not been in the values', async () => {
     const { result } = renderHook(() => useForm());
 
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  test('should not set a FormField when the name has not been bind', async () => {
+  test('should not set a Value when the name has not been bind', async () => {
     const { result } = renderHook(() => useForm());
     const value = 'test value';
     result.current.setValue('name', value);
@@ -24,10 +24,10 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  test('should add a name to FormField when call bind', async () => {
-    const Subscriptions = new NamesValuesSubscriptions();
+  test('should add a name to Value when call bind', async () => {
+    const Subscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: Subscriptions } }),
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
     );
     const formControl = result.current.bind('name');
     const fieldValue = 'value for the simulated field';
@@ -41,14 +41,14 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toBe(fieldValue);
   });
 
-  test('should add a NamesValuesSubscription when call bind', async () => {
-    const Subscriptions = new NamesValuesSubscriptions();
+  test('should add a ValuesSubscription when call bind', async () => {
+    const Subscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: Subscriptions } }),
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
     );
     result.current.bind('name');
 
-    expect(Subscriptions.formFieldIsInitialized('name')).toBe(true);
+    expect(Subscriptions.valueIsInitialized('name')).toBe(true);
   });
 
   test('should set value when called setValue and the name is binded', async () => {
@@ -66,9 +66,9 @@ describe('useForm tests', () => {
   });
 
   test('should notify to subscribers when onChange is called', async () => {
-    const Subscriptions = new NamesValuesSubscriptions();
+    const Subscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: Subscriptions } }),
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
     );
     const value = 'value for test';
     const formControl = result.current.bind('name');
@@ -114,9 +114,9 @@ describe('useForm tests', () => {
   });
 
   test('should notify to subscribers when onChange is called', async () => {
-    const Subscriptions = new NamesValuesSubscriptions();
+    const Subscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: Subscriptions } }),
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
     );
     const value = 'value for test';
     result.current.bind('name');
@@ -129,7 +129,7 @@ describe('useForm tests', () => {
     expect(mockActionValue).toBe(value);
   });
 
-  test('should set the initial NamesValues when called reset', async () => {
+  test('should set the initial Values when called reset', async () => {
     const { result } = renderHook(() => useForm());
     const values = {
       test1: 'value for test1',
@@ -140,7 +140,7 @@ describe('useForm tests', () => {
     expect(result.current.getValue()).toEqual(values);
   });
 
-  test('should reset the current namesValues when called reset', async () => {
+  test('should reset the current values when called reset', async () => {
     const { result } = renderHook(() => useForm());
     const initialValues = { value: 'value' };
     result.current.reset(initialValues);
@@ -157,9 +157,9 @@ describe('useForm tests', () => {
   });
 
   test('should notify to subscribers when reset is called', async () => {
-    const Subscriptions = new NamesValuesSubscriptions();
+    const Subscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: Subscriptions } }),
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
     );
     const valueForTest1 = 'value for test 1';
     const valueForTest2 = 'value for test 2';
@@ -182,16 +182,16 @@ describe('useForm tests', () => {
   });
 
   test('should add only one subscription when called bindFormControl even if the componet is rerendered', async () => {
-    const namesValuesSubscriptions = new NamesValuesSubscriptions();
+    const valuesSubscriptions = new ValuesSubscriptions();
     const Component = () => {
-      const form = useForm({ $instance: { namesValuesSubscriptions: namesValuesSubscriptions } });
+      const form = useForm({ $instance: { valuesSubscriptions: valuesSubscriptions } });
 
       return <input {...form.bind('name')} />;
     };
     const { rerender } = render(<Component />);
     rerender(<Component />);
 
-    expect(namesValuesSubscriptions.getFormFieldSubscription('name').getSubscribers().size).toBe(1);
+    expect(valuesSubscriptions.getValueSubscription('name').getSubscribers().size).toBe(1);
   });
 
   test('should change the inputs values when reset is called', async () => {
@@ -220,13 +220,13 @@ describe('useForm tests', () => {
     });
   });
 
-  // test para getValues con namesValues anidados
+  // test para getValues con values anidados
 
   // faltan los tests del onSubmit
 
-  // test para comprobar correcto funcionamiento de touchedNamesValues
+  // test para comprobar correcto funcionamiento de touchedValues
 
-  // testear que setea a [] los touchedNamesValues cuando llamo a reset
+  // testear que setea a [] los touchedValues cuando llamo a reset
 
   // test para comprobar funcionamiento de los errores
 });

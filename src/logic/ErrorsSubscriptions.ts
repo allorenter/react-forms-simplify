@@ -1,4 +1,4 @@
-import { FormErrors, TouchedNamesValues } from '@/types/Form';
+import { FormErrors, TouchedValues } from '@/types/Form';
 import { SetStateAction } from 'react';
 import formatErrors from './formatErrors';
 
@@ -6,7 +6,7 @@ class ErrorsSubscriptions {
   private subscribers: Set<SetStateAction<any>>;
 
   constructor() {
-    this.subscribers = new Set<SetStateAction<TouchedNamesValues>>();
+    this.subscribers = new Set<SetStateAction<TouchedValues>>();
   }
 
   subscribe(actionFn: SetStateAction<any>) {

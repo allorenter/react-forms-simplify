@@ -1,13 +1,13 @@
 import { describe, test, expect } from 'vitest';
-import transformFormValuesToNamesValues from './transformFormValuesToNamesValues';
+import transformFormValuesToValues from './transformFormValuesToValues';
 
-describe('transformFormValuesToNamesValues', () => {
+describe('transformFormValuesToValues', () => {
   test('should returns an empty object for an empty input object', () => {
-    expect(transformFormValuesToNamesValues({})).toEqual({});
+    expect(transformFormValuesToValues({})).toEqual({});
   });
 
   test('should returns a single key-value pair for a single-level input object', () => {
-    expect(transformFormValuesToNamesValues({ key: 'value' })).toEqual({ key: 'value' });
+    expect(transformFormValuesToValues({ key: 'value' })).toEqual({ key: 'value' });
   });
 
   test('should returns multiple key-value pairs with dot-separated keys for a multi-level input object', () => {
@@ -27,7 +27,7 @@ describe('transformFormValuesToNamesValues', () => {
       'key2.nestedKey2.nestedNestedKey1': 'nestedNestedValue1',
     };
 
-    expect(transformFormValuesToNamesValues(input)).toEqual(expected);
+    expect(transformFormValuesToValues(input)).toEqual(expected);
   });
 
   test('should return array values correctly', () => {
@@ -45,6 +45,6 @@ describe('transformFormValuesToNamesValues', () => {
       'key2.nestedKey2': ['a', 'b'],
     };
 
-    expect(transformFormValuesToNamesValues(input)).toEqual(expected);
+    expect(transformFormValuesToValues(input)).toEqual(expected);
   });
 });

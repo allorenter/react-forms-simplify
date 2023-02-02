@@ -1,9 +1,9 @@
-function transformFormValuesToNamesValues(formValues: Record<string, any>) {
+function transformFormValuesToValues(formValues: Record<string, any>) {
   const paths: Record<string, any> = {};
 
   for (const [key, value] of Object.entries(formValues)) {
     if (typeof value === 'object' && !Array.isArray(value)) {
-      const nestedPaths = transformFormValuesToNamesValues(value);
+      const nestedPaths = transformFormValuesToValues(value);
       for (const [nestedKey, nestedValue] of Object.entries(nestedPaths)) {
         paths[`${key}.${nestedKey}`] = nestedValue;
       }
@@ -15,4 +15,4 @@ function transformFormValuesToNamesValues(formValues: Record<string, any>) {
   return paths;
 }
 
-export default transformFormValuesToNamesValues;
+export default transformFormValuesToValues;

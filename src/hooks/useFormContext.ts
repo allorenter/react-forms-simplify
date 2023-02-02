@@ -1,8 +1,8 @@
 import { useContext } from 'react';
 import FormContext from '@/context/FormContext';
-import { NamesValues, UseForm } from '@/types/Form';
+import { Values, UseForm } from '@/types/Form';
 
-function useFormContext<TFormValues extends NamesValues>() {
+function useFormContext<TFormValues extends Values>() {
   return useContext(FormContext) as UseForm<TFormValues>;
 }
 

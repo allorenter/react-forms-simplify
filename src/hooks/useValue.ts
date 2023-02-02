@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import { NamesValues, FormName, UseForm } from '@/types/Form';
+import { Values, FormName, UseForm } from '@/types/Form';
 
-function useValue<TFormValues extends NamesValues = NamesValues>({
+function useValue<TFormValues extends Values = Values>({
   name,
   form,
 }: {
@@ -9,10 +9,10 @@ function useValue<TFormValues extends NamesValues = NamesValues>({
   form: UseForm<TFormValues>;
 }) {
   const [value, setValue] = useState<any>();
-  const { namesValuesSubscriptions } = form.$instance;
+  const { valuesSubscriptions } = form.$instance;
 
   useEffect(() => {
-    const unsubscribeFn = namesValuesSubscriptions.subscribe(name, setValue);
+    const unsubscribeFn = valuesSubscriptions.subscribe(name, setValue);
     return () => unsubscribeFn?.();
   }, []);
 

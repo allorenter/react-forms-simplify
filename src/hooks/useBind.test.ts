@@ -2,37 +2,37 @@ import { describe, test, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import useForm from './useForm';
 import useBind from './useBind';
-import NamesValuesSubscriptions from '@/logic/NamesValuesSubscriptions';
+import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 
 describe('useBind tests', () => {
-  test('should add a name to FormField when the hook is called initially', async () => {
+  test('should add a name to Value when the hook is called initially', async () => {
     const useFormHook = renderHook(() => useForm());
     renderHook(() => useBind({ name: 'test', form: useFormHook.result.current }));
 
     expect(useFormHook.result.current.getValue()).toEqual({ test: '' });
   });
 
-  test('should add a NamesValuesSubscription when the hook is called initially', async () => {
-    const Subscriptions = new NamesValuesSubscriptions();
+  test('should add a ValuesSubscription when the hook is called initially', async () => {
+    const Subscriptions = new ValuesSubscriptions();
     const useFormHook = renderHook(() =>
-      useForm({ $instance: { namesValuesSubscriptions: Subscriptions } }),
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
     );
     renderHook(() => useBind({ name: 'test', form: useFormHook.result.current }));
 
-    expect(Subscriptions.formFieldIsInitialized('test')).toBe(true);
+    expect(Subscriptions.valueIsInitialized('test')).toBe(true);
   });
 
   test('should bind a form field to the component', () => {
     const form = {
       $instance: {
-        namesValuesSubscriptions: {
-          initFormFieldSubscription: vi.fn(),
+        valuesSubscriptions: {
+          initValueSubscription: vi.fn(),
           subscribe: vi.fn(() => vi.fn()),
         },
-        initFormField: vi.fn(),
-        getFormFieldRef: vi.fn(),
-        initFormFieldValidation: vi.fn(),
-        setFormFieldRef: vi.fn(),
+        initValue: vi.fn(),
+        getValueRef: vi.fn(),
+        initValueValidation: vi.fn(),
+        setValueRef: vi.fn(),
       },
       setValue: vi.fn(),
     };
@@ -41,26 +41,26 @@ describe('useBind tests', () => {
     const { result } = renderHook(() => useBind({ name: 'username', form }));
     expect(result.current.value).toEqual('');
     expect(typeof result.current.setValue).toBe('function');
-    expect(form.$instance.namesValuesSubscriptions.initFormFieldSubscription).toHaveBeenCalledWith(
+    expect(form.$instance.valuesSubscriptions.initValueSubscription).toHaveBeenCalledWith(
       'username',
     );
-    expect(form.$instance.initFormField).toHaveBeenCalledWith('username');
+    expect(form.$instance.initValue).toHaveBeenCalledWith('username');
   });
 
   test('should update the component when the form field value changes', () => {
     const form = {
       $instance: {
-        namesValuesSubscriptions: {
-          initFormFieldSubscription: vi.fn(),
+        valuesSubscriptions: {
+          initValueSubscription: vi.fn(),
           subscribe: vi.fn((name, callback) => {
             callback('new value');
             return vi.fn();
           }),
         },
-        initFormField: vi.fn(),
-        getFormFieldRef: vi.fn(),
-        initFormFieldValidation: vi.fn(),
-        setFormFieldRef: vi.fn(),
+        initValue: vi.fn(),
+        getValueRef: vi.fn(),
+        initValueValidation: vi.fn(),
+        setValueRef: vi.fn(),
       },
       setValue: vi.fn(),
     };
@@ -74,14 +74,14 @@ describe('useBind tests', () => {
   test('should update the form field value when setValue is called', () => {
     const form = {
       $instance: {
-        namesValuesSubscriptions: {
-          initFormFieldSubscription: vi.fn(),
+        valuesSubscriptions: {
+          initValueSubscription: vi.fn(),
           subscribe: vi.fn(() => vi.fn()),
         },
-        initFormField: vi.fn(),
-        getFormFieldRef: vi.fn(),
-        initFormFieldValidation: vi.fn(),
-        setFormFieldRef: vi.fn(),
+        initValue: vi.fn(),
+        getValueRef: vi.fn(),
+        initValueValidation: vi.fn(),
+        setValueRef: vi.fn(),
       },
       setValue: vi.fn(),
     };

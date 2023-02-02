@@ -4,7 +4,7 @@ import { describe, test, expect } from 'vitest';
 import { useForm, useTouched } from '..';
 
 describe('useErrors', () => {
-  test('should return empty array if no formField is touched', () => {
+  test('should return empty array if no value is touched', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bind('name', {
       validation: { required: true },
@@ -16,7 +16,7 @@ describe('useErrors', () => {
     expect(touchedHook.result.current).toEqual([]);
   });
 
-  test('should return the name of the touched namesValues', () => {
+  test('should return the name of the touched values', () => {
     const hookForm = renderHook(() => useForm());
     const formControl = hookForm.result.current.bind('name');
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));

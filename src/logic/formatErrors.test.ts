@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
-import { FormFieldsErrors } from '..';
-import formatFormFieldsErrors from './formatFormFieldsErrors';
+import { FormErrors } from '..';
+import formatErrors from './formatErrors';
 
-describe('formatFormFieldsErrors', () => {
+describe('formatErrors', () => {
   test('should remove entries with undefined values', () => {
     const formFieldsErrors = {
       field1: { name: 'field1', type: 'required', message: 'This field is required' },
@@ -14,14 +14,14 @@ describe('formatFormFieldsErrors', () => {
       field3: { name: 'field3', type: 'validateFunction', message: 'Invalid value' },
     };
 
-    expect(formatFormFieldsErrors(formFieldsErrors as FormFieldsErrors)).toEqual(expectedResult);
+    expect(formatErrors(formFieldsErrors as FormErrors)).toEqual(expectedResult);
   });
 
   test('should return an empty object for an empty input object', () => {
     const formFieldsErrors = {};
     const expectedResult = {};
 
-    expect(formatFormFieldsErrors(formFieldsErrors)).toEqual(expectedResult);
+    expect(formatErrors(formFieldsErrors)).toEqual(expectedResult);
   });
 
   test('should return an empty object for an input object that has only undefined values', () => {
@@ -32,7 +32,7 @@ describe('formatFormFieldsErrors', () => {
     };
     const expectedResult = {};
 
-    expect(formatFormFieldsErrors(formFieldsErrors)).toEqual(expectedResult);
+    expect(formatErrors(formFieldsErrors)).toEqual(expectedResult);
   });
 
   test('should return the input object for an input object that has only non-undefined values', () => {
@@ -47,6 +47,6 @@ describe('formatFormFieldsErrors', () => {
       field3: { name: 'field3', type: 'required', message: 'This field is also required' },
     };
 
-    expect(formatFormFieldsErrors(formFieldsErrors as FormFieldsErrors)).toEqual(expectedResult);
+    expect(formatErrors(formFieldsErrors as FormErrors)).toEqual(expectedResult);
   });
 });

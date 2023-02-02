@@ -1,12 +1,12 @@
-import { FormFieldsErrors, Validation } from '@/types/Form';
-import FormFieldsErrorsSubscriptions from './FormFieldsErrorsSubscriptions';
+import { FormErrors, Validation } from '@/types/Form';
+import ErrorsSubscriptions from './ErrorsSubscriptions';
 
 function validateFormField(
   validation: Validation | undefined,
   name: string,
   value: any,
-  formFieldsErrors: FormFieldsErrors,
-  formFieldsErrorsSubscriptions: FormFieldsErrorsSubscriptions,
+  formFieldsErrors: FormErrors,
+  formFieldsErrorsSubscriptions: ErrorsSubscriptions,
 ) {
   if (!validation) return;
 

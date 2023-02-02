@@ -1,4 +1,4 @@
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
+import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { useForm, useErrors } from '..';
@@ -60,7 +60,7 @@ describe('useErrors', () => {
   });
 
   test('should unsubscribe when the hook unmount', () => {
-    const formFieldErrorsSubscriptions = new FormFieldsErrorsSubscriptions();
+    const formFieldErrorsSubscriptions = new ErrorsSubscriptions();
     const hookForm = renderHook(() =>
       useForm({ $instance: { formFieldsErrorsSubscriptions: formFieldErrorsSubscriptions } }),
     );

@@ -2,7 +2,7 @@ import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
 import {
   BindFormFieldOptions,
   FormFields,
-  FormFieldsErrors,
+  FormErrors,
   FormFieldsValidations,
   FormName,
   SubmitFn,
@@ -15,11 +15,11 @@ import useDynamicRefs from './useDynamicRef';
 import transformFormFieldsToFormValues from '@/logic/transformFormFieldsToFormValues';
 import transformFormValuesToFormFields from '@/logic/transformFormValuesToFormFields';
 import validateFormField from '@/logic/validateFormField';
-import formatFormFieldsErrors from '@/logic/formatFormFieldsErrors';
+import formatErrors from '@/logic/formatErrors';
 import { splitCheckboxName, createCheckboxName } from '@/logic/checkboxName';
 import createFormFieldsSubscriptions from '@/logic/createFormFieldsSubscriptions';
 import createFormFieldsTouchedSubscriptions from '@/logic/createFormFieldsTouchedSubscriptions';
-import createFormFieldsErrorsSubscriptions from '@/logic/createFormFieldsErrorsSubscriptions';
+import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
 
 function useForm<TFormValues extends FormFields = FormFields>(
   params?: UseFormParams,
@@ -32,14 +32,14 @@ function useForm<TFormValues extends FormFields = FormFields>(
     params?.$instance?.formFieldsTouchedSubscriptions,
   );
 
-  const formFieldsErrorsSubscriptions = createFormFieldsErrorsSubscriptions(
+  const formFieldsErrorsSubscriptions = createErrorsSubscriptions(
     params?.$instance?.formFieldsErrorsSubscriptions,
   );
 
   const formFields = useRef<FormFields>({} as FormFields);
   const [getFormFieldRef, setFormFieldRef] = useDynamicRefs<HTMLInputElement>();
   const touchedFormFields = useRef<TouchedFormFields>({});
-  const formFieldsErrors = useRef<FormFieldsErrors>({});
+  const formFieldsErrors = useRef<FormErrors>({});
   const formFieldsValidations = useRef<FormFieldsValidations>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -273,7 +273,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
   );
 
   const getErrors = useCallback(() => {
-    return formatFormFieldsErrors(formFieldsErrors.current);
+    return formatErrors(formFieldsErrors.current);
   }, []);
 
   return {

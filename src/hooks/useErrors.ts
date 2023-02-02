@@ -1,12 +1,12 @@
-import { FormFields, FormFieldsErrors, UseForm } from '@/types/Form';
+import { FormFields, FormErrors, UseForm } from '@/types/Form';
 import { useEffect, useState } from 'react';
 
 function useErrors<TFormValues extends FormFields>({ form }: { form: UseForm<TFormValues> }) {
-  const [errors, setErrors] = useState<FormFieldsErrors>({});
+  const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
     const unsubscribeFn = form.$instance.formFieldsErrorsSubscriptions.subscribe(
-      (errors: FormFieldsErrors) => {
+      (errors: FormErrors) => {
         setErrors(() => ({ ...errors }));
       },
     );

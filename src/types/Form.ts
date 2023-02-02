@@ -3,7 +3,7 @@ import useValue from '@/hooks/useValue';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import useBind from '@/hooks/useBind';
 import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
+import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 
 export type FormFields = Record<string, any>;
 
@@ -14,7 +14,7 @@ export type UseFormParams =
       $instance: {
         formFieldsSubscriptions?: FormFieldsSubscriptions;
         formFieldsTouchedSubscriptions?: FormFieldsTouchedSubscriptions;
-        formFieldsErrorsSubscriptions?: FormFieldsErrorsSubscriptions;
+        formFieldsErrorsSubscriptions?: ErrorsSubscriptions;
       };
     }
   | undefined;
@@ -56,7 +56,7 @@ export type UseForm<TFormValues extends FormFields> = {
   ) => TFormValues | TFormValues[FormName<TFormValues>];
   setValue: (name: FormName<TFormValues>, value: any) => void;
   reset: (values: TFormValues) => void;
-  getErrors: () => FormFieldsErrors;
+  getErrors: () => FormErrors;
   setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;
   bindCheckbox: (
@@ -73,7 +73,7 @@ export type UseForm<TFormValues extends FormFields> = {
     ) => void;
     initFormField: (name: FormName<TFormValues>) => void;
     formFieldsTouchedSubscriptions: FormFieldsTouchedSubscriptions;
-    formFieldsErrorsSubscriptions: FormFieldsErrorsSubscriptions;
+    formFieldsErrorsSubscriptions: ErrorsSubscriptions;
     formFieldsSubscriptions: FormFieldsSubscriptions;
   };
 };
@@ -103,4 +103,4 @@ export type FormFieldError =
     }
   | undefined;
 
-export type FormFieldsErrors = Record<string, FormFieldError>;
+export type FormErrors = Record<string, FormFieldError>;

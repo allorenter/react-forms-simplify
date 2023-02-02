@@ -1,6 +1,6 @@
-import { FormFieldsErrors } from '@/types/Form';
+import { FormErrors } from '@/types/Form';
 
-function formatFormFieldsErrors(formFieldsErrors: FormFieldsErrors) {
+function formatErrors(formFieldsErrors: FormErrors) {
   const objectEntries = Object.entries(formFieldsErrors).filter((entry) => {
     const [, error] = entry;
     return error !== undefined;
@@ -8,4 +8,4 @@ function formatFormFieldsErrors(formFieldsErrors: FormFieldsErrors) {
   return Object.fromEntries(objectEntries);
 }
 
-export default formatFormFieldsErrors;
+export default formatErrors;

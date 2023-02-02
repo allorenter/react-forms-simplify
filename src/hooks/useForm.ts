@@ -1,5 +1,4 @@
 import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
-import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import {
   BindFormFieldOptions,
   FormFields,
@@ -14,29 +13,28 @@ import {
 } from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
 import transformFormFieldsToFormValues from '@/logic/transformFormFieldsToFormValues';
-import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
 import transformFormValuesToFormFields from '@/logic/transformFormValuesToFormFields';
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
 import validateFormField from '@/logic/validateFormField';
 import formatFormFieldsErrors from '@/logic/formatFormFieldsErrors';
+import { splitCheckboxName, createCheckboxName } from '@/logic/checkboxName';
+import createFormFieldsSubscriptions from '@/logic/createFormFieldsSubscriptions';
+import createFormFieldsTouchedSubscriptions from '@/logic/createFormFieldsTouchedSubscriptions';
+import createFormFieldsErrorsSubscriptions from '@/logic/createFormFieldsErrorsSubscriptions';
 
 function useForm<TFormValues extends FormFields = FormFields>(
   params?: UseFormParams,
 ): UseForm<TFormValues> {
-  const formFieldsSubscriptions =
-    params?.$instance?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
-      ? params?.$instance?.formFieldsSubscriptions
-      : new FormFieldsSubscriptions();
+  const formFieldsSubscriptions = createFormFieldsSubscriptions(
+    params?.$instance?.formFieldsSubscriptions,
+  );
 
-  const formFieldsTouchedSubscriptions =
-    params?.$instance?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
-      ? params?.$instance?.formFieldsTouchedSubscriptions
-      : new FormFieldsTouchedSubscriptions();
+  const formFieldsTouchedSubscriptions = createFormFieldsTouchedSubscriptions(
+    params?.$instance?.formFieldsTouchedSubscriptions,
+  );
 
-  const formFieldsErrorsSubscriptions =
-    params?.$instance?.formFieldsErrorsSubscriptions instanceof FormFieldsErrorsSubscriptions
-      ? params?.$instance?.formFieldsErrorsSubscriptions
-      : new FormFieldsErrorsSubscriptions();
+  const formFieldsErrorsSubscriptions = createFormFieldsErrorsSubscriptions(
+    params?.$instance?.formFieldsErrorsSubscriptions,
+  );
 
   const formFields = useRef<FormFields>({} as FormFields);
   const [getFormFieldRef, setFormFieldRef] = useDynamicRefs<HTMLInputElement>();
@@ -124,12 +122,88 @@ function useForm<TFormValues extends FormFields = FormFields>(
     };
   }, []);
 
+  const bindCheckbox = useCallback(
+    (name: FormName<TFormValues>, value: string, options?: BindFormFieldOptions) => {
+      const checkboxName = createCheckboxName(name, value);
+
+      formFieldsSubscriptions.initFormFieldSubscription(checkboxName as string);
+      initFormField(name);
+      initFormFieldValidation(name, options?.validation);
+
+      const ref = setFormFieldRef(checkboxName as string) as RefObject<HTMLInputElement>;
+
+      const updateRefValue = (checked: any) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null) {
+          ref.current.checked = checked;
+        }
+      };
+
+      formFieldsSubscriptions.subscribe(checkboxName as string, updateRefValue);
+
+      const onChange = (e: any) => {
+        const checked = e.target.checked;
+        if (!Array.isArray(formFields.current[name])) {
+          formFields.current[name] = [];
+        }
+
+        if (checked) {
+          formFields.current[name].push(value);
+        } else {
+          const unchecked = formFields.current[name].filter((val: string) => {
+            return val !== value;
+          });
+          formFields.current[name] = unchecked;
+        }
+
+        validateFormField(
+          formFieldsValidations.current[name],
+          name,
+          formFields.current[name],
+          formFieldsErrors.current,
+          formFieldsErrorsSubscriptions,
+        );
+        formFieldsSubscriptions.publish(checkboxName as string, checked);
+
+        touchFormField(name);
+      };
+
+      return {
+        name,
+        ref,
+        type: 'checkbox',
+        value,
+        onChange,
+      };
+    },
+    [],
+  );
+
   const reset = useCallback((values: TFormValues) => {
     const newFormFields = transformFormValuesToFormFields(values);
     formFields.current = newFormFields;
+
     Object.entries(newFormFields).forEach((entry) => {
       const [name, value] = entry;
-      formFieldsSubscriptions.publish(name, value);
+      // es un checkbox
+      if (Array.isArray(value)) {
+        // recorro los checkboxNames suscritos y los pongo a false en caso de no estar en value
+        const subscriptions = formFieldsSubscriptions.getAllSubscriptions();
+        // me quedo con las suscripciones que tengan el name
+        const filteredSubscriptions = Object.entries(subscriptions).filter(
+          (subscriptionProperty) => {
+            const [checkboxName] = subscriptionProperty;
+            const [n] = splitCheckboxName(checkboxName);
+            return n === name;
+          },
+        );
+        filteredSubscriptions.forEach((subscriptionProp) => {
+          const [checkboxName, subscription] = subscriptionProp;
+          const [, v] = splitCheckboxName(checkboxName);
+          subscription.publish(value.findIndex((arrV) => arrV !== v) === -1);
+        });
+      } else {
+        formFieldsSubscriptions.publish(name, value);
+      }
       touchFormField(name as FormName<TFormValues>, false);
     });
   }, []);
@@ -140,7 +214,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
   }, []);
 
   const submit = useCallback(
-    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
+    (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       const hasError = () => {
@@ -211,6 +285,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
     setFocus,
     getErrors,
     isSubmitting,
+    bindCheckbox,
     $instance: {
       formFieldsSubscriptions,
       initFormField,

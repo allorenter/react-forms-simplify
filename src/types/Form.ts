@@ -59,6 +59,11 @@ export type UseForm<TFormValues extends FormFields> = {
   getErrors: () => FormFieldsErrors;
   setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;
+  bindCheckbox: (
+    name: FormName<TFormValues>,
+    value: string,
+    options?: BindFormFieldOptions,
+  ) => void;
   $instance: {
     setFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
     getFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;

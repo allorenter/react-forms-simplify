@@ -10,13 +10,20 @@ type TFieldValues = {
 
 function Example() {
   const form = useForm<TFieldValues>();
-  const { submit, bind } = form;
+  const { submit, bind, bindCheckbox, reset } = form;
 
   const onSubmit = (values) => {
     console.log('values', values);
 
     return new Promise((resolve) => {
       resolve({});
+    });
+  };
+
+  const handleReset = () => {
+    reset({
+      prueba1: '',
+      prueba2: ['A'],
     });
   };
 
@@ -28,7 +35,13 @@ function Example() {
           <form onSubmit={submit(onSubmit)}>
             <input {...bind('prueba1')} />
 
+            <input {...bindCheckbox('prueba2', 'A')} />
+            <input {...bindCheckbox('prueba2', 'B')} />
+
             <button type='submit'>Enviar</button>
+            <button type='button' onClick={handleReset}>
+              RESET
+            </button>
           </form>
         </FormProvider>
       </div>

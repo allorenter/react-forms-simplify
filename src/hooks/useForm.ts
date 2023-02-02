@@ -18,7 +18,7 @@ import validateFormField from '@/logic/validateFormField';
 import formatErrors from '@/logic/formatErrors';
 import { splitCheckboxName, createCheckboxName } from '@/logic/checkboxName';
 import createFormFieldsSubscriptions from '@/logic/createFormFieldsSubscriptions';
-import createFormFieldsTouchedSubscriptions from '@/logic/createFormFieldsTouchedSubscriptions';
+import createTouchedSubscriptions from '@/logic/createTouchedSubscriptions';
 import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
 
 function useForm<TFormValues extends FormFields = FormFields>(
@@ -28,18 +28,14 @@ function useForm<TFormValues extends FormFields = FormFields>(
     params?.$instance?.formFieldsSubscriptions,
   );
 
-  const formFieldsTouchedSubscriptions = createFormFieldsTouchedSubscriptions(
-    params?.$instance?.formFieldsTouchedSubscriptions,
-  );
+  const touchedSubscriptions = createTouchedSubscriptions(params?.$instance?.touchedSubscriptions);
 
-  const formFieldsErrorsSubscriptions = createErrorsSubscriptions(
-    params?.$instance?.formFieldsErrorsSubscriptions,
-  );
+  const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
 
   const formFields = useRef<FormFields>({} as FormFields);
   const [getFormFieldRef, setFormFieldRef] = useDynamicRefs<HTMLInputElement>();
   const touchedFormFields = useRef<TouchedFormFields>({});
-  const formFieldsErrors = useRef<FormErrors>({});
+  const errors = useRef<FormErrors>({});
   const formFieldsValidations = useRef<FormFieldsValidations>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -63,7 +59,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
     // solo lo ejecuto en caso de querer cambiar su valor
     if (touchedFormFields.current[name] !== touch) {
       touchedFormFields.current[name] = touch;
-      formFieldsTouchedSubscriptions.publish(touchedFormFields.current);
+      touchedSubscriptions.publish(touchedFormFields.current);
     }
   }, []);
 
@@ -78,8 +74,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
         formFieldsValidations.current[name],
         name,
         value,
-        formFieldsErrors.current,
-        formFieldsErrorsSubscriptions,
+        errors.current,
+        errorsSubscriptions,
       );
       formFields.current[name] = value;
       formFieldsSubscriptions.publish(name as string, value);
@@ -107,8 +103,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
         formFieldsValidations.current[name],
         name,
         value,
-        formFieldsErrors.current,
-        formFieldsErrorsSubscriptions,
+        errors.current,
+        errorsSubscriptions,
       );
       formFieldsSubscriptions.publish(name as string, value);
       formFields.current[name] = value;
@@ -159,8 +155,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
           formFieldsValidations.current[name],
           name,
           formFields.current[name],
-          formFieldsErrors.current,
-          formFieldsErrorsSubscriptions,
+          errors.current,
+          errorsSubscriptions,
         );
         formFieldsSubscriptions.publish(checkboxName as string, checked);
 
@@ -218,12 +214,12 @@ function useForm<TFormValues extends FormFields = FormFields>(
       e.preventDefault();
 
       const hasError = () => {
-        return Object.values(formFieldsErrors.current).some((val) => val !== undefined);
+        return Object.values(errors.current).some((val) => val !== undefined);
       };
 
       // hace focus sobre el formField del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
       const focusError = () => {
-        const errorsNames = Object.entries(formFieldsErrors.current)
+        const errorsNames = Object.entries(errors.current)
           .filter((entry) => {
             return entry[1] !== undefined;
           })
@@ -245,8 +241,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
           formFieldsValidations.current[name],
           name,
           formFields.current[name],
-          formFieldsErrors.current,
-          formFieldsErrorsSubscriptions,
+          errors.current,
+          errorsSubscriptions,
         );
         if (hasError()) return focusError();
       }
@@ -273,7 +269,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
   );
 
   const getErrors = useCallback(() => {
-    return formatErrors(formFieldsErrors.current);
+    return formatErrors(errors.current);
   }, []);
 
   return {
@@ -289,8 +285,8 @@ function useForm<TFormValues extends FormFields = FormFields>(
     $instance: {
       formFieldsSubscriptions,
       initFormField,
-      formFieldsTouchedSubscriptions,
-      formFieldsErrorsSubscriptions,
+      touchedSubscriptions,
+      errorsSubscriptions,
       initFormFieldValidation,
       setFormFieldRef,
       getFormFieldRef,

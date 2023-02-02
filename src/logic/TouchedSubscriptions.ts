@@ -1,7 +1,7 @@
 import { TouchedFormFields } from '@/types/Form';
 import { SetStateAction } from 'react';
 
-class FormFieldsTouchedSubscriptions {
+class TouchedSubscriptions {
   private subscribers: Set<SetStateAction<any>>;
 
   constructor() {
@@ -26,4 +26,4 @@ class FormFieldsTouchedSubscriptions {
   }
 }
 
-export default FormFieldsTouchedSubscriptions;
+export default TouchedSubscriptions;

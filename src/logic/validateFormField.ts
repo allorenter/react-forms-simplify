@@ -5,13 +5,13 @@ function validateFormField(
   validation: Validation | undefined,
   name: string,
   value: any,
-  formFieldsErrors: FormErrors,
-  formFieldsErrorsSubscriptions: ErrorsSubscriptions,
+  errors: FormErrors,
+  errorsSubscriptions: ErrorsSubscriptions,
 ) {
   if (!validation) return;
 
   if (validation.required) {
-    formFieldsErrors[name] =
+    errors[name] =
       value === undefined || value === null || Number.isNaN(value) || value === ''
         ? {
             name,
@@ -20,7 +20,7 @@ function validateFormField(
         : undefined;
   }
 
-  formFieldsErrorsSubscriptions.publish(formFieldsErrors);
+  errorsSubscriptions.publish(errors);
 }
 
 export default validateFormField;

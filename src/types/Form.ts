@@ -2,7 +2,7 @@ import { FormEvent, RefObject } from 'react';
 import useValue from '@/hooks/useValue';
 import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import useBind from '@/hooks/useBind';
-import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
+import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 
 export type FormFields = Record<string, any>;
@@ -13,8 +13,8 @@ export type UseFormParams =
   | {
       $instance: {
         formFieldsSubscriptions?: FormFieldsSubscriptions;
-        formFieldsTouchedSubscriptions?: FormFieldsTouchedSubscriptions;
-        formFieldsErrorsSubscriptions?: ErrorsSubscriptions;
+        touchedSubscriptions?: TouchedSubscriptions;
+        errorsSubscriptions?: ErrorsSubscriptions;
       };
     }
   | undefined;
@@ -72,8 +72,8 @@ export type UseForm<TFormValues extends FormFields> = {
       validation: Validation | undefined,
     ) => void;
     initFormField: (name: FormName<TFormValues>) => void;
-    formFieldsTouchedSubscriptions: FormFieldsTouchedSubscriptions;
-    formFieldsErrorsSubscriptions: ErrorsSubscriptions;
+    touchedSubscriptions: TouchedSubscriptions;
+    errorsSubscriptions: ErrorsSubscriptions;
     formFieldsSubscriptions: FormFieldsSubscriptions;
   };
 };

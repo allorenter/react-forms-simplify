@@ -1,7 +1,7 @@
 import { FormErrors } from '@/types/Form';
 
-function formatErrors(formFieldsErrors: FormErrors) {
-  const objectEntries = Object.entries(formFieldsErrors).filter((entry) => {
+function formatErrors(errors: FormErrors) {
+  const objectEntries = Object.entries(errors).filter((entry) => {
     const [, error] = entry;
     return error !== undefined;
   });

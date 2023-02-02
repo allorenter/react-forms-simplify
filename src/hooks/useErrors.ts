@@ -5,11 +5,9 @@ function useErrors<TFormValues extends FormFields>({ form }: { form: UseForm<TFo
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {
-    const unsubscribeFn = form.$instance.formFieldsErrorsSubscriptions.subscribe(
-      (errors: FormErrors) => {
-        setErrors(() => ({ ...errors }));
-      },
-    );
+    const unsubscribeFn = form.$instance.errorsSubscriptions.subscribe((errors: FormErrors) => {
+      setErrors(() => ({ ...errors }));
+    });
     return () => unsubscribeFn();
   }, []);
 

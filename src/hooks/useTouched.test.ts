@@ -1,4 +1,4 @@
-import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
+import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { useForm, useTouched } from '..';
@@ -30,9 +30,9 @@ describe('useErrors', () => {
   });
 
   test('should unsubscribe when the hook unmount', () => {
-    const touchedFieldsSubscriptions = new FormFieldsTouchedSubscriptions();
+    const touchedFieldsSubscriptions = new TouchedSubscriptions();
     const hookForm = renderHook(() =>
-      useForm({ $instance: { formFieldsTouchedSubscriptions: touchedFieldsSubscriptions } }),
+      useForm({ $instance: { touchedSubscriptions: touchedFieldsSubscriptions } }),
     );
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));
 

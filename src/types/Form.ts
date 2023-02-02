@@ -1,18 +1,18 @@
 import { FormEvent, RefObject } from 'react';
 import useValue from '@/hooks/useValue';
-import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
+import NamesValuesSubscriptions from '@/logic/NamesValuesSubscriptions';
 import useBind from '@/hooks/useBind';
 import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 
-export type FormFields = Record<string, any>;
+export type NamesValues = Record<string, any>;
 
 export type SubmitFn = (values: any) => any;
 
 export type UseFormParams =
   | {
       $instance: {
-        formFieldsSubscriptions?: FormFieldsSubscriptions;
+        namesValuesSubscriptions?: NamesValuesSubscriptions;
         touchedSubscriptions?: TouchedSubscriptions;
         errorsSubscriptions?: ErrorsSubscriptions;
       };
@@ -39,9 +39,9 @@ type Join<T extends string[], D extends string> = T extends []
     : never
   : string;
 
-export type FormName<TFormValues extends FormFields> = Join<PathsToStringProps<TFormValues>, '.'>;
+export type FormName<TFormValues extends NamesValues> = Join<PathsToStringProps<TFormValues>, '.'>;
 
-export type UseForm<TFormValues extends FormFields> = {
+export type UseForm<TFormValues extends NamesValues> = {
   bind: (
     name: FormName<TFormValues>,
     options?: BindFormFieldOptions,
@@ -74,11 +74,11 @@ export type UseForm<TFormValues extends FormFields> = {
     initFormField: (name: FormName<TFormValues>) => void;
     touchedSubscriptions: TouchedSubscriptions;
     errorsSubscriptions: ErrorsSubscriptions;
-    formFieldsSubscriptions: FormFieldsSubscriptions;
+    namesValuesSubscriptions: NamesValuesSubscriptions;
   };
 };
 
-export type TouchedFormFields = Record<string, boolean>;
+export type TouchedNamesValues = Record<string, boolean>;
 
 export type ValidateFunction = (val: any) => any;
 
@@ -87,7 +87,7 @@ export type Validation = {
   validateFunction?: ValidateFunction;
 };
 
-export type FormFieldsValidations = Record<string, Validation>;
+export type NamesValuesValidations = Record<string, Validation>;
 
 export type BindFormFieldOptions =
   | {

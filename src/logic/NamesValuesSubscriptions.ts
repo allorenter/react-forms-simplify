@@ -32,41 +32,41 @@ class FormFieldSubscription {
 }
 
 // Gestiona subscripcines a todos los valores del formulario
-class FormFieldsSubscriptions {
-  private formFieldsSubscriptions: { [key: string]: FormFieldSubscription };
+class NamesValuesSubscriptions {
+  private namesValuesSubscriptions: { [key: string]: FormFieldSubscription };
 
   constructor() {
-    this.formFieldsSubscriptions = {};
+    this.namesValuesSubscriptions = {};
   }
 
   formFieldIsInitialized(name: string) {
-    return this.formFieldsSubscriptions[name] instanceof FormFieldSubscription;
+    return this.namesValuesSubscriptions[name] instanceof FormFieldSubscription;
   }
 
   // Añade instancia para gestionar las subscripciones a un valor
   initFormFieldSubscription(name: string) {
     if (this.formFieldIsInitialized(name)) return null;
 
-    this.formFieldsSubscriptions[name] = new FormFieldSubscription();
+    this.namesValuesSubscriptions[name] = new FormFieldSubscription();
     return true;
   }
 
   getAllSubscriptions() {
-    return this.formFieldsSubscriptions;
+    return this.namesValuesSubscriptions;
   }
 
   getFormFieldSubscription(name: string) {
-    return this.formFieldsSubscriptions[name];
+    return this.namesValuesSubscriptions[name];
   }
 
   subscribe(name: string, actionFn: SetStateAction<any>) {
     if (!this.formFieldIsInitialized(name)) return null;
 
-    return this.formFieldsSubscriptions[name].subscribe(actionFn);
+    return this.namesValuesSubscriptions[name].subscribe(actionFn);
   }
 
   subscribeAll(actionFn: SetStateAction<any>) {
-    const initializedSubscriptionsEntries = Object.entries(this.formFieldsSubscriptions);
+    const initializedSubscriptionsEntries = Object.entries(this.namesValuesSubscriptions);
 
     if (initializedSubscriptionsEntries.length === 0) return null;
 
@@ -83,9 +83,9 @@ class FormFieldsSubscriptions {
   publish(name: string, value: any) {
     if (!this.formFieldIsInitialized(name)) return null;
 
-    this.formFieldsSubscriptions[name].publish(value);
+    this.namesValuesSubscriptions[name].publish(value);
     return true;
   }
 }
 
-export default FormFieldsSubscriptions;
+export default NamesValuesSubscriptions;

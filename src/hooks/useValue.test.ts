@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
+import NamesValuesSubscriptions from '@/logic/NamesValuesSubscriptions';
 import useFormFieldWatch from './useValue';
 import useForm from './useForm';
 
@@ -18,10 +18,10 @@ describe('useFormFieldWatch tests', () => {
   });
 
   test('should return undefined if the FormField is initialized but has not publish a value yet', async () => {
-    const subscriptions = new FormFieldsSubscriptions();
+    const subscriptions = new NamesValuesSubscriptions();
     subscriptions.initFormFieldSubscription('name');
     const form = renderHook(() =>
-      useForm({ $instance: { formFieldsSubscriptions: subscriptions } }),
+      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
     );
     const { result } = renderHook(() =>
       useFormFieldWatch({
@@ -34,10 +34,10 @@ describe('useFormFieldWatch tests', () => {
   });
 
   test('should return the value if the FormField is initialized and publish a value', async () => {
-    const subscriptions = new FormFieldsSubscriptions();
+    const subscriptions = new NamesValuesSubscriptions();
     subscriptions.initFormFieldSubscription('name');
     const form = renderHook(() =>
-      useForm({ $instance: { formFieldsSubscriptions: subscriptions } }),
+      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
     );
     const { result, rerender } = renderHook(() =>
       useFormFieldWatch({
@@ -56,10 +56,10 @@ describe('useFormFieldWatch tests', () => {
   });
 
   test('should not create a new subscription if other FormField is subscribed ', async () => {
-    const subscriptions = new FormFieldsSubscriptions();
+    const subscriptions = new NamesValuesSubscriptions();
     subscriptions.initFormFieldSubscription('name');
     const form = renderHook(() =>
-      useForm({ $instance: { formFieldsSubscriptions: subscriptions } }),
+      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
     );
     const hookName = renderHook(() =>
       useFormFieldWatch({
@@ -74,17 +74,17 @@ describe('useFormFieldWatch tests', () => {
         form: form.result.current,
       }),
     );
-    hookName.rerender({ formFieldsSubscriptions: subscriptions });
+    hookName.rerender({ namesValuesSubscriptions: subscriptions });
     const nameSubscribers = subscriptions.getFormFieldSubscription('name').getSubscribers();
 
     expect(nameSubscribers.size).toBe(1);
   });
 
   test('should be two subscribers in the FormFieldSubscription if there are two hooks subscribed to the same name', async () => {
-    const subscriptions = new FormFieldsSubscriptions();
+    const subscriptions = new NamesValuesSubscriptions();
     subscriptions.initFormFieldSubscription('name');
     const form = renderHook(() =>
-      useForm({ $instance: { formFieldsSubscriptions: subscriptions } }),
+      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
     );
     const firstHook = renderHook(() =>
       useFormFieldWatch({
@@ -106,10 +106,10 @@ describe('useFormFieldWatch tests', () => {
   });
 
   test('should have the same value if two hooks are subscribed to the same name', async () => {
-    const subscriptions = new FormFieldsSubscriptions();
+    const subscriptions = new NamesValuesSubscriptions();
     subscriptions.initFormFieldSubscription('name');
     const form = renderHook(() =>
-      useForm({ $instance: { formFieldsSubscriptions: subscriptions } }),
+      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
     );
     const firstHook = renderHook(() =>
       useFormFieldWatch({
@@ -137,10 +137,10 @@ describe('useFormFieldWatch tests', () => {
   });
 
   test('should remove the subscription if the hook unmount', () => {
-    const subscriptions = new FormFieldsSubscriptions();
+    const subscriptions = new NamesValuesSubscriptions();
     subscriptions.initFormFieldSubscription('name');
     const form = renderHook(() =>
-      useForm({ $instance: { formFieldsSubscriptions: subscriptions } }),
+      useForm({ $instance: { namesValuesSubscriptions: subscriptions } }),
     );
     const { unmount } = renderHook(() =>
       useFormFieldWatch({

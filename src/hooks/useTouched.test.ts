@@ -16,7 +16,7 @@ describe('useErrors', () => {
     expect(touchedHook.result.current).toEqual([]);
   });
 
-  test('should return the name of the touched formFields', () => {
+  test('should return the name of the touched namesValues', () => {
     const hookForm = renderHook(() => useForm());
     const formControl = hookForm.result.current.bind('name');
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));

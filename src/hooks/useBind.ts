@@ -1,7 +1,7 @@
 import { RefObject, useEffect, useState } from 'react';
-import { BindFormFieldOptions, FormFields, FormName, UseForm } from '@/types/Form';
+import { BindFormFieldOptions, NamesValues, FormName, UseForm } from '@/types/Form';
 
-function useBind<TFormValues extends FormFields = FormFields>({
+function useBind<TFormValues extends NamesValues = NamesValues>({
   name,
   form,
   options,
@@ -13,7 +13,7 @@ function useBind<TFormValues extends FormFields = FormFields>({
   const [val, setVal] = useState<any>('');
   const {
     $instance: {
-      formFieldsSubscriptions,
+      namesValuesSubscriptions,
       initFormField,
       initFormFieldValidation,
       setFormFieldRef,
@@ -23,11 +23,11 @@ function useBind<TFormValues extends FormFields = FormFields>({
   } = form;
 
   useEffect(() => {
-    formFieldsSubscriptions.initFormFieldSubscription(name as string);
+    namesValuesSubscriptions.initFormFieldSubscription(name as string);
     initFormField(name);
     initFormFieldValidation(name, options?.validation);
     setFormFieldRef(name);
-    const unsubscribeFn = formFieldsSubscriptions.subscribe(name as string, setVal);
+    const unsubscribeFn = namesValuesSubscriptions.subscribe(name as string, setVal);
     return () => unsubscribeFn?.();
   }, []);
 

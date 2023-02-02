@@ -1,7 +1,7 @@
-import { FormFields, FormErrors, UseForm } from '@/types/Form';
+import { NamesValues, FormErrors, UseForm } from '@/types/Form';
 import { useEffect, useState } from 'react';
 
-function useErrors<TFormValues extends FormFields>({ form }: { form: UseForm<TFormValues> }) {
+function useErrors<TFormValues extends NamesValues>({ form }: { form: UseForm<TFormValues> }) {
   const [errors, setErrors] = useState<FormErrors>({});
 
   useEffect(() => {

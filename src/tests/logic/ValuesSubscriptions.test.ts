@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import ValuesSubscriptions from './ValuesSubscriptions';
+import ValuesSubscriptions from '../../logic/ValuesSubscriptions';
 
 describe('ValuesSubscriptions tests', () => {
   test('should init subscription to value', async () => {

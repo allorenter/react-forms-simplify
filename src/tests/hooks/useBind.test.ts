@@ -1,7 +1,7 @@
 import { describe, test, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
-import useForm from './useForm';
-import useBind from './useBind';
+import useForm from '../../hooks/useForm';
+import useBind from '../../hooks/useBind';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 
 describe('useBind tests', () => {

@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
-import useForm from './useForm';
+import useForm from '../../hooks/useForm';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 
 describe('useForm tests', () => {

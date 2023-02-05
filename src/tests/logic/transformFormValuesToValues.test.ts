@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import transformFormValuesToValues from './transformFormValuesToValues';
+import transformFormValuesToValues from '../../logic/transformFormValuesToValues';
 
 describe('transformFormValuesToValues', () => {
   test('should returns an empty object for an empty input object', () => {

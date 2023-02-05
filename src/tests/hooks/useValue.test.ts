@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
-import useValueWatch from './useValue';
-import useForm from './useForm';
+import useValueWatch from '../../hooks/useValue';
+import useForm from '../../hooks/useForm';
 
 describe('useValueWatch tests', () => {
   test('should return null if the Value to which we subscribe has not been initialized', async () => {

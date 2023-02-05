@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import transformValuesToFormValues from './transformValuesToFormValues';
+import transformValuesToFormValues from '../../logic/transformValuesToFormValues';
 
 describe('transformValuesToFormValues tests', () => {
   test('should works with a single key-value pair', () => {

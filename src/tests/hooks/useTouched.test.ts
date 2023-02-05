@@ -1,7 +1,7 @@
 import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
-import { useForm, useTouched } from '..';
+import { useForm, useTouched } from '../..';
 
 describe('useErrors', () => {
   test('should return empty array if no value is touched', () => {

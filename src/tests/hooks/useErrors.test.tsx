@@ -1,7 +1,7 @@
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
-import { useForm, useErrors } from '..';
+import { useForm, useErrors } from '../..';
 
 describe('useErrors', () => {
   test('should return hasErrors = true if the form has errors', () => {

@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import useDynamicRefs from './useDynamicRef';
+import useDynamicRefs from '../../hooks/useDynamicRef';
 
 describe('useDynamicRefs', () => {
   test('should set and get a ref object', () => {

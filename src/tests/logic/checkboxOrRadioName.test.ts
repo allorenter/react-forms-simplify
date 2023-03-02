@@ -1,5 +1,8 @@
 import { describe, test, expect } from 'vitest';
-import { splitCheckboxName, createCheckboxName } from '../../logic/checkboxName';
+import {
+  splitCheckboxOrRadioName,
+  createCheckboxOrRadioName,
+} from '../../logic/checkboxOrRadioName';
 
 describe('checkbox name tests', () => {
   test('should return the correct checkbox name format', () => {
@@ -7,13 +10,13 @@ describe('checkbox name tests', () => {
     const chkValue = 'valueA';
     const expected = 'test{{valueA}}';
 
-    expect(createCheckboxName(chkName, chkValue)).toEqual(expected);
+    expect(createCheckboxOrRadioName(chkName, chkValue)).toEqual(expected);
   });
 
   test('should return the correct name form checkboxName', () => {
     const checkboxName = 'test{{valueA}}';
     const expected = ['test', 'valueA'];
 
-    expect(splitCheckboxName(checkboxName)).toEqual(expected);
+    expect(splitCheckboxOrRadioName(checkboxName)).toEqual(expected);
   });
 });

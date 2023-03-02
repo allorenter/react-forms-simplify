@@ -1,8 +1,8 @@
-function createCheckboxName(name: string, value: string) {
+function createCheckboxOrRadioName(name: string, value: string) {
   return `${name}{{${value}}}`;
 }
 
-function splitCheckboxName(checkboxName: string) {
+function splitCheckboxOrRadioName(checkboxName: string) {
   const splitResult = checkboxName.split('{{');
   const n = splitResult[0] || '';
   const v = splitResult[1] || '';
@@ -10,4 +10,4 @@ function splitCheckboxName(checkboxName: string) {
   return [n, formattedV];
 }
 
-export { createCheckboxName, splitCheckboxName };
+export { createCheckboxOrRadioName, splitCheckboxOrRadioName };

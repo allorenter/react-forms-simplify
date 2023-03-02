@@ -10,13 +10,15 @@ import {
   UseForm,
   UseFormParams,
   Validation,
+  ValuesTypes,
+  ValueType,
 } from '@/types/Form';
 import useDynamicRefs from './useDynamicRef';
 import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
 import transformFormValuesToValues from '@/logic/transformFormValuesToValues';
 import validateValue from '@/logic/validateValue';
 import formatErrors from '@/logic/formatErrors';
-import { splitCheckboxName, createCheckboxName } from '@/logic/checkboxName';
+import { splitCheckboxOrRadioName, createCheckboxOrRadioName } from '@/logic/checkboxOrRadioName';
 import createValuesSubscriptions from '@/logic/createValuesSubscriptions';
 import createTouchedSubscriptions from '@/logic/createTouchedSubscriptions';
 import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
@@ -29,10 +31,11 @@ function useForm<TFormValues extends Values = Values>(
   const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
 
   const values = useRef<Values>({} as Values);
-  const [getValueRef, setValueRef] = useDynamicRefs<HTMLInputElement>();
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
   const valuesValidations = useRef<ValuesValidations>({});
+  const valuesTypes = useRef<ValuesTypes>({});
+  const [getValueRef, setValueRef] = useDynamicRefs<HTMLInputElement>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initValue = useCallback((name: FormName<TFormValues>) => {
@@ -50,6 +53,10 @@ function useForm<TFormValues extends Values = Values>(
     },
     [],
   );
+
+  const initValueType = useCallback((name: FormName<TFormValues>, type: ValueType) => {
+    valuesTypes.current[name] = type;
+  }, []);
 
   const touchValue = useCallback((name: FormName<TFormValues>, touch = true) => {
     // solo lo ejecuto en caso de querer cambiar su valor
@@ -83,6 +90,8 @@ function useForm<TFormValues extends Values = Values>(
     valuesSubscriptions.initValueSubscription(name as string);
     initValue(name);
     initValueValidation(name, options?.validation);
+    initValueType(name, 'text');
+
     const ref = setValueRef(name as string) as RefObject<HTMLInputElement>;
 
     const updateRefValue = (value: any) => {
@@ -116,12 +125,13 @@ function useForm<TFormValues extends Values = Values>(
 
   const bindCheckbox = useCallback(
     (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
-      const checkboxName = createCheckboxName(name, value);
+      const checkboxName = createCheckboxOrRadioName(name, value);
 
       valuesSubscriptions.initValueSubscription(name);
       valuesSubscriptions.initValueSubscription(checkboxName as string);
       initValue(name);
       initValueValidation(name, options?.validation);
+      initValueType(name, 'checkbox');
 
       const ref = setValueRef(checkboxName as string) as RefObject<HTMLInputElement>;
 
@@ -172,14 +182,58 @@ function useForm<TFormValues extends Values = Values>(
     [],
   );
 
+  const bindRadio = useCallback(
+    (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
+      const radioName = createCheckboxOrRadioName(name, value);
+
+      valuesSubscriptions.initValueSubscription(name);
+      valuesSubscriptions.initValueSubscription(radioName as string);
+      initValue(name);
+      initValueValidation(name, options?.validation);
+      initValueType(name, 'radio');
+
+      const ref = setValueRef(radioName as string) as RefObject<HTMLInputElement>;
+
+      const updateRefValue = (checked: any) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null) {
+          ref.current.checked = checked;
+        }
+      };
+
+      valuesSubscriptions.subscribe(radioName as string, updateRefValue);
+
+      const onChange = (e: any) => {
+        values.current[name] = value;
+        validateValue(
+          valuesValidations.current[name],
+          name,
+          values.current[name],
+          errors.current,
+          errorsSubscriptions,
+        );
+        valuesSubscriptions.publish(name as string, values.current[name]);
+        touchValue(name);
+      };
+
+      return {
+        name,
+        ref,
+        type: 'radio',
+        value,
+        onChange,
+      };
+    },
+    [],
+  );
+
   const reset = useCallback((val: TFormValues) => {
     const newValues = transformFormValuesToValues(val);
     values.current = newValues;
 
     Object.entries(newValues).forEach((entry) => {
       const [name, value] = entry;
-      // es un checkbox
-      if (Array.isArray(value)) {
+
+      if (valuesTypes.current[name] === 'checkbox') {
         // recorro los checkboxValues suscritos y los pongo a false en caso de no estar en value
         const subscriptions = valuesSubscriptions.getAllSubscriptions();
         Object.entries(subscriptions)
@@ -188,15 +242,34 @@ function useForm<TFormValues extends Values = Values>(
             if (!checkboxName.includes('{{') && !checkboxName.includes('}}')) {
               return false;
             }
-            const [n] = splitCheckboxName(checkboxName);
+            const [n] = splitCheckboxOrRadioName(checkboxName);
             return n === name;
           })
           .forEach((subscriptionProp) => {
             const [checkboxName, subscription] = subscriptionProp;
-            const [, v] = splitCheckboxName(checkboxName);
-            subscription.publish(value.findIndex((arrV) => arrV !== v) === -1);
+            const [, v] = splitCheckboxOrRadioName(checkboxName);
+            subscription.publish(value.findIndex((arrV: string) => arrV !== v) === -1);
           });
       }
+
+      if (valuesTypes.current[name] === 'radio') {
+        const subscriptions = valuesSubscriptions.getAllSubscriptions();
+        Object.entries(subscriptions)
+          .filter((subscriptionProperty) => {
+            const [radioName] = subscriptionProperty;
+            if (!radioName.includes('{{') && !radioName.includes('}}')) {
+              return false;
+            }
+            const [n] = splitCheckboxOrRadioName(radioName);
+            return n === name;
+          })
+          .forEach((subscriptionProp) => {
+            const [radioName, subscription] = subscriptionProp;
+            const [, v] = splitCheckboxOrRadioName(radioName);
+            subscription.publish(v === value);
+          });
+      }
+
       valuesSubscriptions.publish(name, value);
       touchValue(name as FormName<TFormValues>, false);
     });
@@ -280,6 +353,7 @@ function useForm<TFormValues extends Values = Values>(
     getErrors,
     isSubmitting,
     bindCheckbox,
+    bindRadio,
     $instance: {
       valuesSubscriptions,
       initValue,

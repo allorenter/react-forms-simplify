@@ -70,6 +70,17 @@ export type UseForm<TFormValues extends Values> = {
     value: string;
     onChange: (e: any) => void;
   };
+  bindRadio: (
+    name: FormName<TFormValues>,
+    value: string,
+    options?: BindValueOptions,
+  ) => {
+    name: Join<PathsToStringProps<TFormValues>, '.'>;
+    ref: RefObject<HTMLInputElement>;
+    type: string;
+    value: string;
+    onChange: (e: any) => void;
+  };
   $instance: {
     setValueRef: (key: string) => void | RefObject<HTMLInputElement>;
     getValueRef: (key: string) => void | RefObject<HTMLInputElement>;
@@ -91,6 +102,10 @@ export type Validation = {
 };
 
 export type ValuesValidations = Record<string, Validation>;
+
+export type ValueType = 'text' | 'radio' | 'checkbox';
+
+export type ValuesTypes = Record<string, ValueType>;
 
 export type BindValueOptions =
   | {

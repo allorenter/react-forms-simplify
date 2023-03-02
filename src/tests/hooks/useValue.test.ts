@@ -1,14 +1,14 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
-import useValueWatch from '../../hooks/useValue';
+import useValue from '../../hooks/useValue';
 import useForm from '../../hooks/useForm';
 
-describe('useValueWatch tests', () => {
+describe('useValue tests', () => {
   test('should return null if the Value to which we subscribe has not been initialized', async () => {
     const form = renderHook(() => useForm());
     const { result } = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
@@ -22,7 +22,7 @@ describe('useValueWatch tests', () => {
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { result } = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
@@ -36,7 +36,7 @@ describe('useValueWatch tests', () => {
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { result, rerender } = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
@@ -56,14 +56,14 @@ describe('useValueWatch tests', () => {
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const hookName = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
     );
     subscriptions.initValueSubscription('cod');
     renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'cod',
         form: form.result.current,
       }),
@@ -79,13 +79,13 @@ describe('useValueWatch tests', () => {
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const firstHook = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
     );
     const secondHook = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
@@ -102,13 +102,13 @@ describe('useValueWatch tests', () => {
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const firstHook = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
     );
     const secondHook = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),
@@ -131,7 +131,7 @@ describe('useValueWatch tests', () => {
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { unmount } = renderHook(() =>
-      useValueWatch({
+      useValue({
         name: 'name',
         form: form.result.current,
       }),

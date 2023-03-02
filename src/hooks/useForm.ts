@@ -118,6 +118,7 @@ function useForm<TFormValues extends Values = Values>(
     (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
       const checkboxName = createCheckboxName(name, value);
 
+      valuesSubscriptions.initValueSubscription(name);
       valuesSubscriptions.initValueSubscription(checkboxName as string);
       initValue(name);
       initValueValidation(name, options?.validation);
@@ -155,6 +156,7 @@ function useForm<TFormValues extends Values = Values>(
           errorsSubscriptions,
         );
         valuesSubscriptions.publish(checkboxName as string, checked);
+        valuesSubscriptions.publish(name as string, values.current[name]);
 
         touchValue(name);
       };

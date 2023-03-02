@@ -59,7 +59,17 @@ export type UseForm<TFormValues extends Values> = {
   getErrors: () => FormErrors;
   setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;
-  bindCheckbox: (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => void;
+  bindCheckbox: (
+    name: FormName<TFormValues>,
+    value: string,
+    options?: BindValueOptions,
+  ) => {
+    name: Join<PathsToStringProps<TFormValues>, '.'>;
+    ref: RefObject<HTMLInputElement>;
+    type: string;
+    value: string;
+    onChange: (e: any) => void;
+  };
   $instance: {
     setValueRef: (key: string) => void | RefObject<HTMLInputElement>;
     getValueRef: (key: string) => void | RefObject<HTMLInputElement>;

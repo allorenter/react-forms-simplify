@@ -182,22 +182,22 @@ function useForm<TFormValues extends Values = Values>(
       if (Array.isArray(value)) {
         // recorro los checkboxValues suscritos y los pongo a false en caso de no estar en value
         const subscriptions = valuesSubscriptions.getAllSubscriptions();
-        // me quedo con las suscripciones que tengan el name
-        const filteredSubscriptions = Object.entries(subscriptions).filter(
-          (subscriptionProperty) => {
+        Object.entries(subscriptions)
+          .filter((subscriptionProperty) => {
             const [checkboxName] = subscriptionProperty;
+            if (!checkboxName.includes('{{') && !checkboxName.includes('}}')) {
+              return false;
+            }
             const [n] = splitCheckboxName(checkboxName);
             return n === name;
-          },
-        );
-        filteredSubscriptions.forEach((subscriptionProp) => {
-          const [checkboxName, subscription] = subscriptionProp;
-          const [, v] = splitCheckboxName(checkboxName);
-          subscription.publish(value.findIndex((arrV) => arrV !== v) === -1);
-        });
-      } else {
-        valuesSubscriptions.publish(name, value);
+          })
+          .forEach((subscriptionProp) => {
+            const [checkboxName, subscription] = subscriptionProp;
+            const [, v] = splitCheckboxName(checkboxName);
+            subscription.publish(value.findIndex((arrV) => arrV !== v) === -1);
+          });
       }
+      valuesSubscriptions.publish(name, value);
       touchValue(name as FormName<TFormValues>, false);
     });
   }, []);

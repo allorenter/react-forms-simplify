@@ -4,6 +4,12 @@ const map = new Map<string, React.RefObject<unknown>>();
 
 function setRef<T>(key: string): React.RefObject<T> | void {
   if (!key) return console.warn(`useDynamicRefs: Cannot set ref without key `);
+
+  const refExists = map.get(key) as React.RefObject<T>;
+  if (typeof refExists?.current === 'object' && refExists?.current !== null) {
+    return refExists;
+  }
+
   const ref = createRef<T>();
   map.set(key, ref);
   return ref;

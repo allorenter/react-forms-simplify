@@ -13,7 +13,7 @@ import {
   ValuesTypes,
   ValueType,
 } from '@/types/Form';
-import useDynamicRefs from './useDynamicRef';
+import useInputElementRefs from './useInputElementRefs';
 import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
 import transformFormValuesToValues from '@/logic/transformFormValuesToValues';
 import validateValue from '@/logic/validateValue';
@@ -26,16 +26,20 @@ import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
 function useForm<TFormValues extends Values = Values>(
   params?: UseFormParams,
 ): UseForm<TFormValues> {
+  // object instances
   const valuesSubscriptions = createValuesSubscriptions(params?.$instance?.valuesSubscriptions);
   const touchedSubscriptions = createTouchedSubscriptions(params?.$instance?.touchedSubscriptions);
   const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
 
+  // refs
   const values = useRef<Values>({} as Values);
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
   const valuesValidations = useRef<ValuesValidations>({});
   const valuesTypes = useRef<ValuesTypes>({});
-  const [getValueRef, setValueRef] = useDynamicRefs<HTMLInputElement>();
+  const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
+
+  // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initValue = useCallback((name: FormName<TFormValues>) => {
@@ -92,7 +96,7 @@ function useForm<TFormValues extends Values = Values>(
     initValueValidation(name, options?.validation);
     initValueType(name, 'text');
 
-    const ref = setValueRef(name as string) as RefObject<HTMLInputElement>;
+    const ref = setInputRef(name as string) as RefObject<HTMLInputElement>;
 
     const updateRefValue = (value: any) => {
       if (typeof ref?.current === 'object' && ref?.current !== null) {
@@ -133,7 +137,7 @@ function useForm<TFormValues extends Values = Values>(
       initValueValidation(name, options?.validation);
       initValueType(name, 'checkbox');
 
-      const ref = setValueRef(checkboxName as string) as RefObject<HTMLInputElement>;
+      const ref = setInputRef(checkboxName as string) as RefObject<HTMLInputElement>;
 
       const updateRefValue = (checked: any) => {
         if (typeof ref?.current === 'object' && ref?.current !== null) {
@@ -192,7 +196,7 @@ function useForm<TFormValues extends Values = Values>(
       initValueValidation(name, options?.validation);
       initValueType(name, 'radio');
 
-      const ref = setValueRef(radioName as string) as RefObject<HTMLInputElement>;
+      const ref = setInputRef(radioName as string) as RefObject<HTMLInputElement>;
 
       const updateRefValue = (checked: any) => {
         if (typeof ref?.current === 'object' && ref?.current !== null) {
@@ -276,7 +280,7 @@ function useForm<TFormValues extends Values = Values>(
   }, []);
 
   const setFocus = useCallback((name: FormName<TFormValues>) => {
-    const ref = getValueRef(name as string);
+    const ref = getInputRef(name as string);
     if (ref) ref.current?.focus();
   }, []);
 
@@ -360,8 +364,8 @@ function useForm<TFormValues extends Values = Values>(
       touchedSubscriptions,
       errorsSubscriptions,
       initValueValidation,
-      setValueRef,
-      getValueRef,
+      setInputRef,
+      getInputRef,
     },
   };
 }

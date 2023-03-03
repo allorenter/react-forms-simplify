@@ -12,7 +12,7 @@ function useBind<TFormValues extends Values = Values>({
 }) {
   const [val, setVal] = useState<any>('');
   const {
-    $instance: { valuesSubscriptions, initValue, initValueValidation, setValueRef, getValueRef },
+    $instance: { valuesSubscriptions, initValue, initValueValidation, setInputRef, getInputRef },
     setValue,
   } = form;
 
@@ -20,7 +20,7 @@ function useBind<TFormValues extends Values = Values>({
     valuesSubscriptions.initValueSubscription(name as string);
     initValue(name);
     initValueValidation(name, options?.validation);
-    setValueRef(name);
+    setInputRef(name);
     const unsubscribeFn = valuesSubscriptions.subscribe(name as string, setVal);
     return () => unsubscribeFn?.();
   }, []);
@@ -28,7 +28,7 @@ function useBind<TFormValues extends Values = Values>({
   return {
     value: val,
     setValue: (val: any) => setValue(name, val),
-    ref: getValueRef(name) as RefObject<HTMLInputElement>,
+    ref: getInputRef(name) as RefObject<HTMLInputElement>,
   };
 }
 

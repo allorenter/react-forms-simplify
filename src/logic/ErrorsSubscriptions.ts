@@ -1,11 +1,12 @@
-import { TouchedFormFields } from '@/types/Form';
+import { FormErrors, TouchedValues } from '@/types/Form';
 import { SetStateAction } from 'react';
+import formatErrors from './formatErrors';
 
-class FormFieldsTouchedSubscriptions {
+class ErrorsSubscriptions {
   private subscribers: Set<SetStateAction<any>>;
 
   constructor() {
-    this.subscribers = new Set<SetStateAction<TouchedFormFields>>();
+    this.subscribers = new Set<SetStateAction<TouchedValues>>();
   }
 
   subscribe(actionFn: SetStateAction<any>) {
@@ -15,9 +16,10 @@ class FormFieldsTouchedSubscriptions {
     };
   }
 
-  publish(touchedFormFields: TouchedFormFields) {
+  publish(errors: FormErrors) {
     for (const actionFn of Array.from(this.subscribers)) {
-      actionFn(touchedFormFields);
+      const formatted = formatErrors(errors);
+      actionFn(formatted);
     }
   }
 
@@ -26,4 +28,4 @@ class FormFieldsTouchedSubscriptions {
   }
 }
 
-export default FormFieldsTouchedSubscriptions;
+export default ErrorsSubscriptions;

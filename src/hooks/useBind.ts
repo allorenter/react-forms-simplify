@@ -1,40 +1,34 @@
 import { RefObject, useEffect, useState } from 'react';
-import { BindFormFieldOptions, FormFields, FormName, UseForm } from '@/types/Form';
+import { BindValueOptions, Values, FormName, UseForm } from '@/types/Form';
 
-function useBind<TFormValues extends FormFields = FormFields>({
+function useBind<TFormValues extends Values = Values>({
   name,
   form,
   options,
 }: {
   name: FormName<TFormValues>;
   form: UseForm<TFormValues>;
-  options?: BindFormFieldOptions;
+  options?: BindValueOptions;
 }) {
   const [val, setVal] = useState<any>('');
   const {
-    $instance: {
-      formFieldsSubscriptions,
-      initFormField,
-      initFormFieldValidation,
-      setFormFieldRef,
-      getFormFieldRef,
-    },
+    $instance: { valuesSubscriptions, initValue, initValueValidation, setInputRef, getInputRef },
     setValue,
   } = form;
 
   useEffect(() => {
-    formFieldsSubscriptions.initFormFieldSubscription(name as string);
-    initFormField(name);
-    initFormFieldValidation(name, options?.validation);
-    setFormFieldRef(name);
-    const unsubscribeFn = formFieldsSubscriptions.subscribe(name as string, setVal);
+    valuesSubscriptions.initValueSubscription(name as string);
+    initValue(name);
+    initValueValidation(name, options?.validation);
+    setInputRef(name);
+    const unsubscribeFn = valuesSubscriptions.subscribe(name as string, setVal);
     return () => unsubscribeFn?.();
   }, []);
 
   return {
     value: val,
     setValue: (val: any) => setValue(name, val),
-    ref: getFormFieldRef(name) as RefObject<HTMLInputElement>,
+    ref: getInputRef(name) as RefObject<HTMLInputElement>,
   };
 }
 

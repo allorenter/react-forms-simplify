@@ -1,29 +1,29 @@
 import { FormEvent, RefObject } from 'react';
 import useValue from '@/hooks/useValue';
-import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
+import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 import useBind from '@/hooks/useBind';
-import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
+import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
+import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 
-export type FormFields = Record<string, any>;
+export type Values = Record<string, any>;
 
-export type SubmitFn<TSubmitFormFields> = (values: TSubmitFormFields) => any;
+export type SubmitFn = (values: any) => any;
 
 export type UseFormParams =
   | {
       $instance: {
-        formFieldsSubscriptions?: FormFieldsSubscriptions;
-        formFieldsTouchedSubscriptions?: FormFieldsTouchedSubscriptions;
-        formFieldsErrorsSubscriptions?: FormFieldsErrorsSubscriptions;
+        valuesSubscriptions?: ValuesSubscriptions;
+        touchedSubscriptions?: TouchedSubscriptions;
+        errorsSubscriptions?: ErrorsSubscriptions;
       };
     }
   | undefined;
 
-export type UseBindFormField = ReturnType<typeof useBind>;
+export type UseBindValue = ReturnType<typeof useBind>;
 
 export type useValue = ReturnType<typeof useValue>;
 
-type PathsToStringProps<T> = T extends string
+type PathsToStringProps<T> = T extends string | number | boolean | Array<any>
   ? []
   : {
       [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
@@ -39,43 +39,60 @@ type Join<T extends string[], D extends string> = T extends []
     : never
   : string;
 
-export type FormName<TFormValues extends FormFields> = Join<PathsToStringProps<TFormValues>, '.'>;
+export type FormName<TFormValues extends Values> = Join<PathsToStringProps<TFormValues>, '.'>;
 
-export type UseForm<TFormValues extends FormFields> = {
+export type UseForm<TFormValues extends Values> = {
   bind: (
     name: FormName<TFormValues>,
-    options?: BindFormFieldOptions,
+    options?: BindValueOptions,
   ) => {
     name: FormName<TFormValues>;
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
   };
-  submit: (
-    submitFn: SubmitFn<TFormValues>,
-  ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
+  submit: (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (
     name?: FormName<TFormValues> | undefined,
   ) => TFormValues | TFormValues[FormName<TFormValues>];
   setValue: (name: FormName<TFormValues>, value: any) => void;
   reset: (values: TFormValues) => void;
-  getErrors: () => FormFieldsErrors;
+  getErrors: () => FormErrors;
   setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;
+  bindCheckbox: (
+    name: FormName<TFormValues>,
+    value: string,
+    options?: BindValueOptions,
+  ) => {
+    name: Join<PathsToStringProps<TFormValues>, '.'>;
+    ref: RefObject<HTMLInputElement>;
+    type: string;
+    value: string;
+    onChange: (e: any) => void;
+  };
+  bindRadio: (
+    name: FormName<TFormValues>,
+    value: string,
+    options?: BindValueOptions,
+  ) => {
+    name: Join<PathsToStringProps<TFormValues>, '.'>;
+    ref: RefObject<HTMLInputElement>;
+    type: string;
+    value: string;
+    onChange: (e: any) => void;
+  };
   $instance: {
-    setFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
-    getFormFieldRef: (key: string) => void | RefObject<HTMLInputElement>;
-    initFormFieldValidation: (
-      name: FormName<TFormValues>,
-      validation: Validation | undefined,
-    ) => void;
-    initFormField: (name: FormName<TFormValues>) => void;
-    formFieldsTouchedSubscriptions: FormFieldsTouchedSubscriptions;
-    formFieldsErrorsSubscriptions: FormFieldsErrorsSubscriptions;
-    formFieldsSubscriptions: FormFieldsSubscriptions;
+    setInputRef: (key: string) => void | RefObject<HTMLInputElement>;
+    getInputRef: (key: string) => void | RefObject<HTMLInputElement>;
+    initValueValidation: (name: FormName<TFormValues>, validation: Validation | undefined) => void;
+    initValue: (name: FormName<TFormValues>) => void;
+    touchedSubscriptions: TouchedSubscriptions;
+    errorsSubscriptions: ErrorsSubscriptions;
+    valuesSubscriptions: ValuesSubscriptions;
   };
 };
 
-export type TouchedFormFields = Record<string, boolean>;
+export type TouchedValues = Record<string, boolean>;
 
 export type ValidateFunction = (val: any) => any;
 
@@ -84,15 +101,19 @@ export type Validation = {
   validateFunction?: ValidateFunction;
 };
 
-export type FormFieldsValidations = Record<string, Validation>;
+export type ValuesValidations = Record<string, Validation>;
 
-export type BindFormFieldOptions =
+export type ValueType = 'text' | 'radio' | 'checkbox';
+
+export type ValuesTypes = Record<string, ValueType>;
+
+export type BindValueOptions =
   | {
       validation: Validation;
     }
   | undefined;
 
-export type FormFieldError =
+export type ValueError =
   | {
       name: string;
       type: 'validateFunction' | 'required';
@@ -100,4 +121,4 @@ export type FormFieldError =
     }
   | undefined;
 
-export type FormFieldsErrors = Record<string, FormFieldError>;
+export type FormErrors = Record<string, ValueError>;

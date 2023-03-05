@@ -1,10 +1,10 @@
-import { FormFields } from '@/types/Form';
+import { Values } from '@/types/Form';
 
-function transformFormFieldsToFormValues(formFields: FormFields) {
+function transformValuesToFormValues(values: Values) {
   const result: Record<string, any> = {};
 
-  for (const key of Object.keys(formFields)) {
-    const value = formFields[key];
+  for (const key of Object.keys(values)) {
+    const value = values[key];
     if (key.includes('.')) {
       const parts = key.split('.');
       let current = result;
@@ -25,4 +25,4 @@ function transformFormFieldsToFormValues(formFields: FormFields) {
   return result;
 }
 
-export default transformFormFieldsToFormValues;
+export default transformValuesToFormValues;

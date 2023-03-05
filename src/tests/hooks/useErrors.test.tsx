@@ -1,7 +1,7 @@
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
+import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
-import { useForm, useErrors } from '..';
+import { useForm, useErrors } from '../..';
 
 describe('useErrors', () => {
   test('should return hasErrors = true if the form has errors', () => {
@@ -22,7 +22,7 @@ describe('useErrors', () => {
     expect(errorHook.result.current.hasErrors).toBe(true);
   });
 
-  test('should return the error type and the formFieldName if the form has errors', () => {
+  test('should return the error type and the valueName if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bind('phone', {
       validation: { required: true },
@@ -60,16 +60,16 @@ describe('useErrors', () => {
   });
 
   test('should unsubscribe when the hook unmount', () => {
-    const formFieldErrorsSubscriptions = new FormFieldsErrorsSubscriptions();
+    const valueErrorsSubscriptions = new ErrorsSubscriptions();
     const hookForm = renderHook(() =>
-      useForm({ $instance: { formFieldsErrorsSubscriptions: formFieldErrorsSubscriptions } }),
+      useForm({ $instance: { errorsSubscriptions: valueErrorsSubscriptions } }),
     );
     const errorsHook = renderHook(() => useErrors({ form: hookForm.result.current }));
 
-    expect(formFieldErrorsSubscriptions.getSubscribers().size).toBe(1);
+    expect(valueErrorsSubscriptions.getSubscribers().size).toBe(1);
 
     errorsHook.unmount();
 
-    expect(formFieldErrorsSubscriptions.getSubscribers().size).toEqual(0);
+    expect(valueErrorsSubscriptions.getSubscribers().size).toEqual(0);
   });
 });

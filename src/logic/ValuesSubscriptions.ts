@@ -1,7 +1,7 @@
 import { SetStateAction } from 'react';
 
 // Gestiona las subscripciones a un determinado valor
-class FormFieldSubscription {
+class ValueSubscription {
   private subscribers: Set<SetStateAction<any>>;
 
   constructor() {
@@ -32,60 +32,60 @@ class FormFieldSubscription {
 }
 
 // Gestiona subscripcines a todos los valores del formulario
-class FormFieldsSubscriptions {
-  private formFieldsSubscriptions: { [key: string]: FormFieldSubscription };
+class ValuesSubscriptions {
+  private valuesSubscriptions: { [key: string]: ValueSubscription };
 
   constructor() {
-    this.formFieldsSubscriptions = {};
+    this.valuesSubscriptions = {};
   }
 
-  formFieldIsInitialized(name: string) {
-    return this.formFieldsSubscriptions[name] instanceof FormFieldSubscription;
+  valueIsInitialized(name: string) {
+    return this.valuesSubscriptions[name] instanceof ValueSubscription;
   }
 
   // Añade instancia para gestionar las subscripciones a un valor
-  initFormFieldSubscription(name: string) {
-    if (this.formFieldIsInitialized(name)) return null;
+  initValueSubscription(name: string) {
+    if (this.valueIsInitialized(name)) return null;
 
-    this.formFieldsSubscriptions[name] = new FormFieldSubscription();
+    this.valuesSubscriptions[name] = new ValueSubscription();
     return true;
   }
 
   getAllSubscriptions() {
-    return this.formFieldsSubscriptions;
+    return this.valuesSubscriptions;
   }
 
-  getFormFieldSubscription(name: string) {
-    return this.formFieldsSubscriptions[name];
+  getValueSubscription(name: string) {
+    return this.valuesSubscriptions[name];
   }
 
   subscribe(name: string, actionFn: SetStateAction<any>) {
-    if (!this.formFieldIsInitialized(name)) return null;
+    if (!this.valueIsInitialized(name)) return null;
 
-    return this.formFieldsSubscriptions[name].subscribe(actionFn);
+    return this.valuesSubscriptions[name].subscribe(actionFn);
   }
 
   subscribeAll(actionFn: SetStateAction<any>) {
-    const initializedSubscriptionsEntries = Object.entries(this.formFieldsSubscriptions);
+    const initializedSubscriptionsEntries = Object.entries(this.valuesSubscriptions);
 
     if (initializedSubscriptionsEntries.length === 0) return null;
 
     initializedSubscriptionsEntries.forEach((entry) => {
-      const [name, formFieldSubscription] = entry;
+      const [name, valueSubscription] = entry;
       const customAction = (value: any) => {
         actionFn(name, value);
       };
-      formFieldSubscription.subscribe(customAction);
+      valueSubscription.subscribe(customAction);
     });
     return true;
   }
 
   publish(name: string, value: any) {
-    if (!this.formFieldIsInitialized(name)) return null;
+    if (!this.valueIsInitialized(name)) return null;
 
-    this.formFieldsSubscriptions[name].publish(value);
+    this.valuesSubscriptions[name].publish(value);
     return true;
   }
 }
 
-export default FormFieldsSubscriptions;
+export default ValuesSubscriptions;

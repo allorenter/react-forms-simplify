@@ -1,99 +1,102 @@
 import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
-import FormFieldsSubscriptions from '@/logic/FormFieldsSubscriptions';
 import {
-  BindFormFieldOptions,
-  FormFields,
-  FormFieldsErrors,
-  FormFieldsValidations,
+  BindValueOptions,
+  Values,
+  FormErrors,
+  ValuesValidations,
   FormName,
   SubmitFn,
-  TouchedFormFields,
+  TouchedValues,
   UseForm,
   UseFormParams,
   Validation,
+  ValuesTypes,
+  ValueType,
 } from '@/types/Form';
-import useDynamicRefs from './useDynamicRef';
-import transformFormFieldsToFormValues from '@/logic/transformFormFieldsToFormValues';
-import FormFieldsTouchedSubscriptions from '@/logic/FormFieldsTouchedSubscriptions';
-import transformFormValuesToFormFields from '@/logic/transformFormValuesToFormFields';
-import FormFieldsErrorsSubscriptions from '@/logic/FormFieldsErrorsSubscriptions';
-import validateFormField from '@/logic/validateFormField';
-import formatFormFieldsErrors from '@/logic/formatFormFieldsErrors';
+import useInputElementRefs from './useInputElementRefs';
+import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
+import transformFormValuesToValues from '@/logic/transformFormValuesToValues';
+import validateValue from '@/logic/validateValue';
+import formatErrors from '@/logic/formatErrors';
+import { splitCheckboxOrRadioName, createCheckboxOrRadioName } from '@/logic/checkboxOrRadioName';
+import createValuesSubscriptions from '@/logic/createValuesSubscriptions';
+import createTouchedSubscriptions from '@/logic/createTouchedSubscriptions';
+import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
 
-function useForm<TFormValues extends FormFields = FormFields>(
+function useForm<TFormValues extends Values = Values>(
   params?: UseFormParams,
 ): UseForm<TFormValues> {
-  const formFieldsSubscriptions =
-    params?.$instance?.formFieldsSubscriptions instanceof FormFieldsSubscriptions
-      ? params?.$instance?.formFieldsSubscriptions
-      : new FormFieldsSubscriptions();
+  // object instances
+  const valuesSubscriptions = createValuesSubscriptions(params?.$instance?.valuesSubscriptions);
+  const touchedSubscriptions = createTouchedSubscriptions(params?.$instance?.touchedSubscriptions);
+  const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
 
-  const formFieldsTouchedSubscriptions =
-    params?.$instance?.formFieldsTouchedSubscriptions instanceof FormFieldsTouchedSubscriptions
-      ? params?.$instance?.formFieldsTouchedSubscriptions
-      : new FormFieldsTouchedSubscriptions();
+  // refs
+  const values = useRef<Values>({} as Values);
+  const touchedValues = useRef<TouchedValues>({});
+  const errors = useRef<FormErrors>({});
+  const valuesValidations = useRef<ValuesValidations>({});
+  const valuesTypes = useRef<ValuesTypes>({});
+  const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
 
-  const formFieldsErrorsSubscriptions =
-    params?.$instance?.formFieldsErrorsSubscriptions instanceof FormFieldsErrorsSubscriptions
-      ? params?.$instance?.formFieldsErrorsSubscriptions
-      : new FormFieldsErrorsSubscriptions();
-
-  const formFields = useRef<FormFields>({} as FormFields);
-  const [getFormFieldRef, setFormFieldRef] = useDynamicRefs<HTMLInputElement>();
-  const touchedFormFields = useRef<TouchedFormFields>({});
-  const formFieldsErrors = useRef<FormFieldsErrors>({});
-  const formFieldsValidations = useRef<FormFieldsValidations>({});
+  // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initFormField = useCallback((name: FormName<TFormValues>) => {
-    if (!formFields.current[name]) {
-      formFields.current[name] = '';
-      touchedFormFields.current[name] = false;
+  const initValue = useCallback((name: FormName<TFormValues>) => {
+    if (!values.current[name]) {
+      values.current[name] = '';
+      touchedValues.current[name] = false;
     }
   }, []);
 
-  const initFormFieldValidation = useCallback(
+  const initValueValidation = useCallback(
     (name: FormName<TFormValues>, validation: Validation | undefined) => {
       if (validation !== undefined) {
-        formFieldsValidations.current[name] = validation;
+        valuesValidations.current[name] = validation;
       }
     },
     [],
   );
 
-  const touchFormField = useCallback((name: FormName<TFormValues>, touch = true) => {
+  const initValueType = useCallback((name: FormName<TFormValues>, type: ValueType) => {
+    valuesTypes.current[name] = type;
+  }, []);
+
+  const touchValue = useCallback((name: FormName<TFormValues>, touch = true) => {
     // solo lo ejecuto en caso de querer cambiar su valor
-    if (touchedFormFields.current[name] !== touch) {
-      touchedFormFields.current[name] = touch;
-      formFieldsTouchedSubscriptions.publish(touchedFormFields.current);
+    if (touchedValues.current[name] !== touch) {
+      touchedValues.current[name] = touch;
+      touchedSubscriptions.publish(touchedValues.current);
     }
   }, []);
 
   const getValue = useCallback((name?: FormName<TFormValues>) => {
-    if (name === undefined) return transformFormFieldsToFormValues(formFields.current);
-    return formFields.current[name];
+    if (name === undefined) return transformValuesToFormValues(values.current);
+    return values.current[name];
   }, []);
 
   const setValue = useCallback((name: FormName<TFormValues>, value: any) => {
-    if (name in formFields.current) {
-      validateFormField(
-        formFieldsValidations.current[name],
+    if (name in values.current) {
+      validateValue(
+        valuesValidations.current[name],
         name,
         value,
-        formFieldsErrors.current,
-        formFieldsErrorsSubscriptions,
+        errors.current,
+        errorsSubscriptions,
       );
-      formFields.current[name] = value;
-      formFieldsSubscriptions.publish(name as string, value);
-      touchFormField(name);
+      values.current[name] = value;
+      valuesSubscriptions.publish(name as string, value);
+      touchValue(name);
     }
   }, []);
 
-  const bind = useCallback((name: FormName<TFormValues>, options?: BindFormFieldOptions) => {
-    formFieldsSubscriptions.initFormFieldSubscription(name as string);
-    initFormField(name);
-    initFormFieldValidation(name, options?.validation);
-    const ref = setFormFieldRef(name as string) as RefObject<HTMLInputElement>;
+  const bind = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
+    valuesSubscriptions.initValueSubscription(name as string);
+    initValue(name);
+    initValueValidation(name, options?.validation);
+    initValueType(name, 'text');
+
+    const ref = setInputRef(name as string) as RefObject<HTMLInputElement>;
 
     const updateRefValue = (value: any) => {
       if (typeof ref?.current === 'object' && ref?.current !== null) {
@@ -101,20 +104,20 @@ function useForm<TFormValues extends FormFields = FormFields>(
       }
     };
 
-    formFieldsSubscriptions.subscribe(name as string, updateRefValue);
+    valuesSubscriptions.subscribe(name as string, updateRefValue);
 
     const onChange = (e: any) => {
-      const value = e.target.value;
-      validateFormField(
-        formFieldsValidations.current[name],
+      const value = typeof e.target === 'object' ? e.target.value : e;
+      validateValue(
+        valuesValidations.current[name],
         name,
         value,
-        formFieldsErrors.current,
-        formFieldsErrorsSubscriptions,
+        errors.current,
+        errorsSubscriptions,
       );
-      formFieldsSubscriptions.publish(name as string, value);
-      formFields.current[name] = value;
-      touchFormField(name);
+      valuesSubscriptions.publish(name as string, value);
+      values.current[name] = value;
+      touchValue(name);
     };
 
     return {
@@ -124,60 +127,202 @@ function useForm<TFormValues extends FormFields = FormFields>(
     };
   }, []);
 
-  const reset = useCallback((values: TFormValues) => {
-    const newFormFields = transformFormValuesToFormFields(values);
-    formFields.current = newFormFields;
-    Object.entries(newFormFields).forEach((entry) => {
+  const bindCheckbox = useCallback(
+    (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
+      const checkboxName = createCheckboxOrRadioName(name, value);
+
+      valuesSubscriptions.initValueSubscription(name);
+      valuesSubscriptions.initValueSubscription(checkboxName as string);
+      initValue(name);
+      initValueValidation(name, options?.validation);
+      initValueType(name, 'checkbox');
+
+      const ref = setInputRef(checkboxName as string) as RefObject<HTMLInputElement>;
+
+      const updateRefValue = (checked: any) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null) {
+          ref.current.checked = checked;
+        }
+      };
+
+      valuesSubscriptions.subscribe(checkboxName as string, updateRefValue);
+
+      const onChange = (e: any) => {
+        const checked = e.target.checked;
+        if (!Array.isArray(values.current[name])) {
+          values.current[name] = [];
+        }
+
+        if (checked) {
+          values.current[name].push(value);
+        } else {
+          const unchecked = values.current[name].filter((val: string) => {
+            return val !== value;
+          });
+          values.current[name] = unchecked;
+        }
+
+        validateValue(
+          valuesValidations.current[name],
+          name,
+          values.current[name],
+          errors.current,
+          errorsSubscriptions,
+        );
+        valuesSubscriptions.publish(checkboxName as string, checked);
+        valuesSubscriptions.publish(name as string, values.current[name]);
+
+        touchValue(name);
+      };
+
+      return {
+        name,
+        ref,
+        type: 'checkbox',
+        value,
+        onChange,
+      };
+    },
+    [],
+  );
+
+  const bindRadio = useCallback(
+    (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
+      const radioName = createCheckboxOrRadioName(name, value);
+
+      valuesSubscriptions.initValueSubscription(name);
+      valuesSubscriptions.initValueSubscription(radioName as string);
+      initValue(name);
+      initValueValidation(name, options?.validation);
+      initValueType(name, 'radio');
+
+      const ref = setInputRef(radioName as string) as RefObject<HTMLInputElement>;
+
+      const updateRefValue = (checked: any) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null) {
+          ref.current.checked = checked;
+        }
+      };
+
+      valuesSubscriptions.subscribe(radioName as string, updateRefValue);
+
+      const onChange = (e: any) => {
+        values.current[name] = value;
+        validateValue(
+          valuesValidations.current[name],
+          name,
+          values.current[name],
+          errors.current,
+          errorsSubscriptions,
+        );
+        valuesSubscriptions.publish(name as string, values.current[name]);
+        touchValue(name);
+      };
+
+      return {
+        name,
+        ref,
+        type: 'radio',
+        value,
+        onChange,
+      };
+    },
+    [],
+  );
+
+  const reset = useCallback((val: TFormValues) => {
+    const newValues = transformFormValuesToValues(val);
+    values.current = newValues;
+
+    Object.entries(newValues).forEach((entry) => {
       const [name, value] = entry;
-      formFieldsSubscriptions.publish(name, value);
-      touchFormField(name as FormName<TFormValues>, false);
+
+      if (valuesTypes.current[name] === 'checkbox') {
+        // recorro los checkboxValues suscritos y los pongo a false en caso de no estar en value
+        const subscriptions = valuesSubscriptions.getAllSubscriptions();
+        Object.entries(subscriptions)
+          .filter((subscriptionProperty) => {
+            const [checkboxName] = subscriptionProperty;
+            if (!checkboxName.includes('{{') && !checkboxName.includes('}}')) {
+              return false;
+            }
+            const [n] = splitCheckboxOrRadioName(checkboxName);
+            return n === name;
+          })
+          .forEach((subscriptionProp) => {
+            const [checkboxName, subscription] = subscriptionProp;
+            const [, v] = splitCheckboxOrRadioName(checkboxName);
+            subscription.publish(value.findIndex((arrV: string) => arrV !== v) === -1);
+          });
+      }
+
+      if (valuesTypes.current[name] === 'radio') {
+        const subscriptions = valuesSubscriptions.getAllSubscriptions();
+        Object.entries(subscriptions)
+          .filter((subscriptionProperty) => {
+            const [radioName] = subscriptionProperty;
+            if (!radioName.includes('{{') && !radioName.includes('}}')) {
+              return false;
+            }
+            const [n] = splitCheckboxOrRadioName(radioName);
+            return n === name;
+          })
+          .forEach((subscriptionProp) => {
+            const [radioName, subscription] = subscriptionProp;
+            const [, v] = splitCheckboxOrRadioName(radioName);
+            subscription.publish(v === value);
+          });
+      }
+
+      valuesSubscriptions.publish(name, value);
+      touchValue(name as FormName<TFormValues>, false);
     });
   }, []);
 
   const setFocus = useCallback((name: FormName<TFormValues>) => {
-    const ref = getFormFieldRef(name as string);
+    const ref = getInputRef(name as string);
     if (ref) ref.current?.focus();
   }, []);
 
   const submit = useCallback(
-    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
+    (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       const hasError = () => {
-        return Object.values(formFieldsErrors.current).some((val) => val !== undefined);
+        return Object.values(errors.current).some((val) => val !== undefined);
       };
 
-      // hace focus sobre el formField del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
+      // hace focus sobre el value del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
       const focusError = () => {
-        const errorsNames = Object.entries(formFieldsErrors.current)
+        const errorsValues = Object.entries(errors.current)
           .filter((entry) => {
             return entry[1] !== undefined;
           })
           .map((entry) => {
             return entry[1]?.name;
           });
-        if (errorsNames[0]) {
-          setFocus(errorsNames[0] as FormName<TFormValues>);
+        if (errorsValues[0]) {
+          setFocus(errorsValues[0] as FormName<TFormValues>);
           return;
         }
       };
 
       if (hasError()) return focusError();
 
-      // si no hay erorres, valido todos los formFields de uno en uno
-      const validationsNames = Object.keys(formFieldsValidations.current);
-      for (const name of validationsNames) {
-        validateFormField(
-          formFieldsValidations.current[name],
+      // si no hay erorres, valido todos los values de uno en uno
+      const validationsValues = Object.keys(valuesValidations.current);
+      for (const name of validationsValues) {
+        validateValue(
+          valuesValidations.current[name],
           name,
-          formFields.current[name],
-          formFieldsErrors.current,
-          formFieldsErrorsSubscriptions,
+          values.current[name],
+          errors.current,
+          errorsSubscriptions,
         );
         if (hasError()) return focusError();
       }
 
-      const formatted = transformFormFieldsToFormValues(formFields.current);
+      const formatted = transformValuesToFormValues(values.current);
 
       setIsSubmitting(true);
       try {
@@ -199,7 +344,7 @@ function useForm<TFormValues extends FormFields = FormFields>(
   );
 
   const getErrors = useCallback(() => {
-    return formatFormFieldsErrors(formFieldsErrors.current);
+    return formatErrors(errors.current);
   }, []);
 
   return {
@@ -211,14 +356,16 @@ function useForm<TFormValues extends FormFields = FormFields>(
     setFocus,
     getErrors,
     isSubmitting,
+    bindCheckbox,
+    bindRadio,
     $instance: {
-      formFieldsSubscriptions,
-      initFormField,
-      formFieldsTouchedSubscriptions,
-      formFieldsErrorsSubscriptions,
-      initFormFieldValidation,
-      setFormFieldRef,
-      getFormFieldRef,
+      valuesSubscriptions,
+      initValue,
+      touchedSubscriptions,
+      errorsSubscriptions,
+      initValueValidation,
+      setInputRef,
+      getInputRef,
     },
   };
 }

@@ -1,15 +1,13 @@
-import { FormFields, TouchedFormFields, UseForm } from '@/types/Form';
+import { Values, TouchedValues, UseForm } from '@/types/Form';
 import { useEffect, useMemo, useState } from 'react';
 
-function useTouched<TFormValues extends FormFields>({ form }: { form: UseForm<TFormValues> }) {
-  const [touched, setTouched] = useState<TouchedFormFields>({});
+function useTouched<TFormValues extends Values>({ form }: { form: UseForm<TFormValues> }) {
+  const [touched, setTouched] = useState<TouchedValues>({});
 
   useEffect(() => {
-    const unsubscribeFn = form.$instance.formFieldsTouchedSubscriptions.subscribe(
-      (touch: TouchedFormFields) => {
-        setTouched((prev) => ({ ...prev, ...touch }));
-      },
-    );
+    const unsubscribeFn = form.$instance.touchedSubscriptions.subscribe((touch: TouchedValues) => {
+      setTouched((prev) => ({ ...prev, ...touch }));
+    });
     return () => unsubscribeFn();
   }, []);
 

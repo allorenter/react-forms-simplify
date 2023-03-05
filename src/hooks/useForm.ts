@@ -107,7 +107,7 @@ function useForm<TFormValues extends Values = Values>(
     valuesSubscriptions.subscribe(name as string, updateRefValue);
 
     const onChange = (e: any) => {
-      const value = e.target.value;
+      const value = typeof e.target === 'object' ? e.target.value : e;
       validateValue(
         valuesValidations.current[name],
         name,

@@ -23,7 +23,7 @@ export type UseBindValue = ReturnType<typeof useBind>;
 
 export type useValue = ReturnType<typeof useValue>;
 
-type PathsToStringProps<T> = T extends string
+type PathsToStringProps<T> = T extends string | number | boolean | Array<any>
   ? []
   : {
       [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];

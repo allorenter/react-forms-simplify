@@ -94,7 +94,7 @@ export type UseForm<TFormValues extends Values> = {
 
 export type TouchedValues = Record<string, boolean>;
 
-export type ValidateFunction = (val: any) => any;
+export type ValidateFunction = (val: any) => boolean | string;
 
 export type Validation = {
   required?: boolean;

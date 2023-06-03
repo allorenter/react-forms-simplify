@@ -50,6 +50,14 @@ export type UseForm<TFormValues extends Values> = {
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
   };
+  bindNumber: (
+    name: FormName<TFormValues>,
+    options?: BindValueOptions,
+  ) => {
+    name: FormName<TFormValues>;
+    onChange: (e: any) => void;
+    ref: RefObject<HTMLInputElement>;
+  };
   submit: (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (
     name?: FormName<TFormValues> | undefined,
@@ -103,7 +111,7 @@ export type Validation = {
 
 export type ValuesValidations = Record<string, Validation>;
 
-export type ValueType = 'text' | 'radio' | 'checkbox';
+export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
 export type ValuesTypes = Record<string, ValueType>;
 

@@ -41,6 +41,84 @@ describe('useForm tests', () => {
     expect(result.current.getValue('name')).toBe(fieldValue);
   });
 
+  test('should add a name to Value when call bindNumber', async () => {
+    const Subscriptions = new ValuesSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
+    );
+    const formControl = result.current.bindNumber('number');
+    const fieldValue = 9;
+    const eventMock = {
+      target: {
+        value: fieldValue.toString(),
+      },
+    };
+    formControl.onChange(eventMock);
+
+    expect(result.current.getValue('number')).toBe(fieldValue);
+  });
+
+  test('should add a name to Value when call bindCheckbox', async () => {
+    const Subscriptions = new ValuesSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
+    );
+    const formControl = result.current.bindCheckbox('name', 'A');
+    const fieldValue = 'A';
+    const eventMock = {
+      target: {
+        value: fieldValue,
+        checked: true,
+      },
+    };
+    formControl.onChange(eventMock);
+
+    expect(result.current.getValue('name')).toStrictEqual([fieldValue]);
+  });
+
+  test('should add a name to Value when call bindRadio', async () => {
+    const Subscriptions = new ValuesSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
+    );
+    const formControl = result.current.bindRadio('name', 'A');
+    const fieldValue = 'A';
+    const eventMock = {
+      target: {
+        value: fieldValue,
+      },
+    };
+    formControl.onChange(eventMock);
+
+    expect(result.current.getValue('name')).toBe(fieldValue);
+  });
+
+  test('should change the Value when change on other radio with the same name', async () => {
+    const Subscriptions = new ValuesSubscriptions();
+    const { result } = renderHook(() =>
+      useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
+    );
+    const formControlA = result.current.bindRadio('name', 'A');
+    const formControlB = result.current.bindRadio('name', 'B');
+    const fieldValueA = 'A';
+    const fieldValueB = 'B';
+    formControlA.onChange({
+      target: {
+        value: fieldValueA,
+      },
+    });
+
+    expect(result.current.getValue('name')).toBe(fieldValueA);
+
+    formControlB.onChange({
+      target: {
+        value: fieldValueB,
+      },
+    });
+
+    expect(result.current.getValue('name')).toBe(fieldValueB);
+  });
+
   test('should add a ValuesSubscription when call bind', async () => {
     const Subscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() =>
@@ -192,6 +270,32 @@ describe('useForm tests', () => {
     rerender(<Component />);
 
     expect(valuesSubscriptions.getValueSubscription('name').getSubscribers().size).toBe(1);
+  });
+
+  test('should change the inputs values when reset is called', async () => {
+    const updatedValue = 'updatedValue';
+    const Component = () => {
+      const form = useForm();
+      const onClick = () => {
+        form.reset({ test: updatedValue });
+      };
+      return (
+        <>
+          <button onClick={onClick}>Set value</button>
+          <input {...form.bind('test')} />
+        </>
+      );
+    };
+    const { getByRole } = render(<Component />);
+    const updateButton = getByRole('button');
+    const input = getByRole('textbox');
+    fireEvent.click(updateButton);
+
+    await waitFor(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      expect(input.value).toBe(updatedValue);
+    });
   });
 
   test('should change the inputs values when reset is called', async () => {

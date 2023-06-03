@@ -230,6 +230,43 @@ function useForm<TFormValues extends Values = Values>(
     [],
   );
 
+  const bindNumber = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
+    valuesSubscriptions.initValueSubscription(name as string);
+    initValue(name);
+    initValueValidation(name, options?.validation);
+    initValueType(name, 'number');
+
+    const ref = setInputRef(name as string) as RefObject<HTMLInputElement>;
+
+    const updateRefValue = (value: any) => {
+      if (typeof ref?.current === 'object' && ref?.current !== null) {
+        ref.current.value = value;
+      }
+    };
+
+    valuesSubscriptions.subscribe(name as string, updateRefValue);
+
+    const onChange = (e: any) => {
+      const value = typeof e.target === 'object' ? parseInt(e.target.value) : e;
+      validateValue(
+        valuesValidations.current[name],
+        name,
+        value,
+        errors.current,
+        errorsSubscriptions,
+      );
+      valuesSubscriptions.publish(name as string, value);
+      values.current[name] = value;
+      touchValue(name);
+    };
+
+    return {
+      name,
+      onChange,
+      ref,
+    };
+  }, []);
+
   const reset = useCallback((val: TFormValues) => {
     const newValues = transformFormValuesToValues(val);
     values.current = newValues;
@@ -358,6 +395,7 @@ function useForm<TFormValues extends Values = Values>(
     isSubmitting,
     bindCheckbox,
     bindRadio,
+    bindNumber,
     $instance: {
       valuesSubscriptions,
       initValue,

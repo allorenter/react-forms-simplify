@@ -264,6 +264,7 @@ function useForm<TFormValues extends Values = Values>(
       name,
       onChange,
       ref,
+      type: 'number',
     };
   }, []);
 
@@ -322,7 +323,7 @@ function useForm<TFormValues extends Values = Values>(
   }, []);
 
   const submit = useCallback(
-    (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => {
+    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       const hasError = () => {

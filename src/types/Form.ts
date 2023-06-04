@@ -7,7 +7,7 @@ import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 
 export type Values = Record<string, any>;
 
-export type SubmitFn = (values: any) => any;
+export type SubmitFn<TFormValues> = (values: TFormValues) => any;
 
 export type UseFormParams =
   | {
@@ -58,7 +58,9 @@ export type UseForm<TFormValues extends Values> = {
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
   };
-  submit: (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
+  submit: (
+    submitFn: SubmitFn<TFormValues>,
+  ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (
     name?: FormName<TFormValues> | undefined,
   ) => TFormValues | TFormValues[FormName<TFormValues>];

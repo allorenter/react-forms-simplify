@@ -7,7 +7,7 @@ import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 
 export type Values = Record<string, any>;
 
-export type SubmitFn = (values: any) => any;
+export type SubmitFn<TFormValues> = (values: TFormValues) => any;
 
 export type UseFormParams =
   | {
@@ -50,7 +50,17 @@ export type UseForm<TFormValues extends Values> = {
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
   };
-  submit: (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
+  bindNumber: (
+    name: FormName<TFormValues>,
+    options?: BindValueOptions,
+  ) => {
+    name: FormName<TFormValues>;
+    onChange: (e: any) => void;
+    ref: RefObject<HTMLInputElement>;
+  };
+  submit: (
+    submitFn: SubmitFn<TFormValues>,
+  ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: (
     name?: FormName<TFormValues> | undefined,
   ) => TFormValues | TFormValues[FormName<TFormValues>];
@@ -94,7 +104,7 @@ export type UseForm<TFormValues extends Values> = {
 
 export type TouchedValues = Record<string, boolean>;
 
-export type ValidateFunction = (val: any) => any;
+export type ValidateFunction = (val: any) => boolean | string;
 
 export type Validation = {
   required?: boolean;
@@ -103,7 +113,7 @@ export type Validation = {
 
 export type ValuesValidations = Record<string, Validation>;
 
-export type ValueType = 'text' | 'radio' | 'checkbox';
+export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
 export type ValuesTypes = Record<string, ValueType>;
 

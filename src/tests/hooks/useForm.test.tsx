@@ -323,14 +323,4 @@ describe('useForm tests', () => {
       expect(input.value).toBe(updatedValue);
     });
   });
-
-  // test para getValues con values anidados
-
-  // faltan los tests del onSubmit
-
-  // test para comprobar correcto funcionamiento de touchedValues
-
-  // testear que setea a [] los touchedValues cuando llamo a reset
-
-  // test para comprobar funcionamiento de los errores
 });

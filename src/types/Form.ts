@@ -4,6 +4,17 @@ import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 import useBind from '@/hooks/useBind';
 import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
+import { FieldPath, FieldPathValue, NestedValue } from './Utils';
+
+export declare type UnpackNestedValue<T> = T extends NestedValue<infer U>
+  ? U
+  : T extends Date | FileList
+  ? T
+  : T extends Record<string, unknown>
+  ? {
+      [K in keyof T]: UnpackNestedValue<T[K]>;
+    }
+  : T;
 
 export type Values = Record<string, any>;
 
@@ -41,7 +52,7 @@ type Join<T extends string[], D extends string> = T extends []
 
 export type FormName<TFormValues extends Values> = Join<PathsToStringProps<TFormValues>, '.'>;
 
-export type UseForm<TFormValues extends Values> = {
+export type UseForm<TFormValues extends Values = Values> = {
   bind: (
     name: FormName<TFormValues>,
     options?: BindValueOptions,
@@ -61,9 +72,13 @@ export type UseForm<TFormValues extends Values> = {
   submit: (
     submitFn: SubmitFn<TFormValues>,
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
-  getValue: (
-    name?: FormName<TFormValues> | undefined,
-  ) => TFormValues | TFormValues[FormName<TFormValues>];
+  getValue: {
+    (): UnpackNestedValue<TFormValues>;
+    <TName extends FieldPath<TFormValues>>(fieldName: TName): FieldPathValue<TFormValues, TName>;
+  };
+  // getValue: (
+  //   name?: FormName<TFormValues> | undefined,
+  // ) => TFormValues | TFormValues[FormName<TFormValues>];
   setValue: (name: FormName<TFormValues>, value: any) => void;
   reset: (values: TFormValues) => void;
   getErrors: () => FormErrors;

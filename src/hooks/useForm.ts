@@ -3,14 +3,14 @@ import {
   BindValueOptions,
   Values,
   FormErrors,
-  ValuesValidations,
+  ValidationValues,
   FormName,
   SubmitFn,
   TouchedValues,
   UseForm,
   UseFormParams,
   Validation,
-  ValuesTypes,
+  TypeValues,
   ValueType,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
@@ -35,8 +35,8 @@ function useForm<TFormValues extends Values = Values>(
   const values = useRef<Values>({} as Values);
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
-  const valuesValidations = useRef<ValuesValidations>({});
-  const valuesTypes = useRef<ValuesTypes>({});
+  const valuesValidations = useRef<ValidationValues>({});
+  const valuesTypes = useRef<TypeValues>({});
   const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
 
   // states

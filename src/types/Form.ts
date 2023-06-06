@@ -76,9 +76,6 @@ export type UseForm<TFormValues extends Values = Values> = {
     (): UnpackNestedValue<TFormValues>;
     <TName extends FieldPath<TFormValues>>(fieldName: TName): FieldPathValue<TFormValues, TName>;
   };
-  // getValue: (
-  //   name?: FormName<TFormValues> | undefined,
-  // ) => TFormValues | TFormValues[FormName<TFormValues>];
   setValue: (name: FormName<TFormValues>, value: any) => void;
   reset: (values: TFormValues) => void;
   getErrors: () => FormErrors;
@@ -126,11 +123,11 @@ export type Validation = {
   validateFunction?: ValidateFunction;
 };
 
-export type ValuesValidations = Record<string, Validation>;
+export type ValidationValues = Record<string, Validation>;
 
 export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
-export type ValuesTypes = Record<string, ValueType>;
+export type TypeValues = Record<string, ValueType>;
 
 export type BindValueOptions =
   | {

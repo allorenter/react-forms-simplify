@@ -3,15 +3,16 @@ import {
   BindValueOptions,
   Values,
   FormErrors,
-  ValuesValidations,
+  ValidationValues,
   FormName,
   SubmitFn,
   TouchedValues,
   UseForm,
   UseFormParams,
   Validation,
-  ValuesTypes,
+  TypeValues,
   ValueType,
+  FormValue,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
 import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
@@ -35,8 +36,8 @@ function useForm<TFormValues extends Values = Values>(
   const values = useRef<Values>({} as Values);
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
-  const valuesValidations = useRef<ValuesValidations>({});
-  const valuesTypes = useRef<ValuesTypes>({});
+  const valuesValidations = useRef<ValidationValues>({});
+  const valuesTypes = useRef<TypeValues>({});
   const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
 
   // states
@@ -75,20 +76,23 @@ function useForm<TFormValues extends Values = Values>(
     return values.current[name];
   }, []);
 
-  const setValue = useCallback((name: FormName<TFormValues>, value: any) => {
-    if (name in values.current) {
-      validateValue(
-        valuesValidations.current[name],
-        name,
-        value,
-        errors.current,
-        errorsSubscriptions,
-      );
-      values.current[name] = value;
-      valuesSubscriptions.publish(name as string, value);
-      touchValue(name);
-    }
-  }, []);
+  const setValue = useCallback(
+    <TName extends FormName<TFormValues>>(name: TName, value: FormValue<TFormValues, TName>) => {
+      if (name in values.current) {
+        validateValue(
+          valuesValidations.current[name],
+          name,
+          value,
+          errors.current,
+          errorsSubscriptions,
+        );
+        values.current[name] = value;
+        valuesSubscriptions.publish(name as string, value);
+        touchValue(name);
+      }
+    },
+    [],
+  );
 
   const bind = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
     valuesSubscriptions.initValueSubscription(name as string);
@@ -206,7 +210,7 @@ function useForm<TFormValues extends Values = Values>(
 
       valuesSubscriptions.subscribe(radioName as string, updateRefValue);
 
-      const onChange = (e: any) => {
+      const onChange = () => {
         values.current[name] = value;
         validateValue(
           valuesValidations.current[name],
@@ -229,6 +233,44 @@ function useForm<TFormValues extends Values = Values>(
     },
     [],
   );
+
+  const bindNumber = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
+    valuesSubscriptions.initValueSubscription(name as string);
+    initValue(name);
+    initValueValidation(name, options?.validation);
+    initValueType(name, 'number');
+
+    const ref = setInputRef(name as string) as RefObject<HTMLInputElement>;
+
+    const updateRefValue = (value: any) => {
+      if (typeof ref?.current === 'object' && ref?.current !== null) {
+        ref.current.value = value;
+      }
+    };
+
+    valuesSubscriptions.subscribe(name as string, updateRefValue);
+
+    const onChange = (e: any) => {
+      const value = typeof e.target === 'object' ? parseInt(e.target.value) : e;
+      validateValue(
+        valuesValidations.current[name],
+        name,
+        value,
+        errors.current,
+        errorsSubscriptions,
+      );
+      valuesSubscriptions.publish(name as string, value);
+      values.current[name] = value;
+      touchValue(name);
+    };
+
+    return {
+      name,
+      onChange,
+      ref,
+      type: 'number',
+    };
+  }, []);
 
   const reset = useCallback((val: TFormValues) => {
     const newValues = transformFormValuesToValues(val);
@@ -285,7 +327,7 @@ function useForm<TFormValues extends Values = Values>(
   }, []);
 
   const submit = useCallback(
-    (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => {
+    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
       e.preventDefault();
 
       const hasError = () => {
@@ -309,7 +351,7 @@ function useForm<TFormValues extends Values = Values>(
 
       if (hasError()) return focusError();
 
-      // si no hay erorres, valido todos los values de uno en uno
+      // si no hay errores, válido todos los values de uno en uno
       const validationsValues = Object.keys(valuesValidations.current);
       for (const name of validationsValues) {
         validateValue(
@@ -358,6 +400,7 @@ function useForm<TFormValues extends Values = Values>(
     isSubmitting,
     bindCheckbox,
     bindRadio,
+    bindNumber,
     $instance: {
       valuesSubscriptions,
       initValue,

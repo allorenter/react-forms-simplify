@@ -20,6 +20,17 @@ function validateValue(
         : undefined;
   }
 
+  if (typeof validation.validateFunction === 'function') {
+    const validateResult = validation.validateFunction(value);
+    if (validateResult) {
+      errors[name] = {
+        name,
+        type: 'validateFunction',
+        message: typeof validateResult === 'string' ? validateResult : undefined,
+      };
+    }
+  }
+
   errorsSubscriptions.publish(errors);
 }
 

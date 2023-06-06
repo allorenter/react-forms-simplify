@@ -4,10 +4,46 @@ import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 import useBind from '@/hooks/useBind';
 import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
+import { ArrayKey, Digits, IsPrimitive, SplitNestedValue, ValueOf } from './Utils';
+
+export type FormName<Root> = Root extends ReadonlyArray<infer E>
+  ? IsPrimitive<E> extends true
+    ? ArrayKey
+    : ArrayKey | `${ArrayKey}.${FormName<E>}`
+  : ValueOf<{
+      [K in keyof Root]: IsPrimitive<Root[K]> extends true
+        ? K & string
+        : (K & string) | `${K & string}.${FormName<Root[K]>}`;
+    }>;
+
+export type FormValue<
+  TFormValues extends Values,
+  TPath extends FormName<TFormValues>,
+> = TPath extends `${infer Key}.${infer Rest}`
+  ? Key extends keyof TFormValues
+    ? Rest extends FormName<TFormValues[Key]>
+      ? FormValue<TFormValues[Key], Rest>
+      : TFormValues[Key] extends (infer U)[]
+      ? U
+      : never
+    : Key extends Digits
+    ? Key & number extends keyof TFormValues
+      ? Rest extends FormName<TFormValues[Key & number]>
+        ? FormValue<TFormValues[Key & number], Rest>
+        : TFormValues[Key] extends (infer U)[]
+        ? U
+        : never
+      : never
+    : never
+  : TPath extends keyof TFormValues
+  ? TFormValues[TPath]
+  : TPath & number extends keyof TFormValues
+  ? TFormValues[TPath & number]
+  : never;
 
 export type Values = Record<string, any>;
 
-export type SubmitFn = (values: any) => any;
+export type SubmitFn<TFormValues> = (values: TFormValues) => any;
 
 export type UseFormParams =
   | {
@@ -23,25 +59,7 @@ export type UseBindValue = ReturnType<typeof useBind>;
 
 export type useValue = ReturnType<typeof useValue>;
 
-type PathsToStringProps<T> = T extends string | number | boolean | Array<any>
-  ? []
-  : {
-      [K in Extract<keyof T, string>]: [K, ...PathsToStringProps<T[K]>];
-    }[Extract<keyof T, string>];
-
-type Join<T extends string[], D extends string> = T extends []
-  ? never
-  : T extends [infer F]
-  ? F
-  : T extends [infer F, ...infer R]
-  ? F extends string
-    ? `${F}${D}${Join<Extract<R, string[]>, D>}`
-    : never
-  : string;
-
-export type FormName<TFormValues extends Values> = Join<PathsToStringProps<TFormValues>, '.'>;
-
-export type UseForm<TFormValues extends Values> = {
+export type UseForm<TFormValues extends Values = Values> = {
   bind: (
     name: FormName<TFormValues>,
     options?: BindValueOptions,
@@ -50,11 +68,25 @@ export type UseForm<TFormValues extends Values> = {
     onChange: (e: any) => void;
     ref: RefObject<HTMLInputElement>;
   };
-  submit: (submitFn: SubmitFn) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
-  getValue: (
-    name?: FormName<TFormValues> | undefined,
-  ) => TFormValues | TFormValues[FormName<TFormValues>];
-  setValue: (name: FormName<TFormValues>, value: any) => void;
+  bindNumber: (
+    name: FormName<TFormValues>,
+    options?: BindValueOptions,
+  ) => {
+    name: FormName<TFormValues>;
+    onChange: (e: any) => void;
+    ref: RefObject<HTMLInputElement>;
+  };
+  submit: (
+    submitFn: SubmitFn<TFormValues>,
+  ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
+  getValue: {
+    (): SplitNestedValue<TFormValues>;
+    <TName extends FormName<TFormValues>>(name: TName): FormValue<TFormValues, TName>;
+  };
+  setValue: <TName extends FormName<TFormValues>>(
+    name: TName,
+    value: FormValue<TFormValues, TName>,
+  ) => void;
   reset: (values: TFormValues) => void;
   getErrors: () => FormErrors;
   setFocus: (name: FormName<TFormValues>) => void;
@@ -64,7 +96,7 @@ export type UseForm<TFormValues extends Values> = {
     value: string,
     options?: BindValueOptions,
   ) => {
-    name: Join<PathsToStringProps<TFormValues>, '.'>;
+    name: FormName<TFormValues>;
     ref: RefObject<HTMLInputElement>;
     type: string;
     value: string;
@@ -75,7 +107,7 @@ export type UseForm<TFormValues extends Values> = {
     value: string,
     options?: BindValueOptions,
   ) => {
-    name: Join<PathsToStringProps<TFormValues>, '.'>;
+    name: FormName<TFormValues>;
     ref: RefObject<HTMLInputElement>;
     type: string;
     value: string;
@@ -94,18 +126,18 @@ export type UseForm<TFormValues extends Values> = {
 
 export type TouchedValues = Record<string, boolean>;
 
-export type ValidateFunction = (val: any) => any;
+export type ValidateFunction = (val: any) => boolean | string;
 
 export type Validation = {
   required?: boolean;
   validateFunction?: ValidateFunction;
 };
 
-export type ValuesValidations = Record<string, Validation>;
+export type ValidationValues = Record<string, Validation>;
 
-export type ValueType = 'text' | 'radio' | 'checkbox';
+export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
-export type ValuesTypes = Record<string, ValueType>;
+export type TypeValues = Record<string, ValueType>;
 
 export type BindValueOptions =
   | {

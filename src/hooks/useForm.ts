@@ -12,6 +12,7 @@ import {
   Validation,
   TypeValues,
   ValueType,
+  FormValue,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
 import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
@@ -75,20 +76,23 @@ function useForm<TFormValues extends Values = Values>(
     return values.current[name];
   }, []);
 
-  const setValue = useCallback((name: FormName<TFormValues>, value: any) => {
-    if (name in values.current) {
-      validateValue(
-        valuesValidations.current[name],
-        name,
-        value,
-        errors.current,
-        errorsSubscriptions,
-      );
-      values.current[name] = value;
-      valuesSubscriptions.publish(name as string, value);
-      touchValue(name);
-    }
-  }, []);
+  const setValue = useCallback(
+    <TName extends FormName<TFormValues>>(name: TName, value: FormValue<TFormValues, TName>) => {
+      if (name in values.current) {
+        validateValue(
+          valuesValidations.current[name],
+          name,
+          value,
+          errors.current,
+          errorsSubscriptions,
+        );
+        values.current[name] = value;
+        valuesSubscriptions.publish(name as string, value);
+        touchValue(name);
+      }
+    },
+    [],
+  );
 
   const bind = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
     valuesSubscriptions.initValueSubscription(name as string);
@@ -206,7 +210,7 @@ function useForm<TFormValues extends Values = Values>(
 
       valuesSubscriptions.subscribe(radioName as string, updateRefValue);
 
-      const onChange = (e: any) => {
+      const onChange = () => {
         values.current[name] = value;
         validateValue(
           valuesValidations.current[name],
@@ -347,7 +351,7 @@ function useForm<TFormValues extends Values = Values>(
 
       if (hasError()) return focusError();
 
-      // si no hay erorres, valido todos los values de uno en uno
+      // si no hay errores, válido todos los values de uno en uno
       const validationsValues = Object.keys(valuesValidations.current);
       for (const name of validationsValues) {
         validateValue(

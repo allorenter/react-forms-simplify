@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Values, FormName, UseForm } from '@/types/Form';
-import { FieldPath, FieldPathValue } from '@/types/Utils';
+import { Values, FormName, UseForm, FormValue } from '@/types/Form';
 
 function useValue<
   TFormValues extends Values = Values,
-  TName extends FieldPath<TFormValues> = FieldPath<TFormValues>,
->({ name, form }: { name: TName; form: UseForm<TFormValues> }): FieldPathValue<TFormValues, TName> {
+  TName extends FormName<TFormValues> = FormName<TFormValues>,
+>({ name, form }: { name: TName; form: UseForm<TFormValues> }): FormValue<TFormValues, TName> {
   const [value, setValue] = useState<any>();
   const { valuesSubscriptions } = form.$instance;
 

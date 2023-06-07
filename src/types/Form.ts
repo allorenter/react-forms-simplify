@@ -52,13 +52,14 @@ export type Values = Record<string, any>;
 
 export type SubmitFn<TFormValues> = (values: TFormValues) => any;
 
-export type UseFormParams =
+export type UseFormParams<TFormValues extends Values = Values> =
   | {
-      $instance: {
+      $instance?: {
         valuesSubscriptions?: ValuesSubscriptions;
         touchedSubscriptions?: TouchedSubscriptions;
         errorsSubscriptions?: ErrorsSubscriptions;
       };
+      defaultValues?: DefaultValues<TFormValues>;
     }
   | undefined;
 

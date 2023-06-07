@@ -308,4 +308,26 @@ describe('useForm tests', () => {
       expect(input.value).toBe(updatedValue);
     });
   });
+
+  test('should initialize the values of the form with the prop defaultValues', async () => {
+    const defaultValues = {
+      a: 'value for a',
+      b: 'value for b',
+    };
+    const { result } = renderHook(() => useForm({ defaultValues }));
+
+    expect(result.current.getValue()).toEqual(defaultValues);
+  });
+
+  test('should change the values initialized with default values', async () => {
+    const defaultValues = {
+      a: 'value for a',
+      b: 'value for b',
+    };
+    const { result } = renderHook(() => useForm({ defaultValues }));
+    const modifiedA = 'changed value for a';
+    result.current.setValue('a', modifiedA);
+
+    expect(result.current.getValue()).toEqual({ ...defaultValues, a: modifiedA });
+  });
 });

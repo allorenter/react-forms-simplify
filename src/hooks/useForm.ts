@@ -13,6 +13,7 @@ import {
   TypeValues,
   ValueType,
   FormValue,
+  DefaultValues,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
 import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
@@ -25,15 +26,20 @@ import createTouchedSubscriptions from '@/logic/createTouchedSubscriptions';
 import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
 
 function useForm<TFormValues extends Values = Values>(
-  params?: UseFormParams,
+  params?: UseFormParams<TFormValues>,
 ): UseForm<TFormValues> {
   // object instances
   const valuesSubscriptions = createValuesSubscriptions(params?.$instance?.valuesSubscriptions);
   const touchedSubscriptions = createTouchedSubscriptions(params?.$instance?.touchedSubscriptions);
   const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
 
+  const initialValue =
+    typeof params?.defaultValues === 'object' && Object.keys(params.defaultValues).length > 0
+      ? params.defaultValues
+      : {};
+
   // refs
-  const values = useRef<Values>({} as Values);
+  const values = useRef<Values>(initialValue);
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
   const valuesValidations = useRef<ValidationValues>({});
@@ -272,7 +278,7 @@ function useForm<TFormValues extends Values = Values>(
     };
   }, []);
 
-  const reset = useCallback((val: TFormValues) => {
+  const reset = useCallback((val: DefaultValues<TFormValues>) => {
     const newValues = transformFormValuesToValues(val);
     values.current = newValues;
 

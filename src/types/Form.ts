@@ -4,7 +4,14 @@ import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 import useBind from '@/hooks/useBind';
 import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
-import { ArrayKey, Digits, IsPrimitive, SplitNestedValue, ValueOf } from './Utils';
+import {
+  ArrayKey,
+  Digits,
+  IsPrimitive,
+  RecursivePartial,
+  SplitNestedValue,
+  ValueOf,
+} from './Utils';
 
 export type FormName<Root> = Root extends ReadonlyArray<infer E>
   ? IsPrimitive<E> extends true
@@ -59,6 +66,8 @@ export type UseBindValue = ReturnType<typeof useBind>;
 
 export type useValue = ReturnType<typeof useValue>;
 
+export type DefaultValues<TFormValues> = SplitNestedValue<RecursivePartial<TFormValues>>;
+
 export type UseForm<TFormValues extends Values = Values> = {
   bind: (
     name: FormName<TFormValues>,
@@ -87,7 +96,7 @@ export type UseForm<TFormValues extends Values = Values> = {
     name: TName,
     value: FormValue<TFormValues, TName>,
   ) => void;
-  reset: (values: TFormValues) => void;
+  reset: (values: DefaultValues<TFormValues>) => void;
   getErrors: () => FormErrors;
   setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;

@@ -300,7 +300,9 @@ function useForm<TFormValues extends Values = Values>(
           .forEach((subscriptionProp) => {
             const [checkboxName, subscription] = subscriptionProp;
             const [, v] = splitCheckboxOrRadioName(checkboxName);
-            subscription.publish(value.findIndex((arrV: string) => arrV !== v) === -1);
+            subscription.publish(
+              value ? value.findIndex((arrV: string) => arrV !== v) === -1 : false,
+            );
           });
       }
 

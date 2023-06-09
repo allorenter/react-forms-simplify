@@ -13,9 +13,7 @@ function useBind<
   form: UseForm<TFormValues>;
   options?: BindValueOptions;
 }) {
-  const [val, setVal] = useState<FormValue<TFormValues, TName>>(
-    '' as FormValue<TFormValues, TName>,
-  );
+  const [val, setVal] = useState<any>(form?.$instance?.initialValues?.[name] || '');
   const {
     $instance: { valuesSubscriptions, initValue, initValueValidation, setInputRef, getInputRef },
     setValue,

@@ -89,6 +89,26 @@ describe('useBind tests', () => {
     // @ts-expect-error
     const { result } = renderHook(() => useBind({ name: 'username', form }));
     result.current.setValue('new value');
+
     expect(form.setValue).toHaveBeenCalledWith('username', 'new value');
+  });
+
+  test('should return the value if the form is initialized with defaultValues', async () => {
+    const initialValue = 'initial value';
+    const form = renderHook(() =>
+      useForm({
+        defaultValues: { name: initialValue },
+      }),
+    );
+    const { result, rerender } = renderHook(() =>
+      useBind({
+        name: 'name',
+        form: form.result.current,
+      }),
+    );
+
+    rerender();
+
+    expect(result.current.value).toBe(initialValue);
   });
 });

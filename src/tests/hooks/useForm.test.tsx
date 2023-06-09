@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { describe, test, expect } from 'vitest';
 import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
 import useForm from '../../hooks/useForm';
@@ -171,7 +172,6 @@ describe('useForm tests', () => {
     fireEvent.click(updateButton);
 
     await waitFor(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       expect(input.value).toBe(value);
     });
@@ -274,7 +274,6 @@ describe('useForm tests', () => {
     fireEvent.click(updateButton);
 
     await waitFor(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       expect(input.value).toBe(updatedValue);
     });
@@ -300,7 +299,6 @@ describe('useForm tests', () => {
     fireEvent.click(updateButton);
 
     await waitFor(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       expect(input.value).toBe(updatedValue);
     });
@@ -333,33 +331,73 @@ describe('useForm tests', () => {
   });
 
   test('should get the input value when the form is initialized with defaultValues', async () => {
-    const defaultValue = 'initial value';
+    const testValue = 'initial value';
+    const testNumberValue = 9;
+    const testRadioValue = 'RADIO1';
+    const testCheckboxValue = ['chk2'];
+
     const Component = () => {
-      const form = useForm({ defaultValues: { test: defaultValue } });
+      const form = useForm({
+        defaultValues: {
+          test: testValue,
+          testNumber: testNumberValue,
+          testRadio: testRadioValue,
+          testCheckbox: testCheckboxValue,
+        },
+      });
 
       return (
         <>
-          <input {...form.bind('test')} />
+          <input data-testId='test' {...form.bind('test')} />
+          <input data-testId='testNumber' {...form.bindNumber('testNumber')} />
+          <input data-testId='testRadio1' {...form.bindRadio('testRadio', 'RADIO1')} />
+          <input data-testId='testRadio2' {...form.bindRadio('testRadio', 'RADIO2')} />
+          <input data-testId='testCheckbox1' {...form.bindCheckbox('testCheckbox', 'chk1')} />
+          <input data-testId='testCheckbox2' {...form.bindCheckbox('testCheckbox', 'chk2')} />
         </>
       );
     };
-    const { getByRole } = render(<Component />);
-    const input = getByRole('textbox');
+    const { getByTestId } = render(<Component />);
+    const testInput = getByTestId('test');
+    const testNumberInput = getByTestId('testNumber');
+    const testRadio1Input = getByTestId('testRadio1');
+    const testRadio2Input = getByTestId('testRadio2');
+    const testCheckbox1Input = getByTestId('testCheckbox1');
+    const testCheckbox2Input = getByTestId('testCheckbox2');
 
     await waitFor(() => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      expect(input.value).toBe(defaultValue);
+      expect(testNumberInput.value).toBe(testNumberValue.toString());
+      // @ts-expect-error
+      expect(testInput.value).toBe(testValue);
+      // @ts-expect-error
+      expect(testRadio1Input.checked).toBe(true);
+      // @ts-expect-error
+      expect(testRadio2Input.checked).toBe(false);
+      // @ts-expect-error
+      expect(testCheckbox1Input.checked).toBe(false);
+      // @ts-expect-error
+      expect(testCheckbox2Input.checked).toBe(true);
     });
   });
 
-  // test('should not add a new subscriber when the component rerender', async () => {
-  //   // IMPLEMENT HERE
+  test('should not add a new subscriber when the component rerender', async () => {
+    const valuesSubscriptions = new ValuesSubscriptions();
+    const { result, rerender } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
+    const formControl = result.current.bindNumber('number');
+    const fieldValue = 9;
+    const eventMock = {
+      target: {
+        value: fieldValue.toString(),
+      },
+    };
+    formControl.onChange(eventMock);
+    const subscriptions = valuesSubscriptions.getAllSubscriptions();
 
-  //   await waitFor(() => {
-  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  //     // @ts-expect-error
-  //     expect(input.value).toBe({});
-  //   });
-  // });
+    expect(subscriptions.number.getSubscribers().size).toBe(1);
+
+    rerender();
+
+    expect(subscriptions.number.getSubscribers().size).toBe(1);
+  });
 });

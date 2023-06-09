@@ -199,6 +199,9 @@ function useForm<TFormValues extends Values = Values>(
         type: 'checkbox',
         value,
         onChange,
+        defaultChecked: Array.isArray(values.current[name])
+          ? values.current[name].findIndex((val: string) => val === value) !== -1
+          : undefined,
       };
     },
     [],
@@ -208,9 +211,9 @@ function useForm<TFormValues extends Values = Values>(
     (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
       const radioName = createCheckboxOrRadioName(name, value);
 
+      initValue(name);
       valuesSubscriptions.initValueSubscription(name);
       valuesSubscriptions.initValueSubscription(radioName as string);
-      initValue(name);
       initValueValidation(name, options?.validation);
       initValueType(name, 'radio');
 
@@ -243,14 +246,16 @@ function useForm<TFormValues extends Values = Values>(
         type: 'radio',
         value,
         onChange,
+        defaultChecked: value === values.current[name],
       };
     },
     [],
   );
 
   const bindNumber = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
+    const initialized = initValue(name);
+
     valuesSubscriptions.initValueSubscription(name as string);
-    initValue(name);
     initValueValidation(name, options?.validation);
     initValueType(name, 'number');
 
@@ -283,6 +288,7 @@ function useForm<TFormValues extends Values = Values>(
       onChange,
       ref,
       type: 'number',
+      defaultValue: initialized ? undefined : values.current[name],
     };
   }, []);
 

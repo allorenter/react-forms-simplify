@@ -144,4 +144,27 @@ describe('useValue tests', () => {
 
     expect(nameSubscription.getSubscribers().size).toBe(0);
   });
+
+  test('should return the value if the Value is initialized with defaultValues', async () => {
+    const initialValue = 'initial value';
+
+    const subscriptions = new ValuesSubscriptions();
+    subscriptions.initValueSubscription('name');
+    const form = renderHook(() =>
+      useForm({
+        $instance: { valuesSubscriptions: subscriptions },
+        defaultValues: { name: initialValue },
+      }),
+    );
+    const { result, rerender } = renderHook(() =>
+      useValue({
+        name: 'name',
+        form: form.result.current,
+      }),
+    );
+
+    rerender();
+
+    expect(result.current).toBe(initialValue);
+  });
 });

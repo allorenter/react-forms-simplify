@@ -33,13 +33,14 @@ function useForm<TFormValues extends Values = Values>(
   const touchedSubscriptions = createTouchedSubscriptions(params?.$instance?.touchedSubscriptions);
   const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
 
-  const initialValue =
+  const initialValues = useRef(
     typeof params?.defaultValues === 'object' && Object.keys(params.defaultValues).length > 0
       ? params.defaultValues
-      : {};
+      : {},
+  );
 
   // refs
-  const values = useRef<Values>(initialValue);
+  const values = useRef<Values>({});
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
   const valuesValidations = useRef<ValidationValues>({});
@@ -49,11 +50,16 @@ function useForm<TFormValues extends Values = Values>(
   // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // retorna un booleano para indicar si el valor ya ha sido inicializado previamente
   const initValue = useCallback((name: FormName<TFormValues>) => {
     if (!values.current[name]) {
-      values.current[name] = '';
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      values.current[name] = initialValues.current[name] ? initialValues.current[name] : '';
       touchedValues.current[name] = false;
+      return false;
     }
+    return true;
   }, []);
 
   const initValueValidation = useCallback(
@@ -101,8 +107,9 @@ function useForm<TFormValues extends Values = Values>(
   );
 
   const bind = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
+    const initialized = initValue(name);
+
     valuesSubscriptions.initValueSubscription(name as string);
-    initValue(name);
     initValueValidation(name, options?.validation);
     initValueType(name, 'text');
 
@@ -134,6 +141,7 @@ function useForm<TFormValues extends Values = Values>(
       name,
       onChange,
       ref,
+      defaultValue: initialized ? undefined : values.current[name],
     };
   }, []);
 
@@ -417,6 +425,7 @@ function useForm<TFormValues extends Values = Values>(
       initValueValidation,
       setInputRef,
       getInputRef,
+      initialValues: initialValues?.current || {},
     },
   };
 }

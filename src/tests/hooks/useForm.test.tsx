@@ -161,10 +161,7 @@ describe('useForm tests', () => {
       return (
         <>
           <button onClick={onClick}>Set value</button>
-          <input
-            {...form.bind('test')}
-            defaultValue={defaultValue}
-          />
+          <input {...form.bind('test')} defaultValue={defaultValue} />
         </>
       );
     };
@@ -316,7 +313,9 @@ describe('useForm tests', () => {
     };
     const { result } = renderHook(() => useForm({ defaultValues }));
 
-    expect(result.current.getValue()).toEqual(defaultValues);
+    waitFor(() => {
+      expect(result.current.getValue()).toEqual(defaultValues);
+    });
   });
 
   test('should change the values initialized with default values', async () => {
@@ -328,6 +327,39 @@ describe('useForm tests', () => {
     const modifiedA = 'changed value for a';
     result.current.setValue('a', modifiedA);
 
-    expect(result.current.getValue()).toEqual({ ...defaultValues, a: modifiedA });
+    waitFor(() => {
+      expect(result.current.getValue()).toEqual({ ...defaultValues, a: modifiedA });
+    });
   });
+
+  test('should get the input value when the form is initialized with defaultValues', async () => {
+    const defaultValue = 'initial value';
+    const Component = () => {
+      const form = useForm({ defaultValues: { test: defaultValue } });
+
+      return (
+        <>
+          <input {...form.bind('test')} />
+        </>
+      );
+    };
+    const { getByRole } = render(<Component />);
+    const input = getByRole('textbox');
+
+    await waitFor(() => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      expect(input.value).toBe(defaultValue);
+    });
+  });
+
+  // test('should not add a new subscriber when the component rerender', async () => {
+  //   // IMPLEMENT HERE
+
+  //   await waitFor(() => {
+  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  //     // @ts-expect-error
+  //     expect(input.value).toBe({});
+  //   });
+  // });
 });

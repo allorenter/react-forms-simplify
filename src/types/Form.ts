@@ -131,6 +131,7 @@ export type UseForm<TFormValues extends Values = Values> = {
     touchedSubscriptions: TouchedSubscriptions;
     errorsSubscriptions: ErrorsSubscriptions;
     valuesSubscriptions: ValuesSubscriptions;
+    initialValues?: any;
   };
 };
 

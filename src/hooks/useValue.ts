@@ -5,7 +5,10 @@ function useValue<
   TFormValues extends Values = Values,
   TName extends FormName<TFormValues> = FormName<TFormValues>,
 >({ name, form }: { name: TName; form: UseForm<TFormValues> }): FormValue<TFormValues, TName> {
-  const [value, setValue] = useState<any>(form?.$instance?.initialValues?.[name]);
+  const current = form.getValue(name);
+  const [value, setValue] = useState<any>(
+    current === undefined ? form?.$instance?.initialValues?.[name] : current,
+  );
   const { valuesSubscriptions } = form.$instance;
 
   useEffect(() => {

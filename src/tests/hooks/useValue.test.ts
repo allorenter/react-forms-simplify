@@ -1,8 +1,10 @@
 import { describe, test, expect } from 'vitest';
-import { renderHook } from '@testing-library/react';
+import { renderHook, waitFor } from '@testing-library/react';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 import useValue from '../../hooks/useValue';
 import useForm from '../../hooks/useForm';
+
+const timeout = (ms = 300) => new Promise((resolve) => setTimeout(() => resolve(null), ms));
 
 describe('useValue tests', () => {
   test('should return null if the Value to which we subscribe has not been initialized', async () => {
@@ -147,7 +149,6 @@ describe('useValue tests', () => {
 
   test('should return the value if the Value is initialized with defaultValues', async () => {
     const initialValue = 'initial value';
-
     const subscriptions = new ValuesSubscriptions();
     subscriptions.initValueSubscription('name');
     const form = renderHook(() =>
@@ -166,5 +167,26 @@ describe('useValue tests', () => {
     rerender();
 
     expect(result.current).toBe(initialValue);
+  });
+
+  test('should return the value if the Value is initialized with defaultValues and the hook useValue is mount after useForm', async () => {
+    const initialValue = 'initial value';
+    const changedValue = 'changed value';
+    const form = renderHook(() =>
+      useForm({
+        defaultValues: { name: initialValue },
+      }),
+    );
+    form.result.current.bind('name');
+    form.result.current.setValue('name', changedValue);
+    await timeout(300);
+    const { result } = renderHook(() =>
+      useValue({
+        name: 'name',
+        form: form.result.current,
+      }),
+    );
+
+    expect(result.current).toBe(changedValue);
   });
 });

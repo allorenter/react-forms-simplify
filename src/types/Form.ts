@@ -50,6 +50,8 @@ export type FormValue<
 
 export type Values = Record<string, any>;
 
+export type InitializedValues = Record<string, boolean>;
+
 export type SubmitFn<TFormValues> = (values: TFormValues) => any;
 
 export type UseFormParams<TFormValues extends Values = Values> =

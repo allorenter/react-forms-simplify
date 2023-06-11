@@ -14,6 +14,7 @@ import {
   ValueType,
   FormValue,
   DefaultValues,
+  InitializedValues,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
 import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
@@ -28,7 +29,6 @@ import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
 function useForm<TFormValues extends Values = Values>(
   params?: UseFormParams<TFormValues>,
 ): UseForm<TFormValues> {
-  // object instances
   const valuesSubscriptions = createValuesSubscriptions(params?.$instance?.valuesSubscriptions);
   const touchedSubscriptions = createTouchedSubscriptions(params?.$instance?.touchedSubscriptions);
   const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
@@ -39,7 +39,7 @@ function useForm<TFormValues extends Values = Values>(
       : {},
   );
 
-  // refs
+  const initializedValues = useRef<InitializedValues>({});
   const values = useRef<Values>({});
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
@@ -47,16 +47,17 @@ function useForm<TFormValues extends Values = Values>(
   const valuesTypes = useRef<TypeValues>({});
   const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
 
-  // states
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // retorna un booleano para indicar si el valor ya ha sido inicializado previamente
   const initValue = useCallback((name: FormName<TFormValues>) => {
-    if (!values.current[name]) {
+    const initialized = initializedValues.current[name];
+    if (!initialized) {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       values.current[name] = initialValues.current[name] ? initialValues.current[name] : '';
       touchedValues.current[name] = false;
+      initializedValues.current[name] = true;
       return false;
     }
     return true;
@@ -292,11 +293,17 @@ function useForm<TFormValues extends Values = Values>(
     };
   }, []);
 
+  // CON {} o valores nullish debería resetear todos
   const reset = useCallback((val: DefaultValues<TFormValues>) => {
     const newValues = transformFormValuesToValues(val);
-    values.current = newValues;
 
-    Object.entries(newValues).forEach((entry) => {
+    // indica si queremos resetear todos los valores, recibimos undefined | null | {}
+    const resetAllValues =
+      val === undefined ||
+      val === null ||
+      (typeof val === 'object' && Object.keys(val).length === 0);
+
+    Object.entries(resetAllValues ? { ...values.current } : newValues).forEach((entry) => {
       const [name, value] = entry;
 
       if (valuesTypes.current[name] === 'checkbox') {
@@ -315,7 +322,9 @@ function useForm<TFormValues extends Values = Values>(
             const [checkboxName, subscription] = subscriptionProp;
             const [, v] = splitCheckboxOrRadioName(checkboxName);
             subscription.publish(
-              value ? value.findIndex((arrV: string) => arrV !== v) === -1 : false,
+              value && !resetAllValues
+                ? value.findIndex((arrV: string) => arrV !== v) === -1
+                : false,
             );
           });
       }
@@ -334,13 +343,15 @@ function useForm<TFormValues extends Values = Values>(
           .forEach((subscriptionProp) => {
             const [radioName, subscription] = subscriptionProp;
             const [, v] = splitCheckboxOrRadioName(radioName);
-            subscription.publish(v === value);
+            subscription.publish(resetAllValues ? false : v === value);
           });
       }
 
-      valuesSubscriptions.publish(name, value);
+      valuesSubscriptions.publish(name, resetAllValues ? '' : value);
       touchValue(name as FormName<TFormValues>, false);
     });
+
+    values.current = resetAllValues ? {} : newValues;
   }, []);
 
   const setFocus = useCallback((name: FormName<TFormValues>) => {
@@ -387,7 +398,6 @@ function useForm<TFormValues extends Values = Values>(
       }
 
       const formatted = transformValuesToFormValues(values.current);
-
       setIsSubmitting(true);
       try {
         return submitFn(formatted as TFormValues).finally(() => {

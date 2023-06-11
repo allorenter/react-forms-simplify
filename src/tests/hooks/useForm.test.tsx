@@ -400,4 +400,16 @@ describe('useForm tests', () => {
 
     expect(subscriptions.number.getSubscribers().size).toBe(1);
   });
+
+  test('should set to undefined all the values when called reset() with empty object or nullish value', async () => {
+    const { result } = renderHook(() => useForm());
+    const values = {
+      test1: 'value for test1',
+      test2: 'value for test2',
+    };
+    result.current.reset(values);
+    result.current.reset({});
+
+    expect(result.current.getValue()).toEqual({ test1: undefined, test2: undefined });
+  });
 });

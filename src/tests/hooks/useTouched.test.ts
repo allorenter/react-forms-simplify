@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { useForm, useTouched } from '../..';
 
-describe('useErrors', () => {
+describe('useTouched hook tests', () => {
   test('should return empty array if no value is touched', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bind('name', {
@@ -41,5 +41,19 @@ describe('useErrors', () => {
     touchedHook.unmount();
 
     expect(touchedFieldsSubscriptions.getSubscribers().size).toEqual(0);
+  });
+
+  test('should return the name of the touched values for nested names', () => {
+    const hookForm = renderHook(() => useForm());
+    const formControl = hookForm.result.current.bind('name.nest');
+    const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));
+    formControl.onChange({
+      target: { value: 'a' },
+    });
+    hookForm.rerender();
+    touchedHook.rerender();
+
+    expect(touchedHook.result.current).toEqual(['name.nest']);
+    expect(hookForm.result.current.getValue('name.nest')).toBe('a');
   });
 });

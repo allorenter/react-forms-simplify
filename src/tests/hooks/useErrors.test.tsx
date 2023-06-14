@@ -3,7 +3,7 @@ import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { useForm, useErrors } from '../..';
 
-describe('useErrors', () => {
+describe('useErrors hook tests', () => {
   test('should return hasErrors = true if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bind('name', {

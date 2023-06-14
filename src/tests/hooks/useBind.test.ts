@@ -4,7 +4,7 @@ import useForm from '../../hooks/useForm';
 import useBind from '../../hooks/useBind';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 
-describe('useBind tests', () => {
+describe('useBind hook tests', () => {
   test('should add a name to Value when the hook is called initially', async () => {
     const useFormHook = renderHook(() => useForm());
     renderHook(() => useBind({ name: 'test', form: useFormHook.result.current }));

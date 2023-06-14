@@ -3,7 +3,7 @@ import { render, renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { useForm, useFormContext } from '../..';
 
-describe('useFormContext', () => {
+describe('useFormContext hook tests', () => {
   test('should return the form method in the children components', () => {
     const hookForm = renderHook(() => useForm());
     let childrenForm;

@@ -6,7 +6,7 @@ import useForm from '../../hooks/useForm';
 
 const timeout = (ms = 300) => new Promise((resolve) => setTimeout(() => resolve(null), ms));
 
-describe('useValue tests', () => {
+describe('useValue hook tests', () => {
   test('should return null if the Value to which we subscribe has not been initialized', async () => {
     const form = renderHook(() => useForm());
     const { result } = renderHook(() =>

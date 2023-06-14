@@ -74,7 +74,7 @@ export type DefaultValues<TFormValues> = SplitNestedValue<RecursivePartial<TForm
 export type UseForm<TFormValues extends Values = Values> = {
   bind: (
     name: FormName<TFormValues>,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     onChange: (e: any) => void;
@@ -82,7 +82,7 @@ export type UseForm<TFormValues extends Values = Values> = {
   };
   bindNumber: (
     name: FormName<TFormValues>,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     onChange: (e: any) => void;
@@ -106,7 +106,7 @@ export type UseForm<TFormValues extends Values = Values> = {
   bindCheckbox: (
     name: FormName<TFormValues>,
     value: string,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     ref: RefObject<HTMLInputElement>;
@@ -117,7 +117,7 @@ export type UseForm<TFormValues extends Values = Values> = {
   bindRadio: (
     name: FormName<TFormValues>,
     value: string,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     ref: RefObject<HTMLInputElement>;
@@ -152,9 +152,10 @@ export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
 export type TypeValues = Record<string, ValueType>;
 
-export type BindValueOptions =
+export type BindOptions =
   | {
-      validation: Validation;
+      validation?: Validation;
+      onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
     }
   | undefined;
 
@@ -167,3 +168,9 @@ export type ValueError =
   | undefined;
 
 export type FormErrors = Record<string, ValueError>;
+
+export type UseBindOptions =
+  | {
+      validation?: Validation;
+    }
+  | undefined;

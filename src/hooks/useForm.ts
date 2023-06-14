@@ -1,6 +1,6 @@
 import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
 import {
-  BindValueOptions,
+  BindOptions,
   Values,
   FormErrors,
   ValidationValues,
@@ -107,7 +107,7 @@ function useForm<TFormValues extends Values = Values>(
     [],
   );
 
-  const bind = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
+  const bind = useCallback((name: FormName<TFormValues>, options?: BindOptions) => {
     const initialized = initValue(name);
 
     valuesSubscriptions.initValueSubscription(name as string);
@@ -136,6 +136,7 @@ function useForm<TFormValues extends Values = Values>(
       valuesSubscriptions.publish(name as string, value);
       values.current[name] = value;
       touchValue(name);
+      if (typeof options?.onChange === 'function') options.onChange(e);
     };
 
     return {
@@ -147,7 +148,7 @@ function useForm<TFormValues extends Values = Values>(
   }, []);
 
   const bindCheckbox = useCallback(
-    (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
+    (name: FormName<TFormValues>, value: string, options?: BindOptions) => {
       const checkboxName = createCheckboxOrRadioName(name, value);
 
       valuesSubscriptions.initValueSubscription(name);
@@ -171,7 +172,6 @@ function useForm<TFormValues extends Values = Values>(
         if (!Array.isArray(values.current[name])) {
           values.current[name] = [];
         }
-
         if (checked) {
           values.current[name].push(value);
         } else {
@@ -180,7 +180,6 @@ function useForm<TFormValues extends Values = Values>(
           });
           values.current[name] = unchecked;
         }
-
         validateValue(
           valuesValidations.current[name],
           name,
@@ -190,8 +189,8 @@ function useForm<TFormValues extends Values = Values>(
         );
         valuesSubscriptions.publish(checkboxName as string, checked);
         valuesSubscriptions.publish(name as string, values.current[name]);
-
         touchValue(name);
+        if (typeof options?.onChange === 'function') options.onChange(e);
       };
 
       return {
@@ -209,7 +208,7 @@ function useForm<TFormValues extends Values = Values>(
   );
 
   const bindRadio = useCallback(
-    (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
+    (name: FormName<TFormValues>, value: string, options?: BindOptions) => {
       const radioName = createCheckboxOrRadioName(name, value);
 
       initValue(name);
@@ -228,7 +227,7 @@ function useForm<TFormValues extends Values = Values>(
 
       valuesSubscriptions.subscribe(radioName as string, updateRefValue);
 
-      const onChange = () => {
+      const onChange = (e: any) => {
         values.current[name] = value;
         validateValue(
           valuesValidations.current[name],
@@ -239,6 +238,7 @@ function useForm<TFormValues extends Values = Values>(
         );
         valuesSubscriptions.publish(name as string, values.current[name]);
         touchValue(name);
+        if (typeof options?.onChange === 'function') options.onChange(e);
       };
 
       return {
@@ -253,7 +253,7 @@ function useForm<TFormValues extends Values = Values>(
     [],
   );
 
-  const bindNumber = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
+  const bindNumber = useCallback((name: FormName<TFormValues>, options?: BindOptions) => {
     const initialized = initValue(name);
 
     valuesSubscriptions.initValueSubscription(name as string);
@@ -282,6 +282,7 @@ function useForm<TFormValues extends Values = Values>(
       valuesSubscriptions.publish(name as string, value);
       values.current[name] = value;
       touchValue(name);
+      if (typeof options?.onChange === 'function') options.onChange(e);
     };
 
     return {

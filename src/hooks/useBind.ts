@@ -1,18 +1,10 @@
 import { RefObject, useEffect, useState } from 'react';
-import { BindValueOptions, Values, FormName, UseForm, FormValue } from '@/types/Form';
+import { Values, FormName, UseForm, FormValue, UseBindOptions } from '@/types/Form';
 
 function useBind<
   TFormValues extends Values = Values,
   TName extends FormName<TFormValues> = FormName<TFormValues>,
->({
-  name,
-  form,
-  options,
-}: {
-  name: TName;
-  form: UseForm<TFormValues>;
-  options?: BindValueOptions;
-}) {
+>({ name, form, options }: { name: TName; form: UseForm<TFormValues>; options?: UseBindOptions }) {
   const [val, setVal] = useState<any>(form?.$instance?.initialValues?.[name] || '');
   const {
     $instance: { valuesSubscriptions, initValue, initValueValidation, setInputRef, getInputRef },

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { describe, test, expect } from 'vitest';
 import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
-import useForm from '../../hooks/useForm';
+import useForm from '@/hooks/useForm';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
 
 describe('useForm hook tests', () => {

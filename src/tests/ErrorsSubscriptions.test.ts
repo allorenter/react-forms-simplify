@@ -1,6 +1,6 @@
 import { test, expect, vi } from 'vitest';
-import { FormErrors } from '../..';
-import ErrorsSubscriptions from '../../logic/ErrorsSubscriptions';
+import { FormErrors } from '@/index';
+import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 
 test('publish should call all subscribers with the errors object', () => {
   const subscriptions = new ErrorsSubscriptions();

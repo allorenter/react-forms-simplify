@@ -1,8 +1,8 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
 import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
-import useValue from '../../hooks/useValue';
-import useForm from '../../hooks/useForm';
+import useValue from '@/hooks/useValue';
+import useForm from '@/hooks/useForm';
 
 const timeout = (ms = 300) => new Promise((resolve) => setTimeout(() => resolve(null), ms));
 

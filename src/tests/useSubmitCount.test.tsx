@@ -1,6 +1,6 @@
 import { describe, test, expect, vi } from 'vitest';
 import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
-import useForm from '../../hooks/useForm';
+import useForm from '@/hooks/useForm';
 import useSubmitCount from '@/hooks/useSubmitCount';
 
 describe('useSubmitCount hook tests', () => {

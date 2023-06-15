@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest';
-import useInputElementRefs from '../../hooks/useInputElementRefs';
+import useInputElementRefs from '@/hooks/useInputElementRefs';
 
 describe('useInputElementRefs hook tests', () => {
   test('should set and get a ref object', () => {

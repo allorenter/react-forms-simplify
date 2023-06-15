@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
-import { FormErrors } from '../..';
-import formatErrors from '../../logic/formatErrors';
+import { FormErrors } from '@/index';
+import formatErrors from '@/logic/formatErrors';
 
 describe('formatErrors', () => {
   test('should remove entries with undefined values', () => {

@@ -1,6 +1,6 @@
 import { test, expect, vi } from 'vitest';
-import { TouchedValues } from '../..';
-import TouchedSubscriptions from '../../logic/TouchedSubscriptions';
+import { TouchedValues } from '@/index';
+import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 
 test('publish should call all subscribers with the touched form fields object', () => {
   const subscriptions = new TouchedSubscriptions();

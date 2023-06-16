@@ -14,7 +14,7 @@ function useBind<
   useEffect(() => {
     valuesSubscriptions.initValueSubscription(name as string);
     initValue(name);
-    initValueValidation(name, options?.validation);
+    initValueValidation(name, options);
     setInputRef(name);
     const unsubscribeFn = valuesSubscriptions.subscribe(name as string, setVal);
     return () => unsubscribeFn?.();

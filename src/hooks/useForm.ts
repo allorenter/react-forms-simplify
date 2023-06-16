@@ -1,4 +1,4 @@
-import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
+import { RefObject, useCallback, useRef, useState } from 'react';
 import {
   BindOptions,
   Values,
@@ -15,8 +15,6 @@ import {
   InitializedValues,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
-import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
-import validateValue from '@/logic/validateValue';
 import formatErrors from '@/logic/formatErrors';
 import { createCheckboxOrRadioName } from '@/logic/checkboxOrRadioName';
 import createValuesSubscriptions from '@/logic/createValuesSubscriptions';
@@ -34,6 +32,7 @@ import _bindCheckbox from '@/logic/bindCheckbox';
 import _bindRadio from '@/logic/bindRadio';
 import _bindNumber from '@/logic/bindNumber';
 import _reset from '@/logic/reset';
+import _submit from '@/logic/submit';
 
 function useForm<TFormValues extends Values = Values>(
   params?: UseFormParams<TFormValues>,
@@ -208,63 +207,17 @@ function useForm<TFormValues extends Values = Values>(
     if (ref) ref.current?.focus();
   }, []);
 
-  const submit = useCallback(
-    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-
-      const hasError = () => {
-        return Object.values(errors.current).some((val) => val !== undefined);
-      };
-
-      // hace focus sobre el value del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
-      const focusError = () => {
-        const errorsValues = Object.entries(errors.current)
-          .filter((entry) => {
-            return entry[1] !== undefined;
-          })
-          .map((entry) => {
-            return entry[1]?.name;
-          });
-        if (errorsValues[0]) {
-          setFocus(errorsValues[0] as FormName<TFormValues>);
-          return;
-        }
-      };
-
-      if (hasError()) return focusError();
-
-      // si no hay errores, válido todos los values de uno en uno
-      const validationsValues = Object.keys(valuesValidations.current);
-      for (const name of validationsValues) {
-        validateValue(
-          valuesValidations.current[name],
-          name,
-          values.current[name],
-          errors.current,
-          errorsSubscriptions,
-        );
-        if (hasError()) return focusError();
-      }
-
-      const formatted = transformValuesToFormValues(values.current);
-      setIsSubmitting(true);
-      try {
-        return submitFn(formatted as TFormValues).finally(() => {
-          setIsSubmitting(false);
-        });
-      } catch (e) {
-        if (e instanceof TypeError) {
-          // ejecuto promesa para que isSubmitting sea true y después false
-          new Promise((resolve) => {
-            resolve('');
-          }).then(() => {
-            setIsSubmitting(false);
-          });
-        }
-      }
-    },
-    [],
-  );
+  const submit = useCallback((submitFn: SubmitFn<TFormValues>) => {
+    return _submit<TFormValues>({
+      submitFn,
+      errors: errors.current,
+      errorsSubscriptions,
+      onFocus: setFocus,
+      onSubmitting: setIsSubmitting,
+      values: values.current,
+      valuesValidations: valuesValidations.current,
+    });
+  }, []);
 
   const getErrors = useCallback(() => {
     return formatErrors(errors.current);

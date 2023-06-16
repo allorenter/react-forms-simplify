@@ -152,6 +152,8 @@ export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
 export type TypeValues = Record<string, ValueType>;
 
+export type InputsRefs = Record<string, RefObject<HTMLInputElement>>;
+
 export interface BindOptions extends Validation {
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }

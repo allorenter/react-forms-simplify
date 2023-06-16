@@ -1,4 +1,4 @@
-import { FormName, InitializedValues, TouchedValues, Values } from '..';
+import { FormName, InitializedValues, TouchedValues, Values } from '@/index';
 
 type InitValueArgs<TFormValues> = {
   name: FormName<TFormValues>;

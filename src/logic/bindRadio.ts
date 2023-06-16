@@ -7,7 +7,7 @@ import {
   TypeValues,
   ValidationValues,
   Values,
-} from '..';
+} from '@/index';
 import ErrorsSubscriptions from './ErrorsSubscriptions';
 import TouchedSubscriptions from './TouchedSubscriptions';
 import ValuesSubscriptions from './ValuesSubscriptions';

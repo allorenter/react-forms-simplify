@@ -1,4 +1,4 @@
-import { DefaultValues, TouchedValues, TypeValues, Values } from '..';
+import { DefaultValues, TouchedValues, TypeValues, Values } from '@/index';
 import TouchedSubscriptions from './TouchedSubscriptions';
 import ValuesSubscriptions from './ValuesSubscriptions';
 import { splitCheckboxOrRadioName } from './checkboxOrRadioName';

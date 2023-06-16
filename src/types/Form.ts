@@ -141,10 +141,10 @@ export type TouchedValues = Record<string, boolean>;
 
 export type ValidateFunction = (val: any) => boolean | string;
 
-export type Validation = {
+export interface Validation {
   required?: boolean;
   validateFunction?: ValidateFunction;
-};
+}
 
 export type ValidationValues = Record<string, Validation>;
 
@@ -152,12 +152,9 @@ export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
 export type TypeValues = Record<string, ValueType>;
 
-export type BindOptions =
-  | {
-      validation?: Validation;
-      onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    }
-  | undefined;
+export interface BindOptions extends Validation {
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 export type ValueError =
   | {
@@ -169,8 +166,9 @@ export type ValueError =
 
 export type FormErrors = Record<string, ValueError>;
 
-export type UseBindOptions =
-  | {
-      validation?: Validation;
-    }
-  | undefined;
+export type UseBindOptions = Validation;
+
+export type UFInitValueValidationArgs<TFormValues extends Values = Values> = {
+  name: FormName<TFormValues>;
+  bindOptions?: BindOptions;
+};

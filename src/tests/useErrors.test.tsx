@@ -7,10 +7,10 @@ describe('useErrors hook tests', () => {
   test('should return hasErrors = true if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bind('name', {
-      validation: { required: true },
+      required: true,
     });
     const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.submit((values) => {
+    const submit = hookForm.result.current.submit(() => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -25,10 +25,10 @@ describe('useErrors hook tests', () => {
   test('should return the error type and the valueName if the form has errors', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bind('phone', {
-      validation: { required: true },
+      required: true,
     });
     const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.submit((values) => {
+    const submit = hookForm.result.current.submit(() => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -43,11 +43,11 @@ describe('useErrors hook tests', () => {
   test('should return empty errors if the form has no errors', () => {
     const hookForm = renderHook(() => useForm());
     const bind = hookForm.result.current.bind('phone', {
-      validation: { required: true },
+      required: true,
     });
     bind.onChange({ target: { value: '675654321' } });
     const errorHook = renderHook(() => useErrors({ form: hookForm.result.current }));
-    const submit = hookForm.result.current.submit((values) => {
+    const submit = hookForm.result.current.submit(() => {
       return new Promise((resolve) => resolve('submit'));
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

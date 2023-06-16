@@ -7,7 +7,7 @@ describe('useTouched hook tests', () => {
   test('should return empty array if no value is touched', () => {
     const hookForm = renderHook(() => useForm());
     hookForm.result.current.bind('name', {
-      validation: { required: true },
+      required: true,
     });
     const touchedHook = renderHook(() => useTouched({ form: hookForm.result.current }));
     hookForm.rerender();

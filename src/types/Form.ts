@@ -170,7 +170,4 @@ export type FormErrors = Record<string, ValueError>;
 
 export type UseBindOptions = Validation;
 
-export type UFInitValueValidationArgs<TFormValues extends Values = Values> = {
-  name: FormName<TFormValues>;
-  bindOptions?: BindOptions;
-};
+export type BindUnsubscribeFns = Record<string, () => void | null>;

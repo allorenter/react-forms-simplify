@@ -1,5 +1,6 @@
 import {
   BindOptions,
+  BindUnsubscribeFns,
   FormErrors,
   FormName,
   InitializedValues,
@@ -31,6 +32,7 @@ type BindNumberArgs<TFormValues> = {
   errorsSubscriptions: ErrorsSubscriptions;
   touchedSubscriptions: TouchedSubscriptions;
   updateInputValue: (value: any) => void;
+  bindUnsubscribeFns: BindUnsubscribeFns;
 };
 
 function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<TFormValues>) {
@@ -48,6 +50,7 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
     errorsSubscriptions,
     touchedSubscriptions,
     updateInputValue,
+    bindUnsubscribeFns,
   } = args;
 
   const initialized = _initValue({
@@ -69,9 +72,15 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
     valuesTypes,
   });
 
-  valuesSubscriptions.subscribe(name as string, updateInputValue);
+  if (typeof bindUnsubscribeFns[name] === 'function') bindUnsubscribeFns[name]();
+  bindUnsubscribeFns[name] = valuesSubscriptions.subscribe(
+    name as string,
+    updateInputValue,
+  ) as () => void;
 
   const onChange = (e: any) => {
+    console.log('vlvlvl', valuesSubscriptions);
+
     const value = typeof e.target === 'object' ? parseInt(e.target.value) : e;
     validateValue(valuesValidations[name], name, value, errors, errorsSubscriptions);
     valuesSubscriptions.publish(name as string, value);

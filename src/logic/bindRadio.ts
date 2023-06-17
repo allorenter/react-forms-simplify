@@ -1,5 +1,6 @@
 import {
   BindOptions,
+  BindUnsubscribeFns,
   FormErrors,
   FormName,
   InitializedValues,
@@ -33,6 +34,7 @@ type BindRadioArgs<TFormValues> = {
   errorsSubscriptions: ErrorsSubscriptions;
   touchedSubscriptions: TouchedSubscriptions;
   updateInputValue: (value: any) => void;
+  bindUnsubscribeFns: BindUnsubscribeFns;
 };
 
 function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFormValues>) {
@@ -51,6 +53,7 @@ function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFo
     errorsSubscriptions,
     touchedSubscriptions,
     updateInputValue,
+    bindUnsubscribeFns,
   } = args;
 
   const radioName = createCheckboxOrRadioName(name, value);
@@ -73,7 +76,12 @@ function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFo
     type: 'radio',
     valuesTypes,
   });
-  valuesSubscriptions.subscribe(radioName as string, updateInputValue);
+
+  if (typeof bindUnsubscribeFns[name] === 'function') bindUnsubscribeFns[name]();
+  bindUnsubscribeFns[name] = valuesSubscriptions.subscribe(
+    name as string,
+    updateInputValue,
+  ) as () => void;
 
   const onChange = (e: any) => {
     values[name] = value;

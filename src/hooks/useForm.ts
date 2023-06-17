@@ -13,6 +13,7 @@ import {
   FormValue,
   DefaultValues,
   InitializedValues,
+  BindUnsubscribeFns,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
 import formatErrors from '@/logic/formatErrors';
@@ -49,6 +50,7 @@ function useForm<TFormValues extends Values = Values>(
   const valuesValidations = useRef<ValidationValues>({});
   const valuesTypes = useRef<TypeValues>({});
   const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
+  const bindUnsubscribeFns = useRef<BindUnsubscribeFns>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const initValue = useCallback((name: FormName<TFormValues>) => {
@@ -111,6 +113,7 @@ function useForm<TFormValues extends Values = Values>(
       updateInputValue: (value: any) => {
         if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
       },
+      bindUnsubscribeFns: bindUnsubscribeFns.current,
     });
     return { ...bindResult, ref };
   }, []);
@@ -135,6 +138,7 @@ function useForm<TFormValues extends Values = Values>(
         updateInputValue: (value: any) => {
           if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
         },
+        bindUnsubscribeFns: bindUnsubscribeFns.current,
       });
       return { ...bindResult, ref };
     },
@@ -163,6 +167,7 @@ function useForm<TFormValues extends Values = Values>(
           if (typeof ref?.current === 'object' && ref?.current !== null)
             ref.current.checked = checked;
         },
+        bindUnsubscribeFns: bindUnsubscribeFns.current,
       });
       return { ...bindResult, ref };
     },
@@ -187,6 +192,7 @@ function useForm<TFormValues extends Values = Values>(
       updateInputValue: (value: any) => {
         if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
       },
+      bindUnsubscribeFns: bindUnsubscribeFns.current,
     });
     return { ...bindResult, ref };
   }, []);

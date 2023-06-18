@@ -79,8 +79,6 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
   ) as () => void;
 
   const onChange = (e: any) => {
-    console.log('vlvlvl', valuesSubscriptions);
-
     const value = typeof e.target === 'object' ? parseInt(e.target.value) : e;
     validateValue(valuesValidations[name], name, value, errors, errorsSubscriptions);
     valuesSubscriptions.publish(name as string, value);

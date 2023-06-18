@@ -14,9 +14,8 @@ import _initValueValidation from './initValueValidation';
 import FormNameSubscriptions from './FormNameSubscriptions';
 import _initValueType from './initValueType';
 import validateValue from './validateValue';
-import ErrorsSubscriptions from './ErrorsSubscriptions';
 import _touchValue from './touchValue';
-import TouchedSubscriptions from './TouchedSubscriptions';
+import Subscriptions from './Subscriptions';
 
 type BindArgs<TFormValues> = {
   name: FormName<TFormValues>;
@@ -29,8 +28,8 @@ type BindArgs<TFormValues> = {
   valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
   errors: FormErrors;
-  errorsSubscriptions: ErrorsSubscriptions;
-  touchedSubscriptions: TouchedSubscriptions;
+  errorsSubscriptions: Subscriptions;
+  touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
 };

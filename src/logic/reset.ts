@@ -1,5 +1,5 @@
 import { DefaultValues, TouchedValues, TypeValues, Values } from '@/index';
-import TouchedSubscriptions from './TouchedSubscriptions';
+import Subscriptions from './Subscriptions';
 import FormNameSubscriptions from './FormNameSubscriptions';
 import { splitCheckboxOrRadioName } from './checkboxOrRadioName';
 import _touchValue from './touchValue';
@@ -11,7 +11,7 @@ type ResetArgs<TFormValues extends Values = Values> = {
   values: Values;
   valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
-  touchedSubscriptions: TouchedSubscriptions;
+  touchedSubscriptions: Subscriptions;
 };
 
 function _reset<TFormValues extends Values = Values>(args: ResetArgs<TFormValues>) {

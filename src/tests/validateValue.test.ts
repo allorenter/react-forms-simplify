@@ -1,4 +1,4 @@
-import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
+import ErrorsSubscriptions from '@/logic/Subscriptions';
 import validateValue from '@/logic/validateValue';
 import { describe, test, expect, vi } from 'vitest';
 

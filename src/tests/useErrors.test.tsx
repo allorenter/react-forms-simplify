@@ -1,7 +1,7 @@
-import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { useForm, useErrors } from '@/index';
+import Subscriptions from '@/logic/Subscriptions';
 
 describe('useErrors hook tests', () => {
   test('should return hasErrors = true if the form has errors', () => {
@@ -60,7 +60,7 @@ describe('useErrors hook tests', () => {
   });
 
   test('should unsubscribe when the hook unmount', () => {
-    const valueErrorsSubscriptions = new ErrorsSubscriptions();
+    const valueErrorsSubscriptions = new Subscriptions();
     const hookForm = renderHook(() =>
       useForm({ $instance: { errorsSubscriptions: valueErrorsSubscriptions } }),
     );

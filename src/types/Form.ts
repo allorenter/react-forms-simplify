@@ -2,7 +2,7 @@ import { FormEvent, RefObject } from 'react';
 import useValue from '@/hooks/useValue';
 import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 import useBind from '@/hooks/useBind';
-import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
+import Subscriptions from '@/logic/Subscriptions';
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 import {
   ArrayKey,
@@ -58,7 +58,7 @@ export type UseFormParams<TFormValues extends Values = Values> =
   | {
       $instance?: {
         valuesSubscriptions?: FormNameSubscriptions;
-        touchedSubscriptions?: TouchedSubscriptions;
+        touchedSubscriptions?: Subscriptions;
         errorsSubscriptions?: ErrorsSubscriptions;
       };
       defaultValues?: DefaultValues<TFormValues>;
@@ -130,7 +130,7 @@ export type UseForm<TFormValues extends Values = Values> = {
     getInputRef: (key: string) => void | RefObject<HTMLInputElement>;
     initValueValidation: (name: FormName<TFormValues>, validation: Validation | undefined) => void;
     initValue: (name: FormName<TFormValues>) => void;
-    touchedSubscriptions: TouchedSubscriptions;
+    touchedSubscriptions: Subscriptions;
     errorsSubscriptions: ErrorsSubscriptions;
     valuesSubscriptions: FormNameSubscriptions;
     initialValues?: any;

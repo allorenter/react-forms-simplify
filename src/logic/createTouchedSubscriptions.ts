@@ -1,7 +1,7 @@
-import TouchedSubscriptions from './TouchedSubscriptions';
+import Subscriptions from './Subscriptions';
 
-function createTouchedSubscriptions(useFormParam?: TouchedSubscriptions) {
-  return useFormParam instanceof TouchedSubscriptions ? useFormParam : new TouchedSubscriptions();
+function createTouchedSubscriptions(useFormParam?: Subscriptions) {
+  return useFormParam instanceof Subscriptions ? useFormParam : new Subscriptions();
 }
 
 export default createTouchedSubscriptions;

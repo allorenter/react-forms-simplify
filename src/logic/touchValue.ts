@@ -1,11 +1,11 @@
 import { FormName, TouchedValues, Values } from '@/index';
-import TouchedSubscriptions from './TouchedSubscriptions';
+import Subscriptions from './Subscriptions';
 
 type TouchValueArgs<TFormValues> = {
   name: FormName<TFormValues>;
   touch: boolean;
   touchedValues: TouchedValues;
-  touchedSubscriptions: TouchedSubscriptions;
+  touchedSubscriptions: Subscriptions;
 };
 
 function _touchValue<TFormValues extends Values = Values>(args: TouchValueArgs<TFormValues>) {

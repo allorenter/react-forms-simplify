@@ -1,15 +1,15 @@
 import { FormErrors, FormName, SubmitFn, ValidationValues, Values } from '@/index';
 import { FormEvent } from 'react';
 import validateValue from './validateValue';
-import ErrorsSubscriptions from './ErrorsSubscriptions';
 import transformValuesToFormValues from './transformValuesToFormValues';
+import Subscriptions from './Subscriptions';
 
 type SubmitArgs<TFormValues extends Values = Values> = {
   submitFn: SubmitFn<TFormValues>;
   errors: FormErrors;
   valuesValidations: ValidationValues;
   values: Values;
-  errorsSubscriptions: ErrorsSubscriptions;
+  errorsSubscriptions: Subscriptions;
   onSubmitting: (isSubmitting: boolean) => void;
   onFocus: (name: FormName<TFormValues>) => void;
 };

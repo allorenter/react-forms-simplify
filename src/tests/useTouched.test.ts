@@ -1,4 +1,4 @@
-import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
+import Subscriptions from '@/logic/Subscriptions';
 import { renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
 import { useForm, useTouched } from '@/index';
@@ -30,7 +30,7 @@ describe('useTouched hook tests', () => {
   });
 
   test('should unsubscribe when the hook unmount', () => {
-    const touchedFieldsSubscriptions = new TouchedSubscriptions();
+    const touchedFieldsSubscriptions = new Subscriptions();
     const hookForm = renderHook(() =>
       useForm({ $instance: { touchedSubscriptions: touchedFieldsSubscriptions } }),
     );

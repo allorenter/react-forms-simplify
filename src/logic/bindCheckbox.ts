@@ -9,8 +9,7 @@ import {
   ValidationValues,
   Values,
 } from '..';
-import ErrorsSubscriptions from './ErrorsSubscriptions';
-import TouchedSubscriptions from './TouchedSubscriptions';
+import Subscriptions from './Subscriptions';
 import FormNameSubscriptions from './FormNameSubscriptions';
 import { createCheckboxOrRadioName } from './checkboxOrRadioName';
 import _initValue from './initValue';
@@ -31,8 +30,8 @@ type BindCheckboxArgs<TFormValues> = {
   valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
   errors: FormErrors;
-  errorsSubscriptions: ErrorsSubscriptions;
-  touchedSubscriptions: TouchedSubscriptions;
+  errorsSubscriptions: Subscriptions;
+  touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
 };

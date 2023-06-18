@@ -9,8 +9,7 @@ import {
   ValidationValues,
   Values,
 } from '..';
-import ErrorsSubscriptions from './ErrorsSubscriptions';
-import TouchedSubscriptions from './TouchedSubscriptions';
+import Subscriptions from './Subscriptions';
 import FormNameSubscriptions from './FormNameSubscriptions';
 import _initValue from './initValue';
 import _initValueType from './initValueType';
@@ -29,8 +28,8 @@ type BindNumberArgs<TFormValues> = {
   valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
   errors: FormErrors;
-  errorsSubscriptions: ErrorsSubscriptions;
-  touchedSubscriptions: TouchedSubscriptions;
+  errorsSubscriptions: Subscriptions;
+  touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
 };

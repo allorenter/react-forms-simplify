@@ -17,7 +17,7 @@ describe('useForm hook tests', () => {
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  test('should not set a Value when the name has not been bind', async () => {
+  test('should not set a value when the FormName has not been bind', async () => {
     const { result } = renderHook(() => useForm());
     const value = 'test value';
     result.current.setValue('name', value);
@@ -25,7 +25,7 @@ describe('useForm hook tests', () => {
     expect(result.current.getValue('name')).toEqual(undefined);
   });
 
-  test('should add a name to Value when call bind', async () => {
+  test('should add a FormName when call bind', async () => {
     const valuesSubscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bind('name');
@@ -40,7 +40,7 @@ describe('useForm hook tests', () => {
     expect(result.current.getValue('name')).toBe(fieldValue);
   });
 
-  test('should add a name to Value when call bindNumber', async () => {
+  test('should add a FormName when call bindNumber', async () => {
     const valuesSubscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bindNumber('number');
@@ -55,7 +55,7 @@ describe('useForm hook tests', () => {
     expect(result.current.getValue('number')).toBe(fieldValue);
   });
 
-  test('should add a name to Value when call bindCheckbox', async () => {
+  test('should add a FormName when call bindCheckbox', async () => {
     const valuesSubscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bindCheckbox('name', 'A');
@@ -71,7 +71,7 @@ describe('useForm hook tests', () => {
     expect(result.current.getValue('name')).toStrictEqual([fieldValue]);
   });
 
-  test('should add a name to Value when call bindRadio', async () => {
+  test('should add a FormName when call bindRadio', async () => {
     const valuesSubscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bindRadio('name', 'A');
@@ -86,7 +86,7 @@ describe('useForm hook tests', () => {
     expect(result.current.getValue('name')).toBe(fieldValue);
   });
 
-  test('should change the Value when change on other radio with the same name', async () => {
+  test('should change the value when change on other radio with the same name', async () => {
     const valuesSubscriptions = new ValuesSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControlA = result.current.bindRadio('name', 'A');

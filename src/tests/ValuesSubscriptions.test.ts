@@ -31,7 +31,7 @@ describe('ValuesSubscriptions tests', () => {
     expect(subscribers.size).toBe(1);
   });
 
-  test('should subscribe to Value', async () => {
+  test('should subscribe', async () => {
     const subscriptions = new ValuesSubscriptions();
     subscriptions.initValueSubscription('name');
     subscriptions.subscribe('name', (val: any) => val);

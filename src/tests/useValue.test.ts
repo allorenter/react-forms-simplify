@@ -7,7 +7,7 @@ import useForm from '@/hooks/useForm';
 const timeout = (ms = 300) => new Promise((resolve) => setTimeout(() => resolve(null), ms));
 
 describe('useValue hook tests', () => {
-  test('should return null if the Value to which we subscribe has not been initialized', async () => {
+  test('should return null if the FormName to which we subscribe has not been initialized', async () => {
     const form = renderHook(() => useForm());
     const { result } = renderHook(() =>
       useValue({
@@ -19,7 +19,7 @@ describe('useValue hook tests', () => {
     expect(result.current).toBe(undefined);
   });
 
-  test('should return undefined if the Value is initialized but has not publish a value yet', async () => {
+  test('should return undefined if the FormName is initialized but has not publish a value yet', async () => {
     const subscriptions = new ValuesSubscriptions();
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
@@ -33,7 +33,7 @@ describe('useValue hook tests', () => {
     expect(result.current).toBe(undefined);
   });
 
-  test('should return the value if the Value is initialized and publish a value', async () => {
+  test('should return the value if the FormName is initialized and publish a value', async () => {
     const subscriptions = new ValuesSubscriptions();
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
@@ -53,7 +53,7 @@ describe('useValue hook tests', () => {
     expect(result.current).toBe(publishedValue);
   });
 
-  test('should not create a new subscription if other Value is subscribed ', async () => {
+  test('should not create a new subscription if other FormName is subscribed ', async () => {
     const subscriptions = new ValuesSubscriptions();
     subscriptions.initValueSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
@@ -147,7 +147,7 @@ describe('useValue hook tests', () => {
     expect(nameSubscription.getSubscribers().size).toBe(0);
   });
 
-  test('should return the value if the Value is initialized with defaultValues', async () => {
+  test('should return the value if the FormName is initialized with defaultValues', async () => {
     const initialValue = 'initial value';
     const subscriptions = new ValuesSubscriptions();
     subscriptions.initValueSubscription('name');
@@ -169,7 +169,7 @@ describe('useValue hook tests', () => {
     expect(result.current).toBe(initialValue);
   });
 
-  test('should return the value if the Value is initialized with defaultValues and the hook useValue is mount after useForm', async () => {
+  test('should return the value if the FormName is initialized with defaultValues and the hook useValue is mount after useForm', async () => {
     const initialValue = 'initial value';
     const changedValue = 'changed value';
     const form = renderHook(() =>

@@ -2,7 +2,7 @@ import { describe, test, expect, vi } from 'vitest';
 import { renderHook } from '@testing-library/react';
 import useForm from '@/hooks/useForm';
 import useBind from '@/hooks/useBind';
-import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
+import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 
 describe('useBind hook tests', () => {
   test('should add a value when the hook is called initially', async () => {
@@ -13,20 +13,20 @@ describe('useBind hook tests', () => {
   });
 
   test('should add a ValuesSubscription when the hook is called initially', async () => {
-    const Subscriptions = new ValuesSubscriptions();
+    const Subscriptions = new FormNameSubscriptions();
     const useFormHook = renderHook(() =>
       useForm({ $instance: { valuesSubscriptions: Subscriptions } }),
     );
     renderHook(() => useBind({ name: 'test', form: useFormHook.result.current }));
 
-    expect(Subscriptions.valueIsInitialized('test')).toBe(true);
+    expect(Subscriptions.isInitialized('test')).toBe(true);
   });
 
   test('should bind a form field to the component', () => {
     const form = {
       $instance: {
         valuesSubscriptions: {
-          initValueSubscription: vi.fn(),
+          initSubscription: vi.fn(),
           subscribe: vi.fn(() => vi.fn()),
         },
         initValue: vi.fn(),
@@ -41,9 +41,7 @@ describe('useBind hook tests', () => {
     const { result } = renderHook(() => useBind({ name: 'username', form }));
     expect(result.current.value).toEqual('');
     expect(typeof result.current.setValue).toBe('function');
-    expect(form.$instance.valuesSubscriptions.initValueSubscription).toHaveBeenCalledWith(
-      'username',
-    );
+    expect(form.$instance.valuesSubscriptions.initSubscription).toHaveBeenCalledWith('username');
     expect(form.$instance.initValue).toHaveBeenCalledWith('username');
   });
 
@@ -51,7 +49,7 @@ describe('useBind hook tests', () => {
     const form = {
       $instance: {
         valuesSubscriptions: {
-          initValueSubscription: vi.fn(),
+          initSubscription: vi.fn(),
           subscribe: vi.fn((name, callback) => {
             callback('new value');
             return vi.fn();
@@ -75,7 +73,7 @@ describe('useBind hook tests', () => {
     const form = {
       $instance: {
         valuesSubscriptions: {
-          initValueSubscription: vi.fn(),
+          initSubscription: vi.fn(),
           subscribe: vi.fn(() => vi.fn()),
         },
         initValue: vi.fn(),

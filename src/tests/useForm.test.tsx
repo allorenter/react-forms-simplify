@@ -2,7 +2,7 @@
 import { describe, test, expect } from 'vitest';
 import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
 import useForm from '@/hooks/useForm';
-import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
+import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 
 describe('useForm hook tests', () => {
   test('should return an empty object if getValues is called initially', async () => {
@@ -26,7 +26,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should add a FormName when call bind', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bind('name');
     const fieldValue = 'value for the simulated field';
@@ -41,7 +41,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should add a FormName when call bindNumber', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bindNumber('number');
     const fieldValue = 9;
@@ -56,7 +56,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should add a FormName when call bindCheckbox', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bindCheckbox('name', 'A');
     const fieldValue = 'A';
@@ -72,7 +72,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should add a FormName when call bindRadio', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bindRadio('name', 'A');
     const fieldValue = 'A';
@@ -87,7 +87,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should change the value when change on other radio with the same name', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControlA = result.current.bindRadio('name', 'A');
     const formControlB = result.current.bindRadio('name', 'B');
@@ -111,11 +111,11 @@ describe('useForm hook tests', () => {
   });
 
   test('should add a ValuesSubscription when call bind', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     result.current.bind('name');
 
-    expect(valuesSubscriptions.valueIsInitialized('name')).toBe(true);
+    expect(valuesSubscriptions.isInitialized('name')).toBe(true);
   });
 
   test('should set value when called setValue and the name is binded', async () => {
@@ -133,7 +133,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should notify to subscribers when onChange is called', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const value = 'value for test';
     const formControl = result.current.bind('name');
@@ -178,7 +178,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should notify to subscribers when onChange is called', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const value = 'value for test';
     result.current.bind('name');
@@ -219,7 +219,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should notify to subscribers when reset is called', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const valueForTest1 = 'value for test 1';
     const valueForTest2 = 'value for test 2';
@@ -242,7 +242,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should add only one subscription when called bindFormControl even if the componet is rerendered', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const Component = () => {
       const form = useForm({ $instance: { valuesSubscriptions } });
 
@@ -251,7 +251,7 @@ describe('useForm hook tests', () => {
     const { rerender } = render(<Component />);
     rerender(<Component />);
 
-    expect(valuesSubscriptions.getValueSubscription('name').getSubscribers().size).toBe(1);
+    expect(valuesSubscriptions.getSubscription('name').getSubscribers().size).toBe(1);
   });
 
   test('should change the inputs values when reset is called', async () => {
@@ -382,7 +382,7 @@ describe('useForm hook tests', () => {
   });
 
   test('should not add a new subscriber when the component rerender', async () => {
-    const valuesSubscriptions = new ValuesSubscriptions();
+    const valuesSubscriptions = new FormNameSubscriptions();
     const { result, rerender } = renderHook(() => useForm({ $instance: { valuesSubscriptions } }));
     const formControl = result.current.bindNumber('number');
     const fieldValue = 9;

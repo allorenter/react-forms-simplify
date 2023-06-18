@@ -1,6 +1,6 @@
 import { FormEvent, RefObject } from 'react';
 import useValue from '@/hooks/useValue';
-import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
+import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 import useBind from '@/hooks/useBind';
 import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
 import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
@@ -57,7 +57,7 @@ export type SubmitFn<TFormValues> = (values: TFormValues) => any;
 export type UseFormParams<TFormValues extends Values = Values> =
   | {
       $instance?: {
-        valuesSubscriptions?: ValuesSubscriptions;
+        valuesSubscriptions?: FormNameSubscriptions;
         touchedSubscriptions?: TouchedSubscriptions;
         errorsSubscriptions?: ErrorsSubscriptions;
       };
@@ -132,7 +132,7 @@ export type UseForm<TFormValues extends Values = Values> = {
     initValue: (name: FormName<TFormValues>) => void;
     touchedSubscriptions: TouchedSubscriptions;
     errorsSubscriptions: ErrorsSubscriptions;
-    valuesSubscriptions: ValuesSubscriptions;
+    valuesSubscriptions: FormNameSubscriptions;
     initialValues?: any;
   };
 };

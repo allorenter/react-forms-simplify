@@ -11,7 +11,7 @@ import {
 } from '@/index';
 import _initValue from './initValue';
 import _initValueValidation from './initValueValidation';
-import ValuesSubscriptions from './ValuesSubscriptions';
+import FormNameSubscriptions from './FormNameSubscriptions';
 import _initValueType from './initValueType';
 import validateValue from './validateValue';
 import ErrorsSubscriptions from './ErrorsSubscriptions';
@@ -26,7 +26,7 @@ type BindArgs<TFormValues> = {
   values: Values;
   initialValues: any;
   valuesValidations: ValidationValues;
-  valuesSubscriptions: ValuesSubscriptions;
+  valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
   errors: FormErrors;
   errorsSubscriptions: ErrorsSubscriptions;
@@ -60,7 +60,7 @@ function _bind<TFormValues extends Values = Values>(args: BindArgs<TFormValues>)
     touchedValues,
     values,
   });
-  valuesSubscriptions.initValueSubscription(name as string);
+  valuesSubscriptions.initSubscription(name as string);
   _initValueValidation({
     name,
     valuesValidations,

@@ -1,7 +1,7 @@
 import { FormErrors, FormName, FormValue, TouchedValues, ValidationValues, Values } from '@/index';
 import validateValue from './validateValue';
 import ErrorsSubscriptions from './ErrorsSubscriptions';
-import ValuesSubscriptions from './ValuesSubscriptions';
+import FormNameSubscriptions from './FormNameSubscriptions';
 import _touchValue from './touchValue';
 import TouchedSubscriptions from './TouchedSubscriptions';
 
@@ -12,7 +12,7 @@ type SetValueArgs<TFormValues extends Values = Values> = {
   valuesValidations: ValidationValues;
   errors: FormErrors;
   errorsSubscriptions: ErrorsSubscriptions;
-  valuesSubscriptions: ValuesSubscriptions;
+  valuesSubscriptions: FormNameSubscriptions;
   touchedSubscriptions: TouchedSubscriptions;
   touchedValues: TouchedValues;
 };

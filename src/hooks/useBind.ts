@@ -12,7 +12,7 @@ function useBind<
   } = form;
 
   useEffect(() => {
-    valuesSubscriptions.initValueSubscription(name as string);
+    valuesSubscriptions.initSubscription(name as string);
     initValue(name);
     initValueValidation(name, options);
     setInputRef(name);

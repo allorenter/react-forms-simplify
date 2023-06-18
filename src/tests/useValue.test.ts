@@ -1,6 +1,6 @@
 import { describe, test, expect } from 'vitest';
 import { renderHook, waitFor } from '@testing-library/react';
-import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
+import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 import useValue from '@/hooks/useValue';
 import useForm from '@/hooks/useForm';
 
@@ -20,8 +20,8 @@ describe('useValue hook tests', () => {
   });
 
   test('should return undefined if the FormName is initialized but has not publish a value yet', async () => {
-    const subscriptions = new ValuesSubscriptions();
-    subscriptions.initValueSubscription('name');
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { result } = renderHook(() =>
       useValue({
@@ -34,8 +34,8 @@ describe('useValue hook tests', () => {
   });
 
   test('should return the value if the FormName is initialized and publish a value', async () => {
-    const subscriptions = new ValuesSubscriptions();
-    subscriptions.initValueSubscription('name');
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { result, rerender } = renderHook(() =>
       useValue({
@@ -54,8 +54,8 @@ describe('useValue hook tests', () => {
   });
 
   test('should not create a new subscription if other FormName is subscribed ', async () => {
-    const subscriptions = new ValuesSubscriptions();
-    subscriptions.initValueSubscription('name');
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const hookName = renderHook(() =>
       useValue({
@@ -63,7 +63,7 @@ describe('useValue hook tests', () => {
         form: form.result.current,
       }),
     );
-    subscriptions.initValueSubscription('cod');
+    subscriptions.initSubscription('cod');
     renderHook(() =>
       useValue({
         name: 'cod',
@@ -71,14 +71,14 @@ describe('useValue hook tests', () => {
       }),
     );
     hookName.rerender({ valuesSubscriptions: subscriptions });
-    const nameSubscribers = subscriptions.getValueSubscription('name').getSubscribers();
+    const nameSubscribers = subscriptions.getSubscription('name').getSubscribers();
 
     expect(nameSubscribers.size).toBe(1);
   });
 
-  test('should be two subscribers in the ValueSubscription if there are two hooks subscribed to the same name', async () => {
-    const subscriptions = new ValuesSubscriptions();
-    subscriptions.initValueSubscription('name');
+  test('should be two subscribers in the valuesSubscriptions if there are two hooks subscribed to the same FormName', async () => {
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const firstHook = renderHook(() =>
       useValue({
@@ -94,14 +94,14 @@ describe('useValue hook tests', () => {
     );
     firstHook.rerender();
     secondHook.rerender();
-    const nameSubscribers = subscriptions.getValueSubscription('name').getSubscribers();
+    const nameSubscribers = subscriptions.getSubscription('name').getSubscribers();
 
     expect(nameSubscribers.size).toBe(2);
   });
 
-  test('should have the same value if two hooks are subscribed to the same name', async () => {
-    const subscriptions = new ValuesSubscriptions();
-    subscriptions.initValueSubscription('name');
+  test('should have the same value if two hooks are subscribed to the same FormName', async () => {
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const firstHook = renderHook(() =>
       useValue({
@@ -129,8 +129,8 @@ describe('useValue hook tests', () => {
   });
 
   test('should remove the subscription if the hook unmount', () => {
-    const subscriptions = new ValuesSubscriptions();
-    subscriptions.initValueSubscription('name');
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
     const form = renderHook(() => useForm({ $instance: { valuesSubscriptions: subscriptions } }));
     const { unmount } = renderHook(() =>
       useValue({
@@ -138,7 +138,7 @@ describe('useValue hook tests', () => {
         form: form.result.current,
       }),
     );
-    const nameSubscription = subscriptions.getValueSubscription('name');
+    const nameSubscription = subscriptions.getSubscription('name');
 
     expect(nameSubscription.getSubscribers().size).toBe(1);
 
@@ -149,8 +149,8 @@ describe('useValue hook tests', () => {
 
   test('should return the value if the FormName is initialized with defaultValues', async () => {
     const initialValue = 'initial value';
-    const subscriptions = new ValuesSubscriptions();
-    subscriptions.initValueSubscription('name');
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
     const form = renderHook(() =>
       useForm({
         $instance: { valuesSubscriptions: subscriptions },

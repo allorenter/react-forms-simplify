@@ -37,14 +37,22 @@ class FormNameSubscriptions {
 
     if (initializedSubscriptionsEntries.length === 0) return null;
 
+    const unsubscribeFns: (() => void)[] = [];
+
     initializedSubscriptionsEntries.forEach((entry) => {
       const [name, subscription] = entry;
       const customAction = (value: any) => {
         actionFn(name, value);
       };
-      subscription.subscribe(customAction);
+      const unsubscribeFn = subscription.subscribe(customAction);
+      unsubscribeFns.push(unsubscribeFn);
     });
-    return true;
+
+    return () => {
+      unsubscribeFns.forEach((fn) => {
+        if (typeof fn === 'function') fn();
+      });
+    };
   }
 
   publish(name: string, value: any) {

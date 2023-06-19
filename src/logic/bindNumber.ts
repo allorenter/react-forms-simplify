@@ -16,6 +16,7 @@ import _initValueType from './initValueType';
 import _initValueValidation from './initValueValidation';
 import _touchValue from './touchValue';
 import validateValue from './validateValue';
+import initBindFormName from './initBindFormName';
 
 type BindNumberArgs<TFormValues> = {
   name: FormName<TFormValues>;
@@ -59,29 +60,22 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
     touchedValues,
     values,
   });
-  valuesSubscriptions.initSubscription(name as string);
-  _initValueValidation({
-    name,
-    valuesValidations,
-    bindOptions: options,
-  });
-  _initValueType({
+  initBindFormName({
+    bindUnsubscribeFns,
     name,
     type: 'number',
-    valuesTypes,
-  });
-
-  if (typeof bindUnsubscribeFns[name] === 'function') bindUnsubscribeFns[name]();
-  bindUnsubscribeFns[name] = valuesSubscriptions.subscribe(
-    name as string,
     updateInputValue,
-  ) as () => void;
+    valuesSubscriptions,
+    valuesTypes,
+    valuesValidations,
+    options,
+  });
 
   const onChange = (e: any) => {
     const value = typeof e.target === 'object' ? parseInt(e.target.value) : e;
     validateValue(valuesValidations[name], name, value, errors, errorsSubscriptions);
-    valuesSubscriptions.publish(name as string, value);
     values[name] = value;
+    valuesSubscriptions.publish(name as string, value);
     _touchValue({
       name,
       touch: true,

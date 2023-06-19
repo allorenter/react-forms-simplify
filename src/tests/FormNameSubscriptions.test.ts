@@ -159,4 +159,19 @@ describe('FormNameSubscriptions tests', () => {
 
     expect(subscriptions.getSubscription('name').getSubscribers().size).toBe(0);
   });
+
+  test('should unsubscribe all the actions subscribed previously when call the return function of subscribeAll', async () => {
+    const subscriptions = new FormNameSubscriptions();
+    subscriptions.initSubscription('name');
+    subscriptions.initSubscription('name1');
+    const subscribedAction = subscriptions.subscribeAll((val: any) => val);
+
+    expect(subscriptions.getSubscription('name').getSubscribers().size).toBe(1);
+    expect(subscriptions.getSubscription('name1').getSubscribers().size).toBe(1);
+
+    subscribedAction?.();
+
+    expect(subscriptions.getSubscription('name').getSubscribers().size).toBe(0);
+    expect(subscriptions.getSubscription('name1').getSubscribers().size).toBe(0);
+  });
 });

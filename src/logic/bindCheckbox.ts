@@ -17,6 +17,7 @@ import _initValueType from './initValueType';
 import _initValueValidation from './initValueValidation';
 import _touchValue from './touchValue';
 import validateValue from './validateValue';
+import initBindFormName from './initBindFormName';
 
 type BindCheckboxArgs<TFormValues> = {
   name: FormName<TFormValues>;
@@ -56,7 +57,6 @@ function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxAr
   } = args;
 
   const checkboxName = createCheckboxOrRadioName(name, value);
-  valuesSubscriptions.initSubscription(name);
   valuesSubscriptions.initSubscription(checkboxName as string);
   _initValue({
     initializedValues,
@@ -65,22 +65,16 @@ function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxAr
     touchedValues,
     values,
   });
-  _initValueValidation({
-    name,
-    valuesValidations,
-    bindOptions: options,
-  });
-  _initValueType({
+  initBindFormName({
+    bindUnsubscribeFns,
     name,
     type: 'checkbox',
-    valuesTypes,
-  });
-
-  if (typeof bindUnsubscribeFns[name] === 'function') bindUnsubscribeFns[name]();
-  bindUnsubscribeFns[name] = valuesSubscriptions.subscribe(
-    name as string,
     updateInputValue,
-  ) as () => void;
+    valuesSubscriptions,
+    valuesTypes,
+    valuesValidations,
+    options,
+  });
   valuesSubscriptions.subscribe(checkboxName as string, updateInputValue);
 
   const onChange = (e: any) => {

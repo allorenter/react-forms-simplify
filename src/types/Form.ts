@@ -1,9 +1,7 @@
 import { FormEvent, RefObject } from 'react';
-import useValue from '@/hooks/useValue';
 import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 import useBind from '@/hooks/useBind';
 import Subscriptions from '@/logic/Subscriptions';
-import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
 import {
   ArrayKey,
   Digits,
@@ -59,15 +57,13 @@ export type UseFormParams<TFormValues extends Values = Values> =
       $instance?: {
         valuesSubscriptions?: FormNameSubscriptions;
         touchedSubscriptions?: Subscriptions;
-        errorsSubscriptions?: ErrorsSubscriptions;
+        errorsSubscriptions?: Subscriptions;
       };
       defaultValues?: DefaultValues<TFormValues>;
     }
   | undefined;
 
 export type UseBindValue = ReturnType<typeof useBind>;
-
-export type useValue = ReturnType<typeof useValue>;
 
 export type DefaultValues<TFormValues> = SplitNestedValue<RecursivePartial<TFormValues>>;
 
@@ -93,6 +89,7 @@ export type UseForm<TFormValues extends Values = Values> = {
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: {
     (): SplitNestedValue<TFormValues>;
+    (n: undefined): SplitNestedValue<TFormValues>;
     <TName extends FormName<TFormValues>>(name: TName): FormValue<TFormValues, TName>;
   };
   setValue: <TName extends FormName<TFormValues>>(
@@ -131,7 +128,7 @@ export type UseForm<TFormValues extends Values = Values> = {
     initValueValidation: (name: FormName<TFormValues>, validation: Validation | undefined) => void;
     initValue: (name: FormName<TFormValues>) => void;
     touchedSubscriptions: Subscriptions;
-    errorsSubscriptions: ErrorsSubscriptions;
+    errorsSubscriptions: Subscriptions;
     valuesSubscriptions: FormNameSubscriptions;
     initialValues?: any;
   };

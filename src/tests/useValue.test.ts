@@ -189,4 +189,14 @@ describe('useValue hook tests', () => {
 
     expect(result.current).toBe(changedValue);
   });
+
+  test('should return the value of all FormNames when not receive the name parameter', async () => {
+    const defaultValues = { name: 'Initial name', numeric: 10 };
+    const form = renderHook(() => useForm({ defaultValues }));
+    const valuesHook = renderHook(() => useValue({ form: form.result.current }));
+
+    waitFor(() => {
+      expect(valuesHook.result.current).toEqual(defaultValues);
+    });
+  });
 });

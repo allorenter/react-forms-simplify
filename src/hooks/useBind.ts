@@ -5,7 +5,9 @@ function useBind<
   TFormValues extends Values = Values,
   TName extends FormName<TFormValues> = FormName<TFormValues>,
 >({ name, form, options }: { name: TName; form: UseForm<TFormValues>; options?: UseBindOptions }) {
-  const [val, setVal] = useState<any>(form?.$instance?.initialValues?.[name] || '');
+  const [val, setVal] = useState<FormValue<TFormValues, TName>>(
+    form?.$instance?.initialValues?.[name] || '',
+  );
   const {
     $instance: { valuesSubscriptions, initValue, initValueValidation, setInputRef, getInputRef },
     setValue,

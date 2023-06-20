@@ -8,6 +8,7 @@ import {
   Values,
 } from '..';
 import FormNameSubscriptions from './FormNameSubscriptions';
+import initBindSubscription from './initBindSubscription';
 import _initValue from './initValue';
 import _initValueType from './initValueType';
 import _initValueValidation from './initValueValidation';
@@ -22,6 +23,7 @@ type InitBindFormName<TFormValues> = {
   bindUnsubscribeFns: BindUnsubscribeFns;
   type: ValueType;
   errorsSubscriptions: FormNameSubscriptions;
+  updateInputInvalid: (value: boolean) => void;
 };
 
 function initBindFormName<TFormValues extends Values = Values>(
@@ -37,6 +39,7 @@ function initBindFormName<TFormValues extends Values = Values>(
     bindUnsubscribeFns,
     type,
     errorsSubscriptions,
+    updateInputInvalid,
   } = args;
   errorsSubscriptions.initSubscription(name);
   valuesSubscriptions.initSubscription(name);
@@ -51,12 +54,14 @@ function initBindFormName<TFormValues extends Values = Values>(
     type,
     valuesTypes,
   });
-
-  if (typeof bindUnsubscribeFns[name] === 'function') bindUnsubscribeFns[name]();
-  bindUnsubscribeFns[name] = valuesSubscriptions.subscribe(
-    name as string,
+  initBindSubscription({
+    bindUnsubscribeFns,
+    errorsSubscriptions,
+    name,
     updateInputValue,
-  ) as () => void;
+    valuesSubscriptions,
+    updateInputInvalid,
+  });
 }
 
 export default initBindFormName;

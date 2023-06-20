@@ -114,6 +114,10 @@ function useForm<TFormValues extends Values = Values>(
         if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
       },
       bindUnsubscribeFns: bindUnsubscribeFns.current,
+      updateInputInvalid: (invalid) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null)
+          ref.current.ariaInvalid = invalid ? 'true' : '';
+      },
     });
     return { ...bindResult, ref };
   }, []);
@@ -139,6 +143,10 @@ function useForm<TFormValues extends Values = Values>(
           if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
         },
         bindUnsubscribeFns: bindUnsubscribeFns.current,
+        updateInputInvalid: (invalid) => {
+          if (typeof ref?.current === 'object' && ref?.current !== null)
+            ref.current.ariaInvalid = invalid ? 'true' : '';
+        },
       });
       return { ...bindResult, ref };
     },
@@ -168,6 +176,10 @@ function useForm<TFormValues extends Values = Values>(
             ref.current.checked = checked;
         },
         bindUnsubscribeFns: bindUnsubscribeFns.current,
+        updateInputInvalid: (invalid) => {
+          if (typeof ref?.current === 'object' && ref?.current !== null)
+            ref.current.ariaInvalid = invalid ? 'true' : '';
+        },
       });
       return { ...bindResult, ref };
     },
@@ -193,6 +205,10 @@ function useForm<TFormValues extends Values = Values>(
         if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
       },
       bindUnsubscribeFns: bindUnsubscribeFns.current,
+      updateInputInvalid: (invalid) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null)
+          ref.current.ariaInvalid = invalid ? 'true' : '';
+      },
     });
     return { ...bindResult, ref };
   }, []);

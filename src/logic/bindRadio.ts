@@ -35,6 +35,7 @@ type BindRadioArgs<TFormValues> = {
   touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
+  updateInputInvalid: (value: boolean) => void;
 };
 
 function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFormValues>) {
@@ -54,6 +55,7 @@ function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFo
     touchedSubscriptions,
     updateInputValue,
     bindUnsubscribeFns,
+    updateInputInvalid,
   } = args;
 
   const radioName = createCheckboxOrRadioName(name, value);
@@ -75,6 +77,7 @@ function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFo
     options,
     type: 'radio',
     errorsSubscriptions,
+    updateInputInvalid,
   });
 
   const onChange = (e: any) => {

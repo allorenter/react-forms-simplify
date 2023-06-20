@@ -429,6 +429,6 @@ describe('useForm hook tests', () => {
     const input = getByRole('textbox');
     fireEvent.click(updateButton);
 
-    expect(input.ariaInvalid).toBe(false);
+    expect(input.ariaInvalid).toBe('true');
   });
 });

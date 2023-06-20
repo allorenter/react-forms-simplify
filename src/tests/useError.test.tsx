@@ -65,11 +65,11 @@ describe('useError hook tests', () => {
     hookForm.result.current.bind('name');
     const errorsHook = renderHook(() => useError({ form: hookForm.result.current }));
 
-    expect(errorsSubscriptions.getSubscription('name').getSubscribers().size).toBe(1);
+    expect(errorsSubscriptions.getSubscription('name').getSubscribers().size).toBe(2);
 
     errorsHook.unmount();
 
-    expect(errorsSubscriptions.getSubscription('name').getSubscribers().size).toEqual(0);
+    expect(errorsSubscriptions.getSubscription('name').getSubscribers().size).toEqual(1);
   });
 
   test('should return undefined if the form has no errors when receive the name param', () => {

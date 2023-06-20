@@ -167,4 +167,6 @@ export type FormErrors = Record<string, ValueError>;
 
 export type UseBindOptions = Validation;
 
-export type BindUnsubscribeFns = Record<string, () => void | null>;
+export type BindUnsubscribeFn = () => void | null;
+
+export type BindUnsubscribeFns = Record<string, BindUnsubscribeFn | BindUnsubscribeFn[]>;

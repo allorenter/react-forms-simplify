@@ -33,6 +33,7 @@ type BindNumberArgs<TFormValues> = {
   touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
+  updateInputInvalid: (value: boolean) => void;
 };
 
 function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<TFormValues>) {
@@ -51,6 +52,7 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
     touchedSubscriptions,
     updateInputValue,
     bindUnsubscribeFns,
+    updateInputInvalid,
   } = args;
 
   const initialized = _initValue({
@@ -70,6 +72,7 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
     valuesValidations,
     options,
     errorsSubscriptions,
+    updateInputInvalid,
   });
 
   const onChange = (e: any) => {

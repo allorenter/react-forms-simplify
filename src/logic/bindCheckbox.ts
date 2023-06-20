@@ -35,6 +35,7 @@ type BindCheckboxArgs<TFormValues> = {
   touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
+  updateInputInvalid: (value: boolean) => void;
 };
 
 function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxArgs<TFormValues>) {
@@ -54,6 +55,7 @@ function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxAr
     touchedSubscriptions,
     updateInputValue,
     bindUnsubscribeFns,
+    updateInputInvalid,
   } = args;
 
   const checkboxName = createCheckboxOrRadioName(name, value);
@@ -75,6 +77,7 @@ function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxAr
     valuesValidations,
     options,
     errorsSubscriptions,
+    updateInputInvalid,
   });
   valuesSubscriptions.subscribe(checkboxName as string, updateInputValue);
 

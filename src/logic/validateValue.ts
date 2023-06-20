@@ -1,13 +1,13 @@
 import { FormErrors, Validation } from '@/types/Form';
-import Subscriptions from './Subscriptions';
 import formatErrors from './formatErrors';
+import FormNameSubscriptions from './FormNameSubscriptions';
 
 function validateValue(
   validation: Validation | undefined,
   name: string,
   value: any,
   errors: FormErrors,
-  errorsSubscriptions: Subscriptions,
+  errorsSubscriptions: FormNameSubscriptions,
 ) {
   if (!validation) return;
 
@@ -32,7 +32,8 @@ function validateValue(
     }
   }
 
-  errorsSubscriptions.publish(formatErrors(errors));
+  const formatted = formatErrors(errors);
+  errorsSubscriptions.publish(name, formatted?.[name]);
 }
 
 export default validateValue;

@@ -29,7 +29,7 @@ type BindArgs<TFormValues> = {
   valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
   errors: FormErrors;
-  errorsSubscriptions: Subscriptions;
+  errorsSubscriptions: FormNameSubscriptions;
   touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
@@ -70,6 +70,7 @@ function _bind<TFormValues extends Values = Values>(args: BindArgs<TFormValues>)
     valuesValidations,
     options,
     type: 'text',
+    errorsSubscriptions,
   });
 
   const onChange = (e: any) => {

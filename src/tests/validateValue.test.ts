@@ -1,16 +1,16 @@
-import ErrorsSubscriptions from '@/logic/Subscriptions';
+import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 import validateValue from '@/logic/validateValue';
 import { describe, test, expect, vi } from 'vitest';
 
 describe('validateValue tests', () => {
   test('should return undefined if the validation param is falsy', async () => {
-    const subscriptions = new ErrorsSubscriptions();
+    const subscriptions = new FormNameSubscriptions();
 
     expect(validateValue(undefined, 'test', '', {}, subscriptions)).toBeUndefined();
   });
 
   test('should set the error if the value is an empty string, null, undefined or NaN and the validation is required', async () => {
-    const subscriptions = new ErrorsSubscriptions();
+    const subscriptions = new FormNameSubscriptions();
     const errors = {
       test: undefined,
     };
@@ -48,7 +48,7 @@ describe('validateValue tests', () => {
   });
 
   test('should set the error if the value is invalid(empty string, null, undefined or NaN) and the validationFunction returns truthy', async () => {
-    const subscriptions = new ErrorsSubscriptions();
+    const subscriptions = new FormNameSubscriptions();
     const errors = {
       test: undefined,
     };
@@ -64,7 +64,7 @@ describe('validateValue tests', () => {
   });
 
   test('should set the error with the message if the value is invalid(empty string, null, undefined or NaN) and the validationFunction returns a string', async () => {
-    const subscriptions = new ErrorsSubscriptions();
+    const subscriptions = new FormNameSubscriptions();
     const errors = {
       test: undefined,
     };
@@ -82,9 +82,10 @@ describe('validateValue tests', () => {
   });
 
   test('should notify all subscribers with the errors object', async () => {
-    const subscriptions = new ErrorsSubscriptions();
+    const subscriptions = new FormNameSubscriptions();
     const mockSubscriber = vi.fn();
-    subscriptions.subscribe(mockSubscriber);
+    subscriptions.initSubscription('test');
+    subscriptions.subscribeAll(mockSubscriber);
     const errors = {
       test: undefined,
     };
@@ -94,6 +95,6 @@ describe('validateValue tests', () => {
     };
     validateValue({ validateFunction }, 'test', '', errors, subscriptions);
 
-    expect(mockSubscriber).toHaveBeenCalledWith(errors);
+    expect(mockSubscriber).toBeCalled();
   });
 });

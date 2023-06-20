@@ -5,12 +5,10 @@ import { SplitNestedValue } from '@/types/Utils';
 function useValue<TFormValues extends Values = Values>(p: {
   form: UseForm<TFormValues>;
 }): SplitNestedValue<TFormValues>;
-
 function useValue<
   TFormValues extends Values = Values,
   TName extends FormName<TFormValues> = FormName<TFormValues>,
->(props: { name: TName; form: UseForm<TFormValues> }): FormValue<TFormValues, TName>;
-
+>(p: { name: TName; form: UseForm<TFormValues> }): FormValue<TFormValues, TName>;
 function useValue<TFormValues extends Values = Values>(p: {
   name?: any;
   form: UseForm<TFormValues>;

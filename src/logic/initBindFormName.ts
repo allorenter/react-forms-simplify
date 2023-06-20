@@ -21,6 +21,7 @@ type InitBindFormName<TFormValues> = {
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
   type: ValueType;
+  errorsSubscriptions: FormNameSubscriptions;
 };
 
 function initBindFormName<TFormValues extends Values = Values>(
@@ -35,9 +36,11 @@ function initBindFormName<TFormValues extends Values = Values>(
     updateInputValue,
     bindUnsubscribeFns,
     type,
+    errorsSubscriptions,
   } = args;
-
+  errorsSubscriptions.initSubscription(name);
   valuesSubscriptions.initSubscription(name);
+
   _initValueValidation({
     name,
     valuesValidations,

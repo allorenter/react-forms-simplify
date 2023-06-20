@@ -57,7 +57,7 @@ export type UseFormParams<TFormValues extends Values = Values> =
       $instance?: {
         valuesSubscriptions?: FormNameSubscriptions;
         touchedSubscriptions?: Subscriptions;
-        errorsSubscriptions?: Subscriptions;
+        errorsSubscriptions?: FormNameSubscriptions;
       };
       defaultValues?: DefaultValues<TFormValues>;
     }
@@ -128,7 +128,7 @@ export type UseForm<TFormValues extends Values = Values> = {
     initValueValidation: (name: FormName<TFormValues>, validation: Validation | undefined) => void;
     initValue: (name: FormName<TFormValues>) => void;
     touchedSubscriptions: Subscriptions;
-    errorsSubscriptions: Subscriptions;
+    errorsSubscriptions: FormNameSubscriptions;
     valuesSubscriptions: FormNameSubscriptions;
     initialValues?: any;
   };

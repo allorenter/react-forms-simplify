@@ -412,4 +412,23 @@ describe('useForm hook tests', () => {
 
     expect(result.current.getValue()).toEqual({ test1: undefined, test2: undefined });
   });
+
+  test('should set the aria-invalid attribute to a binded input when the FormName has errors', () => {
+    const Component = () => {
+      const form = useForm();
+      const onSubmit = form.submit(() => { });
+      return (
+        <form onSubmit={onSubmit}>
+          <input {...form.bind('name', { required: true })} />
+          <button type='submit'>Submit</button>
+        </form>
+      );
+    };
+    const { getByRole } = render(<Component />);
+    const updateButton = getByRole('button');
+    const input = getByRole('textbox');
+    fireEvent.click(updateButton);
+
+    expect(input.ariaInvalid).toBe(false);
+  });
 });

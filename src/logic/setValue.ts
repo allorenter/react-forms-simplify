@@ -10,7 +10,7 @@ type SetValueArgs<TFormValues extends Values = Values> = {
   values: Values;
   valuesValidations: ValidationValues;
   errors: FormErrors;
-  errorsSubscriptions: Subscriptions;
+  errorsSubscriptions: FormNameSubscriptions;
   valuesSubscriptions: FormNameSubscriptions;
   touchedSubscriptions: Subscriptions;
   touchedValues: TouchedValues;

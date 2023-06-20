@@ -31,7 +31,7 @@ type BindRadioArgs<TFormValues> = {
   valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
   errors: FormErrors;
-  errorsSubscriptions: Subscriptions;
+  errorsSubscriptions: FormNameSubscriptions;
   touchedSubscriptions: Subscriptions;
   updateInputValue: (value: any) => void;
   bindUnsubscribeFns: BindUnsubscribeFns;
@@ -74,6 +74,7 @@ function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFo
     valuesValidations,
     options,
     type: 'radio',
+    errorsSubscriptions,
   });
 
   const onChange = (e: any) => {

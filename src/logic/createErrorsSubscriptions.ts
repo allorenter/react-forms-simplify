@@ -1,7 +1,7 @@
-import Subscriptions from './Subscriptions';
+import FormNameSubscriptions from './FormNameSubscriptions';
 
-function createErrorsSubscriptions(useFormParam?: Subscriptions) {
-  return useFormParam instanceof Subscriptions ? useFormParam : new Subscriptions();
+function createErrorsSubscriptions(useFormParam?: FormNameSubscriptions) {
+  return useFormParam instanceof FormNameSubscriptions ? useFormParam : new FormNameSubscriptions();
 }
 
 export default createErrorsSubscriptions;

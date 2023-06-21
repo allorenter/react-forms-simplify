@@ -3,7 +3,6 @@ import { Values, FormName, UseForm, FormValue, UseBindOptions } from '@/types/Fo
 import _bind from '@/logic/bind';
 import _initValueValidation from '@/logic/initValueValidation';
 import _initValue from '@/logic/initValue';
-import validateValue from '@/logic/validateValue';
 
 function useBind<
   Element extends HTMLElement = HTMLInputElement,
@@ -19,7 +18,6 @@ function useBind<
     values,
     valuesSubscriptions,
     valuesValidations,
-    errors,
   } = form.$instance;
   const { setValue } = form;
 

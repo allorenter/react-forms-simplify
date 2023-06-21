@@ -1,6 +1,6 @@
 import { BindOptions, Validation } from '@/index';
 
-const VALIDATION_PROPERTY_NAMES = ['validationFn', 'required'];
+const VALIDATION_PROPERTY_NAMES = ['invalidate', 'required'];
 
 function bindOptionsToValidation(bindOptions: BindOptions) {
   if (!bindOptions) {

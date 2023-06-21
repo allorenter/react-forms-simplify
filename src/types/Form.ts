@@ -144,7 +144,7 @@ export type ValidateFunction = (val: any) => boolean | string;
 
 export interface Validation {
   required?: boolean;
-  validateFunction?: ValidateFunction;
+  invalidate?: ValidateFunction;
 }
 
 export type ValidationValues = Record<string, Validation>;
@@ -162,7 +162,7 @@ export interface BindOptions extends Validation {
 export type ValueError =
   | {
       name: string;
-      type: 'validateFunction' | 'required';
+      type: 'invalidate' | 'required';
       message?: string | undefined;
     }
   | undefined;

@@ -30,11 +30,6 @@ describe('useBind hook tests', () => {
     );
     renderHook(() => useBind({ name: 'test', form: useFormHook.result.current }));
 
-    console.log(
-      "(subscriptions.getSubscription('test').getSubscribers()",
-      subscriptions.getSubscription('test').getSubscribers(),
-    );
-
     expect(subscriptions.isInitialized('test')).toBe(true);
     expect(subscriptions.getSubscription('test').getSubscribers().size).toBe(1);
   });

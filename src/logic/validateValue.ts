@@ -21,14 +21,16 @@ function validateValue(
         : undefined;
   }
 
-  if (typeof validation.validateFunction === 'function') {
-    const validateResult = validation.validateFunction(value);
+  if (typeof validation.invalidate === 'function') {
+    const validateResult = validation.invalidate(value);
     if (validateResult) {
       errors[name] = {
         name,
-        type: 'validateFunction',
+        type: 'invalidate',
         message: typeof validateResult === 'string' ? validateResult : undefined,
       };
+    } else {
+      errors[name] = undefined;
     }
   }
 

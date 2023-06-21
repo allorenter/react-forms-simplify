@@ -13,6 +13,7 @@ function _initValueValidation<TFormValues extends Values = Values>(
   const { name, valuesValidations, bindOptions } = args;
   if (bindOptions !== undefined) {
     const validation = bindOptionsToValidation(bindOptions);
+
     if (validation !== null) valuesValidations[name] = validation;
   }
 }

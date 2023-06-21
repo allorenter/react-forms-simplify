@@ -24,7 +24,7 @@ function useBind<
   const { setValue } = form;
 
   const [val, setVal] = useState<FormValue<TFormValues, TName>>(initialValues?.[name] || '');
-  const [invalid, setInvalid] = useState<boolean | undefined>();
+  const [error, setError] = useState<boolean | undefined>();
 
   useEffect(() => {
     errorsSubscriptions.initSubscription(name);
@@ -43,7 +43,7 @@ function useBind<
     });
     const unsubscribeFnValues = valuesSubscriptions.subscribe(name as string, setVal);
     const unsubscribeFnErrors = errorsSubscriptions.subscribe(name as string, (invalid) => {
-      setInvalid(invalid);
+      setError(invalid);
     });
     return () => {
       unsubscribeFnValues?.();
@@ -53,9 +53,9 @@ function useBind<
 
   const ref = useMemo(() => {
     const r = setInputRef(name) as RefObject<Element>;
-    if (r.current) r.current.ariaInvalid = invalid ? 'true' : 'undefined';
+    if (r.current) r.current.ariaInvalid = error ? 'true' : 'undefined';
     return r;
-  }, [setInputRef, invalid]);
+  }, [setInputRef, error]);
 
   return {
     value: val,
@@ -64,7 +64,7 @@ function useBind<
       setValue(name, val);
     },
     ref,
-    invalid: invalid ? 'true' : undefined,
+    error,
   };
 }
 

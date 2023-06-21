@@ -52,14 +52,14 @@ describe('validateValue tests', () => {
     const errors = {
       test: undefined,
     };
-    const validateFunction = () => {
+    const invalidate = () => {
       return true;
     };
-    validateValue({ validateFunction }, 'test', '', errors, subscriptions);
+    validateValue({ invalidate }, 'test', '', errors, subscriptions);
 
     expect(errors.test).toEqual({
       name: 'test',
-      type: 'validateFunction',
+      type: 'invalidate',
     });
   });
 
@@ -69,14 +69,14 @@ describe('validateValue tests', () => {
       test: undefined,
     };
     const errorMessage = 'the value is invalid';
-    const validateFunction = () => {
+    const invalidate = () => {
       return errorMessage;
     };
-    validateValue({ validateFunction }, 'test', '', errors, subscriptions);
+    validateValue({ invalidate }, 'test', '', errors, subscriptions);
 
     expect(errors.test).toEqual({
       name: 'test',
-      type: 'validateFunction',
+      type: 'invalidate',
       message: errorMessage,
     });
   });
@@ -90,10 +90,10 @@ describe('validateValue tests', () => {
       test: undefined,
     };
     const errorMessage = 'the value is invalid';
-    const validateFunction = () => {
+    const invalidate = () => {
       return errorMessage;
     };
-    validateValue({ validateFunction }, 'test', '', errors, subscriptions);
+    validateValue({ invalidate }, 'test', '', errors, subscriptions);
 
     expect(mockSubscriber).toBeCalled();
   });

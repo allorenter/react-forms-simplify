@@ -3,6 +3,8 @@ import {
   BindUnsubscribeFns,
   FormName,
   TypeValues,
+  UpdateInputInvalid,
+  UpdateInputValue,
   ValidationValues,
   ValueType,
   Values,
@@ -19,11 +21,11 @@ type InitBindFormName<TFormValues> = {
   valuesValidations: ValidationValues;
   valuesSubscriptions: FormNameSubscriptions;
   valuesTypes: TypeValues;
-  updateInputValue: (value: any) => void;
+  updateInputValue: UpdateInputValue;
   bindUnsubscribeFns: BindUnsubscribeFns;
   type: ValueType;
   errorsSubscriptions: FormNameSubscriptions;
-  updateInputInvalid: (value: boolean) => void;
+  updateInputInvalid: UpdateInputInvalid;
 };
 
 function initBindFormName<TFormValues extends Values = Values>(

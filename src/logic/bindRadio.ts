@@ -6,6 +6,8 @@ import {
   InitializedValues,
   TouchedValues,
   TypeValues,
+  UpdateInputInvalid,
+  UpdateInputValue,
   ValidationValues,
   Values,
 } from '@/index';
@@ -33,9 +35,9 @@ type BindRadioArgs<TFormValues> = {
   errors: FormErrors;
   errorsSubscriptions: FormNameSubscriptions;
   touchedSubscriptions: Subscriptions;
-  updateInputValue: (value: any) => void;
+  updateInputValue: UpdateInputValue;
   bindUnsubscribeFns: BindUnsubscribeFns;
-  updateInputInvalid: (value: boolean) => void;
+  updateInputInvalid: UpdateInputInvalid;
 };
 
 function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFormValues>) {

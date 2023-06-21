@@ -1,15 +1,16 @@
-import { BindOptions, BindUnsubscribeFns, FormName } from '..';
+import { BindUnsubscribeFns, FormName, UpdateInputInvalid, UpdateInputValue } from '..';
 import FormNameSubscriptions from './FormNameSubscriptions';
 
 type InitBindSubscriptionArgs<TFormValues> = {
   name: FormName<TFormValues>;
   valuesSubscriptions: FormNameSubscriptions;
-  updateInputValue: (value: any) => void;
+  updateInputValue: UpdateInputValue;
   bindUnsubscribeFns: BindUnsubscribeFns;
   errorsSubscriptions: FormNameSubscriptions;
-  updateInputInvalid: (invalid: boolean) => void;
+  updateInputInvalid: UpdateInputInvalid;
 };
 
+// SOLO SIRVE PARA LOS INTERNAl BINDS: bind, bindCheckbox, bindNumber, bindRadio
 function initBindSubscription<TFormValues>(args: InitBindSubscriptionArgs<TFormValues>) {
   const {
     bindUnsubscribeFns,

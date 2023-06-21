@@ -170,3 +170,7 @@ export type UseBindOptions = Validation;
 export type BindUnsubscribeFn = () => void | null;
 
 export type BindUnsubscribeFns = Record<string, BindUnsubscribeFn | BindUnsubscribeFn[]>;
+
+export type UpdateInputValue = (value: any) => void;
+
+export type UpdateInputInvalid = (value: ValueError) => void;

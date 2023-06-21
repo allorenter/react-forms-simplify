@@ -6,6 +6,8 @@ import {
   InitializedValues,
   TouchedValues,
   TypeValues,
+  UpdateInputInvalid,
+  UpdateInputValue,
   ValidationValues,
   Values,
 } from '..';
@@ -31,9 +33,9 @@ type BindNumberArgs<TFormValues> = {
   errors: FormErrors;
   errorsSubscriptions: FormNameSubscriptions;
   touchedSubscriptions: Subscriptions;
-  updateInputValue: (value: any) => void;
+  updateInputValue: UpdateInputValue;
   bindUnsubscribeFns: BindUnsubscribeFns;
-  updateInputInvalid: (value: boolean) => void;
+  updateInputInvalid: UpdateInputInvalid;
 };
 
 function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<TFormValues>) {

@@ -123,14 +123,18 @@ export type UseForm<TFormValues extends Values = Values> = {
     onChange: (e: any) => void;
   };
   $instance: {
-    setInputRef: (key: string) => void | RefObject<HTMLInputElement>;
-    getInputRef: (key: string) => void | RefObject<HTMLInputElement>;
-    initValueValidation: (name: FormName<TFormValues>, validation: Validation | undefined) => void;
-    initValue: (name: FormName<TFormValues>) => void;
+    initializedValues: InitializedValues;
+    values: Values;
+    touchedValues: TouchedValues;
+    errors: FormErrors;
+    valuesValidations: ValidationValues;
+    valuesSubscriptions: FormNameSubscriptions;
     touchedSubscriptions: Subscriptions;
     errorsSubscriptions: FormNameSubscriptions;
-    valuesSubscriptions: FormNameSubscriptions;
-    initialValues?: any;
+    bindUnsubscribeFns: BindUnsubscribeFns;
+    setInputRef: (key: string) => any;
+    getInputRef: (key: string) => any;
+    initialValues: any;
   };
 };
 

@@ -53,27 +53,6 @@ function useForm<TFormValues extends Values = Values>(
   const bindUnsubscribeFns = useRef<BindUnsubscribeFns>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initValue = useCallback((name: FormName<TFormValues>) => {
-    return _initValue({
-      name,
-      initializedValues: initializedValues.current,
-      touchedValues: touchedValues.current,
-      values: values.current,
-      initialValues: initialValues.current,
-    });
-  }, []);
-
-  const initValueValidation = useCallback(
-    (name: FormName<TFormValues>, bindOptions: BindOptions | undefined) => {
-      _initValueValidation({
-        name,
-        bindOptions,
-        valuesValidations: valuesValidations.current,
-      });
-    },
-    [],
-  );
-
   const getValue = useCallback((name?: FormName<TFormValues>) => {
     return _getValue({ name, values: values.current });
   }, []);
@@ -258,11 +237,15 @@ function useForm<TFormValues extends Values = Values>(
     bindRadio,
     bindNumber,
     $instance: {
+      initializedValues: initializedValues.current,
+      values: values.current,
+      touchedValues: touchedValues.current,
+      errors: errors.current,
+      valuesValidations: valuesValidations.current,
       valuesSubscriptions,
-      initValue,
       touchedSubscriptions,
       errorsSubscriptions,
-      initValueValidation,
+      bindUnsubscribeFns: bindUnsubscribeFns.current,
       setInputRef,
       getInputRef,
       initialValues: initialValues?.current || {},

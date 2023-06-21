@@ -60,7 +60,6 @@ function useBind<
   return {
     value: val,
     setValue: (val: FormValue<TFormValues, TName>) => {
-      validateValue(valuesValidations[name], name, val, errors, errorsSubscriptions);
       setValue(name, val);
     },
     ref,

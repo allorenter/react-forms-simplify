@@ -14,6 +14,7 @@ import {
   DefaultValues,
   InitializedValues,
   BindUnsubscribeFns,
+  ValidationMode,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
 import formatErrors from '@/logic/formatErrors';
@@ -34,6 +35,7 @@ import _bindRadio from '@/logic/bindRadio';
 import _bindNumber from '@/logic/bindNumber';
 import _reset from '@/logic/reset';
 import _submit from '@/logic/submit';
+import getValidationMode from '@/logic/getValidationMode';
 
 function useForm<TFormValues extends Values = Values>(
   params?: UseFormParams<TFormValues>,
@@ -51,6 +53,9 @@ function useForm<TFormValues extends Values = Values>(
   const valuesTypes = useRef<TypeValues>({});
   const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
   const bindUnsubscribeFns = useRef<BindUnsubscribeFns>({});
+  const validationMode = useRef<{ mode: ValidationMode }>({
+    mode: getValidationMode(params?.validationMode),
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getValue = useCallback((name?: FormName<TFormValues>) => {
@@ -97,6 +102,7 @@ function useForm<TFormValues extends Values = Values>(
         if (typeof ref?.current === 'object' && ref?.current !== null)
           ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
       },
+      validationMode: validationMode.current,
     });
     return { ...bindResult, ref };
   }, []);
@@ -217,6 +223,9 @@ function useForm<TFormValues extends Values = Values>(
       onSubmitting: setIsSubmitting,
       values: values.current,
       valuesValidations: valuesValidations.current,
+      changeValidationModeToOnChange: () => {
+        if (validationMode.current.mode === 'onSubmit') validationMode.current.mode = 'onChange';
+      },
     });
   }, []);
 

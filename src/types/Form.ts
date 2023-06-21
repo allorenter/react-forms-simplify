@@ -60,6 +60,7 @@ export type UseFormParams<TFormValues extends Values = Values> =
         errorsSubscriptions?: FormNameSubscriptions;
       };
       defaultValues?: DefaultValues<TFormValues>;
+      validationMode?: ValidationMode;
     }
   | undefined;
 
@@ -178,3 +179,5 @@ export type BindUnsubscribeFns = Record<string, BindUnsubscribeFn | BindUnsubscr
 export type UpdateInputValue = (value: any) => void;
 
 export type UpdateInputInvalid = (value: ValueError) => void;
+
+export type ValidationMode = 'onChange' | 'onSubmit';

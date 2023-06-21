@@ -12,6 +12,7 @@ type SubmitArgs<TFormValues extends Values = Values> = {
   errorsSubscriptions: FormNameSubscriptions;
   onSubmitting: (isSubmitting: boolean) => void;
   onFocus: (name: FormName<TFormValues>) => void;
+  changeValidationModeToOnChange: () => void;
 };
 
 function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValues>) {
@@ -23,6 +24,7 @@ function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValu
     errorsSubscriptions,
     onSubmitting,
     onFocus,
+    changeValidationModeToOnChange,
   } = args;
 
   return (e: FormEvent<HTMLFormElement>) => {
@@ -53,8 +55,11 @@ function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValu
     const validationsValues = Object.keys(valuesValidations);
     for (const name of validationsValues) {
       validateValue(valuesValidations[name], name, values[name], errors, errorsSubscriptions);
-      if (hasError()) return focusError();
     }
+
+    changeValidationModeToOnChange();
+
+    if (hasError()) return focusError();
 
     const formatted = transformValuesToFormValues(values);
     onSubmitting(true);

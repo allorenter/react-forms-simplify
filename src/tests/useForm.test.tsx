@@ -431,4 +431,50 @@ describe('useForm hook tests', () => {
 
     expect(input.ariaInvalid).toBe('true');
   });
+
+  test('should set the aria-invalid to all the binded inputs with errors when submit', () => {
+    const Component = () => {
+      const form = useForm();
+      const onSubmit = form.submit(() => { });
+      return (
+        <form onSubmit={onSubmit}>
+          <input data-testId='nameInput' {...form.bind('name', { required: true })} />
+          <input data-testId='numberInput' {...form.bindNumber('number', { required: true })} />
+          <button type='submit'>Submit</button>
+        </form>
+      );
+    };
+    const { getByRole, getByTestId } = render(<Component />);
+    const updateButton = getByRole('button');
+    const input = getByTestId('nameInput');
+    const inputNumber = getByTestId('numberInput');
+    fireEvent.click(updateButton);
+
+    expect(input.ariaInvalid).toBe('true');
+    expect(inputNumber.ariaInvalid).toBe('true');
+  });
+
+  test('should change the validation mode', () => {
+    const Component = () => {
+      const form = useForm({ validationMode: 'onSubmit' });
+      const onSubmit = form.submit(() => { });
+      return (
+        <form onSubmit={onSubmit}>
+          <input data-testId='nameInput' {...form.bind('name', { required: true })} />
+          <button type='submit'>Submit</button>
+        </form>
+      );
+    };
+    const { getByRole, getByTestId } = render(<Component />);
+    const updateButton = getByRole('button');
+    const input = getByTestId('nameInput');
+    fireEvent.change(input, { target: { value: 'val' } });
+
+    expect(input.ariaInvalid).toBe(undefined);
+
+    fireEvent.change(input, { target: { value: '' } });
+    fireEvent.click(updateButton);
+
+    expect(input.ariaInvalid).toBe('true');
+  });
 });

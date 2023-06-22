@@ -56,6 +56,7 @@ function useForm<TFormValues extends Values = Values>(
   const validationMode = useRef<{ mode: ValidationMode }>({
     mode: getValidationMode(params?.validationMode),
   });
+  const initialValidationMode = useRef<ValidationMode>(getValidationMode(params?.validationMode));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const getValue = useCallback((name?: FormName<TFormValues>) => {
@@ -227,8 +228,9 @@ function useForm<TFormValues extends Values = Values>(
       onSubmitting: setIsSubmitting,
       values: values.current,
       valuesValidations: valuesValidations.current,
-      changeValidationModeToOnChange: () => {
-        if (validationMode.current.mode === 'onSubmit') validationMode.current.mode = 'onChange';
+      initialValidationMode: initialValidationMode.current,
+      changeValidationMode: (mode: ValidationMode) => {
+        if (validationMode.current.mode !== mode) validationMode.current.mode = mode;
       },
     });
   }, []);

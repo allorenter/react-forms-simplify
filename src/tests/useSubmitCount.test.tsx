@@ -1,9 +1,9 @@
 import { describe, test, expect, vi } from 'vitest';
 import { fireEvent, render, renderHook, waitFor } from '@testing-library/react';
-import useForm from '../../hooks/useForm';
+import useForm from '@/hooks/useForm';
 import useSubmitCount from '@/hooks/useSubmitCount';
 
-describe('useBind tests', () => {
+describe('useSubmitCount hook tests', () => {
   test('should return the number of submits of a form', async () => {
     const Component = () => {
       const form = useForm();

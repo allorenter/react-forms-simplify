@@ -1,12 +1,13 @@
 import { FormErrors, Validation } from '@/types/Form';
-import ErrorsSubscriptions from './ErrorsSubscriptions';
+import formatErrors from './formatErrors';
+import FormNameSubscriptions from './FormNameSubscriptions';
 
 function validateValue(
   validation: Validation | undefined,
   name: string,
   value: any,
   errors: FormErrors,
-  errorsSubscriptions: ErrorsSubscriptions,
+  errorsSubscriptions: FormNameSubscriptions,
 ) {
   if (!validation) return;
 
@@ -20,18 +21,21 @@ function validateValue(
         : undefined;
   }
 
-  if (typeof validation.validateFunction === 'function') {
-    const validateResult = validation.validateFunction(value);
+  if (typeof validation.invalidate === 'function') {
+    const validateResult = validation.invalidate(value);
     if (validateResult) {
       errors[name] = {
         name,
-        type: 'validateFunction',
+        type: 'invalidate',
         message: typeof validateResult === 'string' ? validateResult : undefined,
       };
+    } else {
+      errors[name] = undefined;
     }
   }
 
-  errorsSubscriptions.publish(errors);
+  const formatted = formatErrors(errors);
+  errorsSubscriptions.publish(name, formatted?.[name]);
 }
 
 export default validateValue;

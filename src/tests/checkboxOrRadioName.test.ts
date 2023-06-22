@@ -1,8 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import {
-  splitCheckboxOrRadioName,
-  createCheckboxOrRadioName,
-} from '../../logic/checkboxOrRadioName';
+import { splitCheckboxOrRadioName, createCheckboxOrRadioName } from '@/logic/checkboxOrRadioName';
 
 describe('checkbox name tests', () => {
   test('should return the correct checkbox name format', () => {

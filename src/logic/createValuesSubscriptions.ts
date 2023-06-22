@@ -1,7 +1,7 @@
-import ValuesSubscriptions from './ValuesSubscriptions';
+import FormNameSubscriptions from './FormNameSubscriptions';
 
-function createValuesSubscriptions(useFormParam?: ValuesSubscriptions) {
-  return useFormParam instanceof ValuesSubscriptions ? useFormParam : new ValuesSubscriptions();
+function createValuesSubscriptions(useFormParam?: FormNameSubscriptions) {
+  return useFormParam instanceof FormNameSubscriptions ? useFormParam : new FormNameSubscriptions();
 }
 
 export default createValuesSubscriptions;

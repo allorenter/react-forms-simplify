@@ -74,7 +74,11 @@ function _reset<TFormValues extends Values = Values>(args: ResetArgs<TFormValues
     });
   });
 
-  values.current = resetAllValues ? {} : newValues;
+  // hay que mantener los valores anteriores que no tenemos en reset
+  const previousValues = values.current || {};
+  const formattedNewValues = { ...previousValues, ...newValues };
+
+  values.current = resetAllValues ? {} : formattedNewValues;
 }
 
 export default _reset;

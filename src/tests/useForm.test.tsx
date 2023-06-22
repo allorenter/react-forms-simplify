@@ -215,7 +215,7 @@ describe('useForm hook tests', () => {
     };
     result.current.reset(values);
 
-    expect(result.current.getValue()).toEqual(values);
+    expect(result.current.getValue()).toEqual({ ...initialValues, ...values });
   });
 
   test('should notify to subscribers when reset is called', async () => {
@@ -476,5 +476,19 @@ describe('useForm hook tests', () => {
     fireEvent.click(updateButton);
 
     expect(input.ariaInvalid).toBe('true');
+  });
+
+  test('should keep the previously selected values when the FormName does not exist in the object passed by parameters to reset. ', () => {
+    const hookForm = renderHook(() => useForm());
+    const bindName = hookForm.result.current.bind('name', { required: true });
+    const bindNumber = hookForm.result.current.bindNumber('numeric', { required: true });
+    bindName.onChange({ target: { value: 'value' } });
+    bindNumber.onChange({ target: { value: '675' } });
+
+    expect(hookForm.result.current.getValue()).toEqual({ name: 'value', numeric: 675 });
+
+    hookForm.result.current.reset({ name: 'after reset' });
+
+    expect(hookForm.result.current.getValue()).toEqual({ name: 'after reset', numeric: 675 });
   });
 });

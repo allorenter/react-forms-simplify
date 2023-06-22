@@ -8,6 +8,7 @@ import {
   TypeValues,
   UpdateInputInvalid,
   UpdateInputValue,
+  ValidationMode,
   ValidationValues,
   Values,
 } from '..';
@@ -36,6 +37,7 @@ type BindNumberArgs<TFormValues> = {
   updateInputValue: UpdateInputValue;
   bindUnsubscribeFns: BindUnsubscribeFns;
   updateInputInvalid: UpdateInputInvalid;
+  validationMode: { mode: ValidationMode };
 };
 
 function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<TFormValues>) {
@@ -55,6 +57,7 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
     updateInputValue,
     bindUnsubscribeFns,
     updateInputInvalid,
+    validationMode,
   } = args;
 
   const initialized = _initValue({
@@ -79,7 +82,9 @@ function _bindNumber<TFormValues extends Values = Values>(args: BindNumberArgs<T
 
   const onChange = (e: any) => {
     const value = typeof e.target === 'object' ? parseInt(e.target.value) : e;
-    validateValue(valuesValidations[name], name, value, errors, errorsSubscriptions);
+    if (validationMode.mode === 'onChange') {
+      validateValue(valuesValidations[name], name, value, errors, errorsSubscriptions);
+    }
     values[name] = value;
     valuesSubscriptions.publish(name as string, value);
     _touchValue({

@@ -8,6 +8,7 @@ import {
   TypeValues,
   UpdateInputInvalid,
   UpdateInputValue,
+  ValidationMode,
   ValidationValues,
   Values,
 } from '..';
@@ -38,6 +39,7 @@ type BindCheckboxArgs<TFormValues> = {
   updateInputValue: UpdateInputValue;
   bindUnsubscribeFns: BindUnsubscribeFns;
   updateInputInvalid: UpdateInputInvalid;
+  validationMode: { mode: ValidationMode };
 };
 
 function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxArgs<TFormValues>) {
@@ -58,6 +60,7 @@ function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxAr
     updateInputValue,
     bindUnsubscribeFns,
     updateInputInvalid,
+    validationMode,
   } = args;
 
   const checkboxName = createCheckboxOrRadioName(name, value);
@@ -96,7 +99,9 @@ function _bindCheckbox<TFormValues extends Values = Values>(args: BindCheckboxAr
       });
       values[name] = unchecked;
     }
-    validateValue(valuesValidations[name], name, values[name], errors, errorsSubscriptions);
+    if (validationMode.mode === 'onChange') {
+      validateValue(valuesValidations[name], name, values[name], errors, errorsSubscriptions);
+    }
     valuesSubscriptions.publish(checkboxName as string, checked);
     valuesSubscriptions.publish(name as string, values[name]);
     _touchValue({ name, touch: true, touchedSubscriptions, touchedValues });

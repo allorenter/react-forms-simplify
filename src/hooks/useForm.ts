@@ -74,6 +74,7 @@ function useForm<TFormValues extends Values = Values>(
         values: values.current,
         valuesSubscriptions,
         valuesValidations: valuesValidations.current,
+        validationMode: validationMode.current,
       });
     },
     [],
@@ -132,6 +133,7 @@ function useForm<TFormValues extends Values = Values>(
           if (typeof ref?.current === 'object' && ref?.current !== null)
             ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
         },
+        validationMode: validationMode.current,
       });
       return { ...bindResult, ref };
     },
@@ -165,6 +167,7 @@ function useForm<TFormValues extends Values = Values>(
           if (typeof ref?.current === 'object' && ref?.current !== null)
             ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
         },
+        validationMode: validationMode.current,
       });
       return { ...bindResult, ref };
     },
@@ -194,6 +197,7 @@ function useForm<TFormValues extends Values = Values>(
         if (typeof ref?.current === 'object' && ref?.current !== null)
           ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
       },
+      validationMode: validationMode.current,
     });
     return { ...bindResult, ref };
   }, []);

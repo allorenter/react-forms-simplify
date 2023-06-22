@@ -8,6 +8,7 @@ import {
   TypeValues,
   UpdateInputInvalid,
   UpdateInputValue,
+  ValidationMode,
   ValidationValues,
   Values,
 } from '@/index';
@@ -38,6 +39,7 @@ type BindRadioArgs<TFormValues> = {
   updateInputValue: UpdateInputValue;
   bindUnsubscribeFns: BindUnsubscribeFns;
   updateInputInvalid: UpdateInputInvalid;
+  validationMode: { mode: ValidationMode };
 };
 
 function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFormValues>) {
@@ -58,6 +60,7 @@ function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFo
     updateInputValue,
     bindUnsubscribeFns,
     updateInputInvalid,
+    validationMode,
   } = args;
 
   const radioName = createCheckboxOrRadioName(name, value);
@@ -84,7 +87,9 @@ function _bindRadio<TFormValues extends Values = Values>(args: BindRadioArgs<TFo
 
   const onChange = (e: any) => {
     values[name] = value;
-    validateValue(valuesValidations[name], name, values[name], errors, errorsSubscriptions);
+    if (validationMode.mode === 'onChange') {
+      validateValue(valuesValidations[name], name, values[name], errors, errorsSubscriptions);
+    }
     valuesSubscriptions.publish(name as string, values[name]);
     _touchValue({
       name,

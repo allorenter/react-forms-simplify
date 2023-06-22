@@ -49,8 +49,6 @@ function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValu
       }
     };
 
-    if (hasError()) return focusError();
-
     // si no hay errores, válido todos los values de uno en uno
     const validationsValues = Object.keys(valuesValidations);
     for (const name of validationsValues) {

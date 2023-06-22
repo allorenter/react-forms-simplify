@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { UseForm, Values } from '..';
+import { UseForm, Values } from '@/index';
 
 function useSubmitCount<TFormValues extends Values>({ form }: { form: UseForm<TFormValues> }) {
   const [submitCount, setSubmitCount] = useState(0);

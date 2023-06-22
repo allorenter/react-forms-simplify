@@ -1,9 +1,9 @@
 import FormProvider from '@/providers/FormProvider';
 import { render, renderHook } from '@testing-library/react';
 import { describe, test, expect } from 'vitest';
-import { useForm, useFormContext } from '../..';
+import { useForm, useFormContext } from '@/index';
 
-describe('useFormContext', () => {
+describe('useFormContext hook tests', () => {
   test('should return the form method in the children components', () => {
     const hookForm = renderHook(() => useForm());
     let childrenForm;

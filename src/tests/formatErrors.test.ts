@@ -1,17 +1,17 @@
 import { describe, test, expect } from 'vitest';
-import { FormErrors } from '../..';
-import formatErrors from '../../logic/formatErrors';
+import { FormErrors } from '@/index';
+import formatErrors from '@/logic/formatErrors';
 
 describe('formatErrors', () => {
   test('should remove entries with undefined values', () => {
     const errors = {
       field1: { name: 'field1', type: 'required', message: 'This field is required' },
       field2: undefined,
-      field3: { name: 'field3', type: 'validateFunction', message: 'Invalid value' },
+      field3: { name: 'field3', type: 'invalidate', message: 'Invalid value' },
     };
     const expectedResult = {
       field1: { name: 'field1', type: 'required', message: 'This field is required' },
-      field3: { name: 'field3', type: 'validateFunction', message: 'Invalid value' },
+      field3: { name: 'field3', type: 'invalidate', message: 'Invalid value' },
     };
 
     expect(formatErrors(errors as FormErrors)).toEqual(expectedResult);
@@ -38,12 +38,12 @@ describe('formatErrors', () => {
   test('should return the input object for an input object that has only non-undefined values', () => {
     const errors = {
       field1: { name: 'field1', type: 'required', message: 'This field is required' },
-      field2: { name: 'field2', type: 'validateFunction', message: 'Invalid value' },
+      field2: { name: 'field2', type: 'invalidate', message: 'Invalid value' },
       field3: { name: 'field3', type: 'required', message: 'This field is also required' },
     };
     const expectedResult = {
       field1: { name: 'field1', type: 'required', message: 'This field is required' },
-      field2: { name: 'field2', type: 'validateFunction', message: 'Invalid value' },
+      field2: { name: 'field2', type: 'invalidate', message: 'Invalid value' },
       field3: { name: 'field3', type: 'required', message: 'This field is also required' },
     };
 

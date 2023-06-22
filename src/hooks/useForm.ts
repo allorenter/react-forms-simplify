@@ -1,6 +1,6 @@
-import { FormEvent, RefObject, useCallback, useRef, useState } from 'react';
+import { RefObject, useCallback, useRef, useState } from 'react';
 import {
-  BindValueOptions,
+  BindOptions,
   Values,
   FormErrors,
   ValidationValues,
@@ -9,315 +9,208 @@ import {
   TouchedValues,
   UseForm,
   UseFormParams,
-  Validation,
   TypeValues,
-  ValueType,
   FormValue,
+  DefaultValues,
+  InitializedValues,
+  BindUnsubscribeFns,
+  ValidationMode,
 } from '@/types/Form';
 import useInputElementRefs from './useInputElementRefs';
-import transformValuesToFormValues from '@/logic/transformValuesToFormValues';
-import transformFormValuesToValues from '@/logic/transformFormValuesToValues';
-import validateValue from '@/logic/validateValue';
 import formatErrors from '@/logic/formatErrors';
-import { splitCheckboxOrRadioName, createCheckboxOrRadioName } from '@/logic/checkboxOrRadioName';
+import { createCheckboxOrRadioName } from '@/logic/checkboxOrRadioName';
 import createValuesSubscriptions from '@/logic/createValuesSubscriptions';
 import createTouchedSubscriptions from '@/logic/createTouchedSubscriptions';
 import createErrorsSubscriptions from '@/logic/createErrorsSubscriptions';
+import getInitialValues from '@/logic/getInitialValues';
+import _initValueValidation from '@/logic/initValueValidation';
+import _initValue from '@/logic/initValue';
+import _initValueType from '@/logic/initValueType';
+import _touchValue from '@/logic/touchValue';
+import _getValue from '@/logic/getValue';
+import _setValue from '@/logic/setValue';
+import _bind from '@/logic/bind';
+import _bindCheckbox from '@/logic/bindCheckbox';
+import _bindRadio from '@/logic/bindRadio';
+import _bindNumber from '@/logic/bindNumber';
+import _reset from '@/logic/reset';
+import _submit from '@/logic/submit';
+import getValidationMode from '@/logic/getValidationMode';
 
 function useForm<TFormValues extends Values = Values>(
-  params?: UseFormParams,
+  params?: UseFormParams<TFormValues>,
 ): UseForm<TFormValues> {
-  // object instances
   const valuesSubscriptions = createValuesSubscriptions(params?.$instance?.valuesSubscriptions);
   const touchedSubscriptions = createTouchedSubscriptions(params?.$instance?.touchedSubscriptions);
   const errorsSubscriptions = createErrorsSubscriptions(params?.$instance?.errorsSubscriptions);
 
-  // refs
-  const values = useRef<Values>({} as Values);
+  const initialValues = useRef(getInitialValues(params?.defaultValues));
+  const initializedValues = useRef<InitializedValues>({});
+  const values = useRef<Values>({});
   const touchedValues = useRef<TouchedValues>({});
   const errors = useRef<FormErrors>({});
   const valuesValidations = useRef<ValidationValues>({});
   const valuesTypes = useRef<TypeValues>({});
   const [getInputRef, setInputRef] = useInputElementRefs<HTMLInputElement>();
-
-  // states
+  const bindUnsubscribeFns = useRef<BindUnsubscribeFns>({});
+  const validationMode = useRef<{ mode: ValidationMode }>({
+    mode: getValidationMode(params?.validationMode),
+  });
+  const initialValidationMode = useRef<ValidationMode>(getValidationMode(params?.validationMode));
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const initValue = useCallback((name: FormName<TFormValues>) => {
-    if (!values.current[name]) {
-      values.current[name] = '';
-      touchedValues.current[name] = false;
-    }
-  }, []);
-
-  const initValueValidation = useCallback(
-    (name: FormName<TFormValues>, validation: Validation | undefined) => {
-      if (validation !== undefined) {
-        valuesValidations.current[name] = validation;
-      }
-    },
-    [],
-  );
-
-  const initValueType = useCallback((name: FormName<TFormValues>, type: ValueType) => {
-    valuesTypes.current[name] = type;
-  }, []);
-
-  const touchValue = useCallback((name: FormName<TFormValues>, touch = true) => {
-    // solo lo ejecuto en caso de querer cambiar su valor
-    if (touchedValues.current[name] !== touch) {
-      touchedValues.current[name] = touch;
-      touchedSubscriptions.publish(touchedValues.current);
-    }
-  }, []);
-
   const getValue = useCallback((name?: FormName<TFormValues>) => {
-    if (name === undefined) return transformValuesToFormValues(values.current);
-    return values.current[name];
+    return _getValue({ name, values: values.current });
   }, []);
 
   const setValue = useCallback(
     <TName extends FormName<TFormValues>>(name: TName, value: FormValue<TFormValues, TName>) => {
-      if (name in values.current) {
-        validateValue(
-          valuesValidations.current[name],
-          name,
-          value,
-          errors.current,
-          errorsSubscriptions,
-        );
-        values.current[name] = value;
-        valuesSubscriptions.publish(name as string, value);
-        touchValue(name);
-      }
+      return _setValue<TFormValues>({
+        name,
+        value: value as any,
+        errors: errors.current,
+        errorsSubscriptions,
+        touchedSubscriptions,
+        touchedValues: touchedValues.current,
+        values: values.current,
+        valuesSubscriptions,
+        valuesValidations: valuesValidations.current,
+        validationMode: validationMode.current,
+      });
     },
     [],
   );
 
-  const bind = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
-    valuesSubscriptions.initValueSubscription(name as string);
-    initValue(name);
-    initValueValidation(name, options?.validation);
-    initValueType(name, 'text');
-
+  const bind = useCallback((name: FormName<TFormValues>, options?: BindOptions) => {
     const ref = setInputRef(name as string) as RefObject<HTMLInputElement>;
-
-    const updateRefValue = (value: any) => {
-      if (typeof ref?.current === 'object' && ref?.current !== null) {
-        ref.current.value = value;
-      }
-    };
-
-    valuesSubscriptions.subscribe(name as string, updateRefValue);
-
-    const onChange = (e: any) => {
-      const value = typeof e.target === 'object' ? e.target.value : e;
-      validateValue(
-        valuesValidations.current[name],
-        name,
-        value,
-        errors.current,
-        errorsSubscriptions,
-      );
-      valuesSubscriptions.publish(name as string, value);
-      values.current[name] = value;
-      touchValue(name);
-    };
-
-    return {
+    const bindResult = _bind<TFormValues>({
       name,
-      onChange,
-      ref,
-    };
+      options,
+      errors: errors.current,
+      errorsSubscriptions,
+      touchedSubscriptions,
+      touchedValues: touchedValues.current,
+      values: values.current,
+      valuesSubscriptions,
+      valuesValidations: valuesValidations.current,
+      initializedValues: initializedValues.current,
+      initialValues: initialValues.current,
+      valuesTypes: valuesTypes.current,
+      updateInputValue: (value: any) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
+      },
+      bindUnsubscribeFns: bindUnsubscribeFns.current,
+      updateInputInvalid: (invalid) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null)
+          ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
+      },
+      validationMode: validationMode.current,
+    });
+    return { ...bindResult, ref };
   }, []);
 
   const bindCheckbox = useCallback(
-    (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
-      const checkboxName = createCheckboxOrRadioName(name, value);
-
-      valuesSubscriptions.initValueSubscription(name);
-      valuesSubscriptions.initValueSubscription(checkboxName as string);
-      initValue(name);
-      initValueValidation(name, options?.validation);
-      initValueType(name, 'checkbox');
-
-      const ref = setInputRef(checkboxName as string) as RefObject<HTMLInputElement>;
-
-      const updateRefValue = (checked: any) => {
-        if (typeof ref?.current === 'object' && ref?.current !== null) {
-          ref.current.checked = checked;
-        }
-      };
-
-      valuesSubscriptions.subscribe(checkboxName as string, updateRefValue);
-
-      const onChange = (e: any) => {
-        const checked = e.target.checked;
-        if (!Array.isArray(values.current[name])) {
-          values.current[name] = [];
-        }
-
-        if (checked) {
-          values.current[name].push(value);
-        } else {
-          const unchecked = values.current[name].filter((val: string) => {
-            return val !== value;
-          });
-          values.current[name] = unchecked;
-        }
-
-        validateValue(
-          valuesValidations.current[name],
-          name,
-          values.current[name],
-          errors.current,
-          errorsSubscriptions,
-        );
-        valuesSubscriptions.publish(checkboxName as string, checked);
-        valuesSubscriptions.publish(name as string, values.current[name]);
-
-        touchValue(name);
-      };
-
-      return {
+    (name: FormName<TFormValues>, value: string, options?: BindOptions) => {
+      const ref = setInputRef(name as string) as RefObject<HTMLInputElement>;
+      const bindResult = _bindCheckbox<TFormValues>({
         name,
-        ref,
-        type: 'checkbox',
+        options,
+        errors: errors.current,
+        errorsSubscriptions,
+        touchedSubscriptions,
+        touchedValues: touchedValues.current,
+        values: values.current,
+        valuesSubscriptions,
+        valuesValidations: valuesValidations.current,
+        initializedValues: initializedValues.current,
+        initialValues: initialValues.current,
+        valuesTypes: valuesTypes.current,
         value,
-        onChange,
-      };
+        updateInputValue: (value: any) => {
+          if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
+        },
+        bindUnsubscribeFns: bindUnsubscribeFns.current,
+        updateInputInvalid: (invalid) => {
+          if (typeof ref?.current === 'object' && ref?.current !== null)
+            ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
+        },
+        validationMode: validationMode.current,
+      });
+      return { ...bindResult, ref };
     },
     [],
   );
 
   const bindRadio = useCallback(
-    (name: FormName<TFormValues>, value: string, options?: BindValueOptions) => {
+    (name: FormName<TFormValues>, value: string, options?: BindOptions) => {
       const radioName = createCheckboxOrRadioName(name, value);
-
-      valuesSubscriptions.initValueSubscription(name);
-      valuesSubscriptions.initValueSubscription(radioName as string);
-      initValue(name);
-      initValueValidation(name, options?.validation);
-      initValueType(name, 'radio');
-
       const ref = setInputRef(radioName as string) as RefObject<HTMLInputElement>;
-
-      const updateRefValue = (checked: any) => {
-        if (typeof ref?.current === 'object' && ref?.current !== null) {
-          ref.current.checked = checked;
-        }
-      };
-
-      valuesSubscriptions.subscribe(radioName as string, updateRefValue);
-
-      const onChange = () => {
-        values.current[name] = value;
-        validateValue(
-          valuesValidations.current[name],
-          name,
-          values.current[name],
-          errors.current,
-          errorsSubscriptions,
-        );
-        valuesSubscriptions.publish(name as string, values.current[name]);
-        touchValue(name);
-      };
-
-      return {
+      const bindResult = _bindRadio({
         name,
-        ref,
-        type: 'radio',
+        options,
+        errors: errors.current,
+        errorsSubscriptions,
+        touchedSubscriptions,
+        touchedValues: touchedValues.current,
+        values: values.current,
+        valuesSubscriptions,
+        valuesValidations: valuesValidations.current,
+        initializedValues: initializedValues.current,
+        initialValues: initialValues.current,
+        valuesTypes: valuesTypes.current,
         value,
-        onChange,
-      };
+        updateInputValue: (checked: any) => {
+          if (typeof ref?.current === 'object' && ref?.current !== null)
+            ref.current.checked = checked;
+        },
+        bindUnsubscribeFns: bindUnsubscribeFns.current,
+        updateInputInvalid: (invalid) => {
+          if (typeof ref?.current === 'object' && ref?.current !== null)
+            ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
+        },
+        validationMode: validationMode.current,
+      });
+      return { ...bindResult, ref };
     },
     [],
   );
 
-  const bindNumber = useCallback((name: FormName<TFormValues>, options?: BindValueOptions) => {
-    valuesSubscriptions.initValueSubscription(name as string);
-    initValue(name);
-    initValueValidation(name, options?.validation);
-    initValueType(name, 'number');
-
+  const bindNumber = useCallback((name: FormName<TFormValues>, options?: BindOptions) => {
     const ref = setInputRef(name as string) as RefObject<HTMLInputElement>;
-
-    const updateRefValue = (value: any) => {
-      if (typeof ref?.current === 'object' && ref?.current !== null) {
-        ref.current.value = value;
-      }
-    };
-
-    valuesSubscriptions.subscribe(name as string, updateRefValue);
-
-    const onChange = (e: any) => {
-      const value = typeof e.target === 'object' ? parseInt(e.target.value) : e;
-      validateValue(
-        valuesValidations.current[name],
-        name,
-        value,
-        errors.current,
-        errorsSubscriptions,
-      );
-      valuesSubscriptions.publish(name as string, value);
-      values.current[name] = value;
-      touchValue(name);
-    };
-
-    return {
+    const bindResult = _bindNumber({
       name,
-      onChange,
-      ref,
-      type: 'number',
-    };
+      options,
+      errors: errors.current,
+      errorsSubscriptions,
+      touchedSubscriptions,
+      touchedValues: touchedValues.current,
+      values: values.current,
+      valuesSubscriptions,
+      valuesValidations: valuesValidations.current,
+      initializedValues: initializedValues.current,
+      initialValues: initialValues.current,
+      valuesTypes: valuesTypes.current,
+      updateInputValue: (value: any) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null) ref.current.value = value;
+      },
+      bindUnsubscribeFns: bindUnsubscribeFns.current,
+      updateInputInvalid: (invalid) => {
+        if (typeof ref?.current === 'object' && ref?.current !== null)
+          ref.current.ariaInvalid = invalid ? 'true' : 'undefined';
+      },
+      validationMode: validationMode.current,
+    });
+    return { ...bindResult, ref };
   }, []);
 
-  const reset = useCallback((val: TFormValues) => {
-    const newValues = transformFormValuesToValues(val);
-    values.current = newValues;
-
-    Object.entries(newValues).forEach((entry) => {
-      const [name, value] = entry;
-
-      if (valuesTypes.current[name] === 'checkbox') {
-        // recorro los checkboxValues suscritos y los pongo a false en caso de no estar en value
-        const subscriptions = valuesSubscriptions.getAllSubscriptions();
-        Object.entries(subscriptions)
-          .filter((subscriptionProperty) => {
-            const [checkboxName] = subscriptionProperty;
-            if (!checkboxName.includes('{{') && !checkboxName.includes('}}')) {
-              return false;
-            }
-            const [n] = splitCheckboxOrRadioName(checkboxName);
-            return n === name;
-          })
-          .forEach((subscriptionProp) => {
-            const [checkboxName, subscription] = subscriptionProp;
-            const [, v] = splitCheckboxOrRadioName(checkboxName);
-            subscription.publish(value.findIndex((arrV: string) => arrV !== v) === -1);
-          });
-      }
-
-      if (valuesTypes.current[name] === 'radio') {
-        const subscriptions = valuesSubscriptions.getAllSubscriptions();
-        Object.entries(subscriptions)
-          .filter((subscriptionProperty) => {
-            const [radioName] = subscriptionProperty;
-            if (!radioName.includes('{{') && !radioName.includes('}}')) {
-              return false;
-            }
-            const [n] = splitCheckboxOrRadioName(radioName);
-            return n === name;
-          })
-          .forEach((subscriptionProp) => {
-            const [radioName, subscription] = subscriptionProp;
-            const [, v] = splitCheckboxOrRadioName(radioName);
-            subscription.publish(v === value);
-          });
-      }
-
-      valuesSubscriptions.publish(name, value);
-      touchValue(name as FormName<TFormValues>, false);
+  const reset = useCallback((val: DefaultValues<TFormValues>) => {
+    _reset({
+      touchedSubscriptions,
+      touchedValues: touchedValues.current,
+      val,
+      values,
+      valuesSubscriptions,
+      valuesTypes: valuesTypes.current,
     });
   }, []);
 
@@ -326,64 +219,21 @@ function useForm<TFormValues extends Values = Values>(
     if (ref) ref.current?.focus();
   }, []);
 
-  const submit = useCallback(
-    (submitFn: SubmitFn<TFormValues>) => (e: FormEvent<HTMLFormElement>) => {
-      e.preventDefault();
-
-      const hasError = () => {
-        return Object.values(errors.current).some((val) => val !== undefined);
-      };
-
-      // hace focus sobre el value del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
-      const focusError = () => {
-        const errorsValues = Object.entries(errors.current)
-          .filter((entry) => {
-            return entry[1] !== undefined;
-          })
-          .map((entry) => {
-            return entry[1]?.name;
-          });
-        if (errorsValues[0]) {
-          setFocus(errorsValues[0] as FormName<TFormValues>);
-          return;
-        }
-      };
-
-      if (hasError()) return focusError();
-
-      // si no hay errores, válido todos los values de uno en uno
-      const validationsValues = Object.keys(valuesValidations.current);
-      for (const name of validationsValues) {
-        validateValue(
-          valuesValidations.current[name],
-          name,
-          values.current[name],
-          errors.current,
-          errorsSubscriptions,
-        );
-        if (hasError()) return focusError();
-      }
-
-      const formatted = transformValuesToFormValues(values.current);
-
-      setIsSubmitting(true);
-      try {
-        return submitFn(formatted as TFormValues).finally(() => {
-          setIsSubmitting(false);
-        });
-      } catch (e) {
-        if (e instanceof TypeError) {
-          // ejecuto promesa para que isSubmitting sea true y después false
-          new Promise((resolve) => {
-            resolve('');
-          }).then(() => {
-            setIsSubmitting(false);
-          });
-        }
-      }
-    },
-    [],
-  );
+  const submit = useCallback((submitFn: SubmitFn<TFormValues>) => {
+    return _submit<TFormValues>({
+      submitFn,
+      errors: errors.current,
+      errorsSubscriptions,
+      onFocus: setFocus,
+      onSubmitting: setIsSubmitting,
+      values: values.current,
+      valuesValidations: valuesValidations.current,
+      initialValidationMode: initialValidationMode.current,
+      changeValidationMode: (mode: ValidationMode) => {
+        if (validationMode.current.mode !== mode) validationMode.current.mode = mode;
+      },
+    });
+  }, []);
 
   const getErrors = useCallback(() => {
     return formatErrors(errors.current);
@@ -402,13 +252,18 @@ function useForm<TFormValues extends Values = Values>(
     bindRadio,
     bindNumber,
     $instance: {
+      initializedValues: initializedValues.current,
+      values: values.current,
+      touchedValues: touchedValues.current,
+      errors: errors.current,
+      valuesValidations: valuesValidations.current,
       valuesSubscriptions,
-      initValue,
       touchedSubscriptions,
       errorsSubscriptions,
-      initValueValidation,
+      bindUnsubscribeFns: bindUnsubscribeFns.current,
       setInputRef,
       getInputRef,
+      initialValues: initialValues?.current || {},
     },
   };
 }

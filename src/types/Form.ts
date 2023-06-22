@@ -1,10 +1,15 @@
 import { FormEvent, RefObject } from 'react';
-import useValue from '@/hooks/useValue';
-import ValuesSubscriptions from '@/logic/ValuesSubscriptions';
+import FormNameSubscriptions from '@/logic/FormNameSubscriptions';
 import useBind from '@/hooks/useBind';
-import TouchedSubscriptions from '@/logic/TouchedSubscriptions';
-import ErrorsSubscriptions from '@/logic/ErrorsSubscriptions';
-import { ArrayKey, Digits, IsPrimitive, SplitNestedValue, ValueOf } from './Utils';
+import Subscriptions from '@/logic/Subscriptions';
+import {
+  ArrayKey,
+  Digits,
+  IsPrimitive,
+  RecursivePartial,
+  SplitNestedValue,
+  ValueOf,
+} from './Utils';
 
 export type FormName<Root> = Root extends ReadonlyArray<infer E>
   ? IsPrimitive<E> extends true
@@ -43,26 +48,30 @@ export type FormValue<
 
 export type Values = Record<string, any>;
 
+export type InitializedValues = Record<string, boolean>;
+
 export type SubmitFn<TFormValues> = (values: TFormValues) => any;
 
-export type UseFormParams =
+export type UseFormParams<TFormValues extends Values = Values> =
   | {
-      $instance: {
-        valuesSubscriptions?: ValuesSubscriptions;
-        touchedSubscriptions?: TouchedSubscriptions;
-        errorsSubscriptions?: ErrorsSubscriptions;
+      $instance?: {
+        valuesSubscriptions?: FormNameSubscriptions;
+        touchedSubscriptions?: Subscriptions;
+        errorsSubscriptions?: FormNameSubscriptions;
       };
+      defaultValues?: DefaultValues<TFormValues>;
+      validationMode?: ValidationMode;
     }
   | undefined;
 
 export type UseBindValue = ReturnType<typeof useBind>;
 
-export type useValue = ReturnType<typeof useValue>;
+export type DefaultValues<TFormValues> = SplitNestedValue<RecursivePartial<TFormValues>>;
 
 export type UseForm<TFormValues extends Values = Values> = {
   bind: (
     name: FormName<TFormValues>,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     onChange: (e: any) => void;
@@ -70,7 +79,7 @@ export type UseForm<TFormValues extends Values = Values> = {
   };
   bindNumber: (
     name: FormName<TFormValues>,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     onChange: (e: any) => void;
@@ -81,20 +90,21 @@ export type UseForm<TFormValues extends Values = Values> = {
   ) => (e: FormEvent<HTMLFormElement>) => Promise<unknown> | void;
   getValue: {
     (): SplitNestedValue<TFormValues>;
+    (n: undefined): SplitNestedValue<TFormValues>;
     <TName extends FormName<TFormValues>>(name: TName): FormValue<TFormValues, TName>;
   };
   setValue: <TName extends FormName<TFormValues>>(
     name: TName,
     value: FormValue<TFormValues, TName>,
   ) => void;
-  reset: (values: TFormValues) => void;
+  reset: (values: DefaultValues<TFormValues>) => void;
   getErrors: () => FormErrors;
   setFocus: (name: FormName<TFormValues>) => void;
   isSubmitting: boolean;
   bindCheckbox: (
     name: FormName<TFormValues>,
     value: string,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     ref: RefObject<HTMLInputElement>;
@@ -105,7 +115,7 @@ export type UseForm<TFormValues extends Values = Values> = {
   bindRadio: (
     name: FormName<TFormValues>,
     value: string,
-    options?: BindValueOptions,
+    options?: BindOptions,
   ) => {
     name: FormName<TFormValues>;
     ref: RefObject<HTMLInputElement>;
@@ -114,13 +124,18 @@ export type UseForm<TFormValues extends Values = Values> = {
     onChange: (e: any) => void;
   };
   $instance: {
-    setInputRef: (key: string) => void | RefObject<HTMLInputElement>;
-    getInputRef: (key: string) => void | RefObject<HTMLInputElement>;
-    initValueValidation: (name: FormName<TFormValues>, validation: Validation | undefined) => void;
-    initValue: (name: FormName<TFormValues>) => void;
-    touchedSubscriptions: TouchedSubscriptions;
-    errorsSubscriptions: ErrorsSubscriptions;
-    valuesSubscriptions: ValuesSubscriptions;
+    initializedValues: InitializedValues;
+    values: Values;
+    touchedValues: TouchedValues;
+    errors: FormErrors;
+    valuesValidations: ValidationValues;
+    valuesSubscriptions: FormNameSubscriptions;
+    touchedSubscriptions: Subscriptions;
+    errorsSubscriptions: FormNameSubscriptions;
+    bindUnsubscribeFns: BindUnsubscribeFns;
+    setInputRef: (key: string) => any;
+    getInputRef: (key: string) => any;
+    initialValues: any;
   };
 };
 
@@ -128,10 +143,10 @@ export type TouchedValues = Record<string, boolean>;
 
 export type ValidateFunction = (val: any) => boolean | string;
 
-export type Validation = {
+export interface Validation {
   required?: boolean;
-  validateFunction?: ValidateFunction;
-};
+  invalidate?: ValidateFunction;
+}
 
 export type ValidationValues = Record<string, Validation>;
 
@@ -139,18 +154,30 @@ export type ValueType = 'text' | 'radio' | 'checkbox' | 'number';
 
 export type TypeValues = Record<string, ValueType>;
 
-export type BindValueOptions =
-  | {
-      validation: Validation;
-    }
-  | undefined;
+export type InputsRefs = Record<string, RefObject<HTMLInputElement>>;
+
+export interface BindOptions extends Validation {
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+}
 
 export type ValueError =
   | {
       name: string;
-      type: 'validateFunction' | 'required';
+      type: 'invalidate' | 'required';
       message?: string | undefined;
     }
   | undefined;
 
 export type FormErrors = Record<string, ValueError>;
+
+export type UseBindOptions = Validation;
+
+export type BindUnsubscribeFn = () => void | null;
+
+export type BindUnsubscribeFns = Record<string, BindUnsubscribeFn | BindUnsubscribeFn[]>;
+
+export type UpdateInputValue = (value: any) => void;
+
+export type UpdateInputInvalid = (value: ValueError) => void;
+
+export type ValidationMode = 'onChange' | 'onSubmit';

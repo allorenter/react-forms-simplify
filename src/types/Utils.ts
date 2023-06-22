@@ -29,3 +29,15 @@ export type SplitNestedValue<T> = T extends NestedValue<infer U>
       [K in keyof T]: SplitNestedValue<T[K]>;
     }
   : T;
+
+export type RecursivePartial<T> = T extends Array<infer U>
+  ? Array<RecursivePartial<U>>
+  : T extends ReadonlyArray<infer U>
+  ? ReadonlyArray<RecursivePartial<U>>
+  : T extends {
+      [key in keyof T]: T[key];
+    }
+  ? {
+      [K in keyof T]?: RecursivePartial<T[K]>;
+    }
+  : T;

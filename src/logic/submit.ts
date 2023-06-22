@@ -1,4 +1,4 @@
-import { FormErrors, FormName, SubmitFn, ValidationValues, Values } from '@/index';
+import { FormErrors, FormName, SubmitFn, ValidationMode, ValidationValues, Values } from '@/index';
 import { FormEvent } from 'react';
 import validateValue from './validateValue';
 import transformValuesToFormValues from './transformValuesToFormValues';
@@ -12,7 +12,8 @@ type SubmitArgs<TFormValues extends Values = Values> = {
   errorsSubscriptions: FormNameSubscriptions;
   onSubmitting: (isSubmitting: boolean) => void;
   onFocus: (name: FormName<TFormValues>) => void;
-  changeValidationModeToOnChange: () => void;
+  initialValidationMode: ValidationMode;
+  changeValidationMode: (mode: ValidationMode) => void;
 };
 
 function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValues>) {
@@ -24,15 +25,12 @@ function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValu
     errorsSubscriptions,
     onSubmitting,
     onFocus,
-    changeValidationModeToOnChange,
+    initialValidationMode,
+    changeValidationMode,
   } = args;
 
   return (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    const hasError = () => {
-      return Object.values(errors).some((val) => val !== undefined);
-    };
 
     // hace focus sobre el value del primer error encontrado (se ha seteado previamente en un onChange, onBlur, etc)
     const focusError = () => {
@@ -55,15 +53,19 @@ function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValu
       validateValue(valuesValidations[name], name, values[name], errors, errorsSubscriptions);
     }
 
-    changeValidationModeToOnChange();
-
-    if (hasError()) return focusError();
+    // en caso de errores hago focus y cambio el modo de validación a onChange
+    if (Object.values(errors).some((val) => val !== undefined)) {
+      changeValidationMode('onChange');
+      return focusError();
+    }
 
     const formatted = transformValuesToFormValues(values);
     onSubmitting(true);
     try {
       return submitFn(formatted as TFormValues).finally(() => {
         onSubmitting(false);
+        // siempre debo volver al modo de validación inicial
+        changeValidationMode(initialValidationMode);
       });
     } catch (e) {
       if (e instanceof TypeError) {
@@ -72,6 +74,8 @@ function _submit<TFormValues extends Values = Values>(args: SubmitArgs<TFormValu
           resolve('');
         }).then(() => {
           onSubmitting(false);
+          // siempre debo volver al modo de validación inicial
+          changeValidationMode(initialValidationMode);
         });
       }
     }

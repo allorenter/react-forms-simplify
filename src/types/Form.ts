@@ -168,7 +168,10 @@ export type ValueError =
     }
   | undefined;
 
-export type FormErrors = Record<string, ValueError>;
+export type FormErrors<TFormValues extends Values = Values> = Record<
+  FormName<TFormValues>,
+  ValueError
+>;
 
 export type UseBindOptions = Validation;
 
@@ -181,3 +184,8 @@ export type UpdateInputValue = (value: any) => void;
 export type UpdateInputInvalid = (value: ValueError) => void;
 
 export type ValidationMode = 'onChange' | 'onSubmit';
+
+export type UseError<TFormValues extends Values = Values> = {
+  hasErrors: boolean;
+  errors: SplitNestedValue<RecursivePartial<FormErrors<TFormValues>>>;
+};

@@ -1,9 +1,9 @@
-import { Values, FormErrors, UseForm, ValueError, FormName } from '@/types/Form';
+import { Values, FormErrors, UseForm, ValueError, FormName, UseError } from '@/types/Form';
 import { useEffect, useState } from 'react';
 
 function useError<TFormValues extends Values = Values>(p: {
   form: UseForm<TFormValues>;
-}): FormErrors;
+}): UseError<TFormValues>;
 function useError<
   TFormValues extends Values = Values,
   TName extends FormName<TFormValues> = FormName<TFormValues>,
@@ -15,14 +15,14 @@ function useError<TFormValues extends Values = Values>(p: {
   const { name, form } = p;
   const GET_ALL = !(typeof name === 'string' && name?.length > 0);
 
-  const [errors, setErrors] = useState<FormErrors | ValueError | undefined>();
+  const [errors, setErrors] = useState<FormErrors | ValueError>({});
 
   const { errorsSubscriptions } = form.$instance;
 
   useEffect(() => {
     const unsubscribeFn = GET_ALL
       ? errorsSubscriptions.subscribeAll(() => {
-          setErrors(form.getErrors());
+          setErrors(form.getErrors() || {});
         })
       : errorsSubscriptions.subscribe(name, setErrors);
     return () => unsubscribeFn?.();
@@ -30,7 +30,6 @@ function useError<TFormValues extends Values = Values>(p: {
 
   if (GET_ALL) {
     const hasErrors = Object.keys(errors || {}).length > 0;
-
     return {
       hasErrors,
       errors,
